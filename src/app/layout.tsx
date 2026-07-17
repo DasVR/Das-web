@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 
 import { SmoothScrollProvider } from "@/components/site/smooth-scroll-provider";
 
@@ -15,10 +15,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
 export const metadata: Metadata = {
   title: "Das.web",
   description:
-    "A liminal terminal portfolio reimagined with liquid glass, ASCII texture, CRT scanlines, and hand-crafted motion.",
+    "A hand-crafted digital ruin where soft natural light, faded ASCII, and overgrown glass frame atmospheric design work.",
 };
 
 export default function RootLayout({
@@ -29,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col overflow-x-hidden">
         <SmoothScrollProvider>{children}</SmoothScrollProvider>

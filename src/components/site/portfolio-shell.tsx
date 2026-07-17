@@ -1,55 +1,38 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 
-import { BootSequence } from "@/components/site/boot-sequence";
-import { CrtOverlay } from "@/components/site/crt-overlay";
-import { CursorLens } from "@/components/site/cursor-lens";
-import { DitherPlane } from "@/components/site/dither-plane";
+import { DustField } from "@/components/ruin/dust-field";
+import { Vine } from "@/components/ruin/vine";
 import { HeroSection } from "@/components/site/hero-section";
-import { MatrixRainCanvas } from "@/components/site/matrix-rain-canvas";
 import { SectionCard } from "@/components/site/section-card";
 import { SvgFilterDefs } from "@/components/site/svg-filter-defs";
-import { TerminalPanel } from "@/components/site/terminal-panel";
 import { atmosphere } from "@/config/atmosphere";
 
 export function PortfolioShell() {
-  const [bootComplete, setBootComplete] = useState(false);
-  const projects = useMemo(() => atmosphere.projects, []);
-
   return (
     <div className="relative min-h-screen overflow-hidden bg-[var(--background)] text-[var(--foreground)]">
       <SvgFilterDefs />
-      {!bootComplete ? <BootSequence onComplete={() => setBootComplete(true)} /> : null}
-
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_top,rgba(109,255,176,0.11),transparent_25%),radial-gradient(circle_at_85%_10%,rgba(93,124,255,0.12),transparent_22%),linear-gradient(180deg,#06110d_0%,#040709_50%,#020405_100%)]"
+        className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_62%_0%,rgba(222,208,169,0.16),transparent_28%),linear-gradient(180deg,#252a20_0%,#1a1e18_48%,#121510_100%)]"
       />
-      <DitherPlane />
-      <MatrixRainCanvas />
-      <CursorLens />
-      <CrtOverlay />
+      <DustField />
 
-      <header className="fixed inset-x-0 top-0 z-20 px-4 pt-4 sm:px-6 lg:px-10">
-        <div className="terminal-card liquid-panel flex items-center justify-between px-4 py-3">
+      <header className="fixed inset-x-0 top-0 z-30 px-5 pt-5 sm:px-8 lg:px-14">
+        <div className="mx-auto flex max-w-[88rem] items-center justify-between border-b border-[#d8c99e]/12 pb-4">
           <div>
-            <p className="font-mono text-[0.68rem] uppercase tracking-[0.32em] text-[#8ce6b3]">
+            <p className="font-serif text-lg tracking-[-0.02em] text-[#ede7d9]">
               Das.web
             </p>
-            <p className="text-xs text-[#8ebba2]">booted / matrix / refractive</p>
+            <p className="text-[0.58rem] uppercase tracking-[0.26em] text-[#b9af94]/50">
+              quiet work / living archive
+            </p>
           </div>
-          <nav className="hidden gap-3 font-mono text-xs text-[#d7ffe8] sm:flex">
-            <a href="#work" className="rounded-full px-3 py-2 hover:bg-white/6">
-              work
-            </a>
-            <a href="#about" className="rounded-full px-3 py-2 hover:bg-white/6">
-              about
-            </a>
-            <a href="#contact" className="rounded-full px-3 py-2 hover:bg-white/6">
-              contact
-            </a>
+          <nav className="flex gap-5 text-[0.62rem] uppercase tracking-[0.24em] text-[#d0c7ae]/55 sm:gap-8">
+            <a href="#work" className="transition-colors hover:text-[#eee6d3]">Work</a>
+            <a href="#about" className="transition-colors hover:text-[#eee6d3]">About</a>
+            <a href="#contact" className="transition-colors hover:text-[#eee6d3]">Contact</a>
           </nav>
         </div>
       </header>
@@ -57,30 +40,30 @@ export function PortfolioShell() {
       <main className="relative z-10">
         <HeroSection />
 
-        <div className="grid gap-6 px-4 pb-24 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-10">
+        <div className="relative mx-auto grid max-w-[88rem] gap-8 px-5 py-28 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-14">
+          <Vine className="absolute -top-20 -right-20 h-[36rem] w-44 text-[#5f6d49]/35" />
           <motion.div
             id="work"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.55, ease: "easeOut" }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
-            <SectionCard eyebrow="work / cards / craft" title="Terminal cards, but elevated into glass-backed objects.">
+            <SectionCard eyebrow="selected work / field notes" title="Interfaces composed like photographs, not assembled like templates.">
               <div className="space-y-4">
                 <div className="-mx-2 flex snap-x gap-4 overflow-x-auto px-2 pb-2">
-                  {projects.map((project) => (
+                  {atmosphere.projects.map((project, projectIndex) => (
                     <article
                       key={project.title}
-                      className="glass-filtered min-w-[18rem] snap-start rounded-[1.6rem] border border-white/10 bg-black/14 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-                      style={{ filter: "url(#liquid-glass-filter)" }}
+                      className="project-fragment min-w-[19rem] snap-start border-l border-[#cfc3a3]/18 p-5"
                     >
-                      <p className="font-mono text-[0.66rem] uppercase tracking-[0.28em] text-[#83d8aa]">
-                        {project.label}
+                      <p className="text-[0.62rem] uppercase tracking-[0.28em] text-[#aeb38c]/65">
+                        0{projectIndex + 1} / {project.label}
                       </p>
-                      <h3 className="mt-3 text-xl font-medium text-[#ecfff4]">
+                      <h3 className="mt-5 font-serif text-2xl text-[#e7e0d1]">
                         {project.title}
                       </h3>
-                      <p className="mt-2 leading-7">{project.description}</p>
+                      <p className="mt-3 text-sm leading-7 text-[#aaa699]">{project.description}</p>
                     </article>
                   ))}
                 </div>
@@ -94,14 +77,13 @@ export function PortfolioShell() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
             >
-              <SectionCard eyebrow="about / atmosphere" title="The design behaves like a quiet photograph.">
+              <SectionCard eyebrow="about / the eye behind it" title="The design behaves like a quiet photograph.">
                 <p className="leading-7">
-                  The palette stays dark and liminal. The motion stays soft and
-                  physical. The glass only appears where depth matters. The terminal
-                  voice remains intact so the site still feels authored rather than
-                  templated.
+                  I work with light, weight, silence, and texture before decoration.
+                  Motion is slow enough to notice only when it stops; glass appears
+                  where a real window might still catch the sky.
                 </p>
               </SectionCard>
             </motion.div>
@@ -111,21 +93,19 @@ export function PortfolioShell() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.55, ease: "easeOut", delay: 0.1 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
             >
-              <SectionCard eyebrow="contact / output" title="Ready for a site that feels built, not generated.">
-                <div className="space-y-3 font-mono text-sm">
-                  <p>&gt; hello@dasvr.dev</p>
-                  <p>&gt; github.com/DasVR</p>
-                  <p>&gt; available for portfolio, brand, and interaction systems</p>
+              <SectionCard eyebrow="contact / leave a trace" title="Make something worth finding years from now.">
+                <div className="space-y-3 text-sm leading-7">
+                  <p>hello@dasvr.dev</p>
+                  <p>github.com/DasVR</p>
+                  <p className="text-[#969287]">Available for portfolio, brand, and interaction systems.</p>
                 </div>
               </SectionCard>
             </motion.div>
           </div>
         </div>
       </main>
-
-      <TerminalPanel />
     </div>
   );
 }

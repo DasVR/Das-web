@@ -2,116 +2,86 @@
 
 import { motion } from "motion/react";
 
+import { FadedAscii } from "@/components/hero/faded-ascii";
+import { Vine } from "@/components/ruin/vine";
 import { atmosphere } from "@/config/atmosphere";
-import { AsciiSignal } from "@/components/site/ascii-signal";
-import { PlaylistRail } from "@/components/site/playlist-rail";
-
-function DitherDots() {
-  return (
-    <div
-      aria-hidden="true"
-      className="absolute inset-0 opacity-50 [background-image:radial-gradient(rgba(109,255,176,0.22)_0.8px,transparent_0.8px)] [background-size:14px_14px] [mask-image:radial-gradient(circle_at_center,black_40%,transparent_82%)]"
-    />
-  );
-}
-
-function VinylCluster() {
-  return (
-    <div className="relative h-44 w-full">
-      <div className="vinyl-record absolute top-4 left-0 size-28 animate-spin-slow opacity-90" />
-      <div className="vinyl-record absolute top-16 left-20 size-36 animate-[spin_12s_linear_infinite_reverse] opacity-80" />
-      <div className="vinyl-record absolute top-0 right-8 size-20 animate-spin-slow opacity-60" />
-    </div>
-  );
-}
 
 export function HeroSection() {
   return (
-    <section className="relative grid min-h-screen items-center gap-8 px-4 pt-28 pb-12 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-10">
-      <div className="relative">
+    <section className="relative min-h-[100svh] overflow-hidden px-5 pt-24 pb-14 sm:px-8 lg:px-14">
+      <div aria-hidden="true" className="light-shaft absolute -top-24 left-[46%] h-[120%] w-[36rem] -rotate-12" />
+      <div aria-hidden="true" className="ruin-wall absolute inset-y-0 right-0 w-[46%] opacity-75" />
+      <Vine className="absolute -top-10 right-2 z-10 h-[38rem] w-48 text-[#68784d]/70" />
+      <Vine flip className="absolute top-[44%] -left-10 z-10 h-[28rem] w-36 text-[#53613f]/55" />
+
+      <div className="relative z-10 mx-auto grid min-h-[calc(100svh-9rem)] max-w-[88rem] items-end gap-8 lg:grid-cols-[1.18fr_0.82fr]">
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="terminal-card liquid-panel relative overflow-hidden p-6 sm:p-8"
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="pb-4 lg:pb-16"
         >
-          <DitherDots />
-          <div className="relative z-10">
-            <p className="font-mono text-[0.72rem] uppercase tracking-[0.32em] text-[#86d7aa]">
-              terminal portfolio / dark liminal cyber
-            </p>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <span className="rounded-full border border-[#84ffc9]/16 bg-white/8 px-3 py-1 font-mono text-xs text-[#d4ffe5]">
-                boot sequence
+          <p className="text-[0.68rem] uppercase tracking-[0.38em] text-[#d8c99e]/70">
+            Creative developer · atmospheric design
+          </p>
+          <h1 className="mt-7 max-w-4xl font-serif text-[clamp(3.7rem,8.5vw,8.5rem)] leading-[0.87] tracking-[-0.055em] text-[#eee9dc]">
+            Beautiful things
+            <span className="block pl-[8vw] text-[#aab18a] italic">grow back.</span>
+          </h1>
+          <p className="mt-8 max-w-xl text-base leading-8 text-[#c5c0b2] sm:text-lg">
+            A portfolio built like an abandoned room after rain—soft light on old
+            surfaces, nature at the edges, and careful details waiting to be found.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-3 text-[0.7rem] uppercase tracking-[0.22em] text-[#cdc5b2]/75">
+            {atmosphere.skills.map((skill) => (
+              <span key={skill} className="border-b border-[#d8c99e]/25 pb-1">
+                {skill}
               </span>
-              <span className="rounded-full border border-[#84ffc9]/16 bg-white/8 px-3 py-1 font-mono text-xs text-[#d4ffe5]">
-                liquid shell
-              </span>
-              <span className="rounded-full border border-[#84ffc9]/16 bg-white/8 px-3 py-1 font-mono text-xs text-[#d4ffe5]">
-                ascii transmission
-              </span>
-            </div>
-
-            <h1 className="mt-8 max-w-4xl text-5xl font-semibold tracking-[-0.04em] text-[#eefff5] sm:text-6xl lg:text-7xl">
-              A hand-built terminal world softened by liquid glass, scanlines, and
-              cinematic silence.
-            </h1>
-
-            <p className="mt-6 max-w-2xl text-base leading-8 text-[#a5c6b5] sm:text-lg">
-              This portfolio treats the interface like photography: composition,
-              negative space, glow, texture, and restraint first. Terminal DNA stays
-              intact, but the surfaces bend light now.
-            </p>
-
-            <div className="mt-10 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
-              <AsciiSignal className="min-h-[13rem]" />
-              <div className="terminal-card liquid-panel relative min-h-[13rem] overflow-hidden p-5">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(109,255,176,0.16),transparent_35%),radial-gradient(circle_at_80%_30%,rgba(213,168,92,0.18),transparent_28%),radial-gradient(circle_at_50%_90%,rgba(255,255,255,0.1),transparent_24%)]" />
-                <div className="absolute inset-0 bg-[linear-gradient(130deg,rgba(255,255,255,0.12),rgba(255,255,255,0.02)_30%,transparent_60%)]" />
-                <div className="relative z-10 flex h-full flex-col justify-between">
-                  <div>
-                    <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-[#86d7aa]">
-                      liquid glass / hero field
-                    </p>
-                    <p className="mt-3 max-w-md text-sm leading-7 text-[#cce9d9]">
-                      Refractive typography, holographic edge blooms, and dithered
-                      motion are confined to the hero so the page stays premium, not noisy.
-                    </p>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {atmosphere.skills.map((skill) => (
-                      <div
-                        key={skill}
-                        className="rounded-2xl border border-white/10 bg-black/12 px-3 py-3 font-mono text-xs text-[#dbffea]"
-                      >
-                        {skill}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </motion.div>
-      </div>
 
-      <div className="relative flex flex-col gap-6">
-        <div className="terminal-card liquid-panel relative overflow-hidden p-5">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.16),transparent_38%),radial-gradient(circle_at_40%_40%,rgba(109,255,176,0.18),transparent_22%),radial-gradient(circle_at_70%_60%,rgba(110,130,255,0.12),transparent_24%)]" />
-          <div className="relative z-10">
-            <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-[#86d7aa]">
-              liminal playback
-            </p>
-            <p className="mt-2 max-w-sm text-sm leading-7 text-[#cce9d9]">
-              Floating vinyl records act like soft physical anchors inside the hero.
-              They make the playlist feel tactile instead of tacked on.
-            </p>
-            <VinylCluster />
-          </div>
+        <div className="relative pb-2 lg:pb-20">
+          <motion.div
+            initial={false}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+            className="ruin-window relative min-h-[31rem] overflow-hidden rounded-[0.4rem_3rem_0.4rem_2rem] border border-white/14 p-5 shadow-[0_35px_90px_rgba(5,8,4,0.42)] sm:p-7"
+          >
+            <div className="window-refraction absolute inset-0" />
+            <div className="window-landscape absolute inset-4 overflow-hidden rounded-[0.2rem_2.2rem_0.2rem_1.5rem]">
+              <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(229,215,177,0.38),transparent_35%),radial-gradient(circle_at_72%_30%,rgba(220,211,170,0.3),transparent_22%),linear-gradient(180deg,#65715b_0%,#3f4938_43%,#252a21_100%)]" />
+              <div className="broken-frame absolute inset-y-0 left-[37%] w-px bg-[#292c24]/80" />
+              <div className="broken-frame absolute inset-x-0 top-[42%] h-px bg-[#292c24]/70" />
+              <div className="absolute right-[8%] bottom-0 h-[72%] w-[34%] bg-[linear-gradient(100deg,transparent,rgba(26,31,23,0.66))] [clip-path:polygon(30%_0,100%_10%,100%_100%,0_100%)]" />
+              <div className="grass-line absolute inset-x-0 bottom-0 h-28" />
+            </div>
+            <div className="relative z-10 flex h-full min-h-[27rem] flex-col justify-between">
+              <div className="flex justify-end">
+                <span className="rounded-full border border-white/14 bg-[#e6dfcc]/10 px-3 py-2 text-[0.62rem] uppercase tracking-[0.3em] text-[#ede5d1]/65 backdrop-blur-xl">
+                  room study / 01
+                </span>
+              </div>
+              <FadedAscii />
+            </div>
+            <Vine className="absolute -top-24 -right-4 h-[31rem] w-36 text-[#718050]/75" />
+          </motion.div>
+          <p className="mt-4 max-w-sm text-xs leading-6 text-[#aaa696]">
+            Frosted glass holds the light; faded data becomes a sign slowly
+            overtaken by growth.
+          </p>
         </div>
-
-        <PlaylistRail />
       </div>
+
+      <motion.a
+        href="#work"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-7 left-1/2 z-20 -translate-x-1/2 text-[0.62rem] uppercase tracking-[0.36em] text-[#d8c99e]/50"
+      >
+        descend into the ruin
+      </motion.a>
     </section>
   );
 }

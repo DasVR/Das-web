@@ -8,17 +8,15 @@ type SectionCardProps = {
 
 export function SectionCard({ children, eyebrow, title }: SectionCardProps) {
   return (
-    <section
-      className="terminal-card liquid-panel glass-filtered relative overflow-hidden p-6 sm:p-7"
-      style={{ filter: "url(#liquid-glass-filter)" }}
-    >
-      <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-[#7adca8]">
+    <section className="weathered-card relative overflow-hidden p-7 sm:p-9">
+      <div aria-hidden="true" className="absolute top-0 left-0 h-14 w-28 bg-[radial-gradient(ellipse_at_top_left,rgba(116,132,78,0.35),transparent_70%)]" />
+      <p className="relative text-[0.64rem] uppercase tracking-[0.3em] text-[#c9bea1]/60">
         {eyebrow}
       </p>
-      <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-[#ecfff4]">
+      <h2 className="relative mt-5 max-w-2xl font-serif text-3xl leading-tight tracking-[-0.025em] text-[#e8e2d4] sm:text-4xl">
         {title}
       </h2>
-      <div className="mt-6 text-[#a3c4b3]">{children}</div>
+      <div className="relative mt-7 text-[#bcb7aa]">{children}</div>
     </section>
   );
 }
