@@ -4,15 +4,14 @@ Personal portfolio website.
 
 ## Current direction
 
-This branch rebuilds the site in Next.js around a dark liminal terminal aesthetic:
+This branch rebuilds the site as a hand-crafted digital ruin:
 
-- boot sequence overlay
-- matrix rain canvas
-- CRT scanlines and vignette
-- ASCII hero treatment
-- refractive liquid-glass terminal cards
-- floating vinyl playlist rail
-- collapsible command terminal
+- post-apocalyptic beauty without heavy dystopia
+- warm light filtering through broken structures
+- dust motes and gently moving vines
+- faded ASCII used like abandoned signage
+- frosted, refractive glass as weathered windows
+- editorial, photography-led composition
 - reduced-motion and text fallback modes
 
 ## Development

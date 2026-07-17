@@ -1,19 +1,18 @@
 import { atmosphere } from "@/config/atmosphere";
-import { playlist } from "@/config/playlist";
 
 export function TextFallback() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-16 font-mono text-sm text-[#dbffe9]">
+    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-16 text-sm leading-7 text-[#d9d3c5]">
       <header className="space-y-2">
-        <p>Das.web / text mode</p>
-        <p>dark liminal terminal portfolio fallback</p>
+        <p className="font-serif text-3xl">Das.web</p>
+        <p>quiet work / living archive</p>
       </header>
 
       <section className="space-y-3">
-        <p>A hand-built terminal world softened by liquid glass, scanlines, and cinematic silence.</p>
+        <p>Beautiful things grow back.</p>
         <p>
-          This fallback disables the matrix rain, refraction lens, and animated
-          dither layers while preserving structure and content.
+          A portfolio built like an abandoned room after rain—soft light on old
+          surfaces, nature at the edges, and careful details waiting to be found.
         </p>
       </section>
 
@@ -24,15 +23,6 @@ export function TextFallback() {
             <p>{project.title}</p>
             <p>{project.description}</p>
           </div>
-        ))}
-      </section>
-
-      <section className="space-y-2">
-        <p>Playlist</p>
-        {playlist.tracks.map((track) => (
-          <p key={track.title}>
-            {track.title} — {track.artist} ({track.mood})
-          </p>
         ))}
       </section>
 
