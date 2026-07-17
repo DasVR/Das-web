@@ -1,16 +1,22 @@
-import { TextFallback } from "@/components/site/text-fallback";
+"use client";
+
+import { useState } from "react";
+
 import { PortfolioShell } from "@/components/site/portfolio-shell";
+import { TextFallback } from "@/components/site/text-fallback";
 
-type HomeProps = {
-  searchParams: Promise<{
-    text?: string;
-  }>;
-};
+function isTextMode() {
+  if (typeof window === "undefined") {
+    return false;
+  }
 
-export default async function Home({ searchParams }: HomeProps) {
-  const resolvedSearchParams = await searchParams;
+  return new URLSearchParams(window.location.search).get("text") === "1";
+}
 
-  if (resolvedSearchParams.text === "1") {
+export default function Home() {
+  const [textMode] = useState(isTextMode);
+
+  if (textMode) {
     return <TextFallback />;
   }
 

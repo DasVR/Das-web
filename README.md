@@ -23,3 +23,15 @@ npm run dev
 ```
 
 Then open `http://localhost:3000`.
+
+## GitHub Pages
+
+This project is configured for static export and GitHub Pages:
+
+```bash
+npm run build:pages
+```
+
+Live site: [https://dasvr.github.io/Das-web/](https://dasvr.github.io/Das-web/)
+
+Deployment runs automatically via `.github/workflows/deploy-pages.yml` on push.
