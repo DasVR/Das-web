@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { terminalCommands } from "@/config/terminal";
@@ -17,12 +17,8 @@ export function TerminalPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [lines, setLines] = useState<string[]>(DEFAULT_LINES);
   const [inputValue, setInputValue] = useState("");
-  const [coarsePointer, setCoarsePointer] = useState(false);
+  const [coarsePointer] = useState(() => hasCoarsePointer());
   const { pulse } = useHaptics();
-
-  useEffect(() => {
-    setCoarsePointer(hasCoarsePointer());
-  }, []);
 
   const submit = () => {
     const normalizedValue = inputValue.trim().toLowerCase();

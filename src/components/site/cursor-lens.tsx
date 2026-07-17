@@ -10,15 +10,12 @@ export function CursorLens() {
   const pointerY = useMotionValue(-160);
   const x = useSpring(pointerX, { damping: 28, stiffness: 240, mass: 0.7 });
   const y = useSpring(pointerY, { damping: 28, stiffness: 240, mass: 0.7 });
-  const [enabled, setEnabled] = useState(false);
+  const [enabled] = useState(
+    () => canHover() && !hasCoarsePointer() && !prefersReducedMotion(),
+  );
 
   useEffect(() => {
-    const isEnabled =
-      canHover() && !hasCoarsePointer() && !prefersReducedMotion();
-
-    setEnabled(isEnabled);
-
-    if (!isEnabled) {
+    if (!enabled) {
       return;
     }
 
@@ -32,7 +29,7 @@ export function CursorLens() {
     return () => {
       window.removeEventListener("pointermove", move);
     };
-  }, [pointerX, pointerY]);
+  }, [enabled, pointerX, pointerY]);
 
   if (!enabled) {
     return null;

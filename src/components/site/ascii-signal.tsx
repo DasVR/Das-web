@@ -10,11 +10,7 @@ const ASCII_SWAP = ["*", "+", ".", ":", "#"];
 
 export function AsciiSignal({ className }: { className?: string }) {
   const [tick, setTick] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    setReducedMotion(prefersReducedMotion());
-  }, []);
+  const [reducedMotion] = useState(() => prefersReducedMotion());
 
   useEffect(() => {
     if (reducedMotion) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { playlist } from "@/config/playlist";
 import { cn } from "@/lib/cn";
@@ -9,12 +9,8 @@ import { useHaptics } from "@/lib/haptics";
 
 export function PlaylistRail() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [coarsePointer, setCoarsePointer] = useState(false);
+  const [coarsePointer] = useState(() => hasCoarsePointer());
   const { pulse } = useHaptics();
-
-  useEffect(() => {
-    setCoarsePointer(hasCoarsePointer());
-  }, []);
 
   return (
     <aside className="terminal-card liquid-panel relative overflow-hidden p-4">
