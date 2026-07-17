@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05080b;
+  --foreground: #ddffe9;
+  --panel: rgba(7, 18, 15, 0.58);
+  --panel-strong: rgba(10, 26, 21, 0.72);
+  --panel-border: rgba(120, 255, 191, 0.18);
+  --glow: #6dffb0;
+  --glow-soft: #a3ffd1;
+  --muted: #8ebba2;
+  --vignette: rgba(0, 0, 0, 0.56);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top, rgba(109, 255, 176, 0.08), transparent 24%),
+    linear-gradient(180deg, #08100f 0%, #040708 38%, #020305 100%);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(109, 255, 176, 0.24);
+  color: #effff7;
+}
+
+.terminal-card {
+  border-radius: 1.75rem;
+  border: 1px solid rgba(120, 255, 191, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
+    rgba(7, 18, 15, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 60px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(109, 255, 176, 0.05);
+  backdrop-filter: blur(20px) saturate(125%);
+}
+
+.liquid-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-panel::before {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(255, 255, 255, 0.18), transparent 24%),
+    radial-gradient(circle at 75% 28%, rgba(109, 255, 176, 0.12), transparent 24%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 32%, rgba(255, 255, 255, 0.04) 60%, transparent 80%);
+  content: "";
+  pointer-events: none;
+}
+
+.vinyl-record {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at center, rgba(10, 16, 13, 0.98) 0 16%, rgba(120, 255, 191, 0.85) 16% 20%, rgba(12, 15, 14, 1) 20% 36%, rgba(27, 35, 31, 1) 36% 48%, rgba(10, 12, 11, 1) 48% 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 0 28px rgba(255, 255, 255, 0.05),
+    0 0 18px rgba(109, 255, 176, 0.12);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility animate-spin-slow {
+  animation: spin-slow 9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .terminal-card {
+    backdrop-filter: none;
+    background: rgba(7, 18, 15, 0.92);
+  }
+}
