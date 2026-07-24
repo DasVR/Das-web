@@ -1,18 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { SiteNav } from "@/components/SiteNav";
-import { GrainOverlay } from "@/components/GrainOverlay";
-import { CustomCursor } from "@/components/CustomCursor";
 import { ScrollTextScramble, StaggerTextScramble, ScrollRevealScramble } from "@/components/ScrollTextScramble";
 
 export default function TextScrambleDemoPage() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white">
-      <GrainOverlay />
-      <CustomCursor />
-      <SiteNav />
-
+    <main className="min-h-screen">
       <div className="px-6 pt-40 pb-20 md:px-12 md:pt-48 md:pb-32 lg:px-24">
         <div className="mx-auto max-w-3xl space-y-32">
           {/* Variant 1: Basic Scroll Scramble */}
