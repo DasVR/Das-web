@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
-/** Tight follow cursor — no spring lag; expands on interactive hover */
+/** Tight follow cursor — no spring lag; expands + labels on interactive hover */
 export function CustomCursor() {
   const reduceMotion = useReducedMotion();
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const [visible, setVisible] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const [label, setLabel] = useState<string | null>(null);
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
@@ -21,13 +22,17 @@ export function CustomCursor() {
       setPos({ x: e.clientX, y: e.clientY });
       setVisible(true);
       const el = e.target as HTMLElement | null;
-      setHovering(
-        Boolean(el?.closest("a, button, input, textarea, [role='button']"))
+      const interactive = el?.closest(
+        "a, button, input, textarea, [role='button']"
       );
+      setHovering(Boolean(interactive));
+      const labelled = el?.closest<HTMLElement>("[data-cursor]");
+      setLabel(labelled?.dataset.cursor ?? null);
     }
     function onLeave() {
       setVisible(false);
       setHovering(false);
+      setLabel(null);
     }
 
     window.addEventListener("mousemove", onMove, { passive: true });
@@ -43,28 +48,37 @@ export function CustomCursor() {
 
   if (!enabled) return null;
 
-  const size = hovering ? 36 : 8;
+  const size = label ? 64 : hovering ? 36 : 8;
 
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-[100] mix-blend-difference"
+      className="pointer-events-none fixed left-0 top-0 z-[100]"
       style={{
         transform: `translate3d(${pos.x}px, ${pos.y}px, 0)`,
         opacity: visible ? 1 : 0,
       }}
     >
       <motion.div
-        className="-translate-x-1/2 -translate-y-1/2 rounded-full border border-white bg-white"
+        className="flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white"
         animate={{
           width: size,
           height: size,
-          backgroundColor: hovering
-            ? "rgba(255,255,255,0)"
-            : "rgba(255,255,255,1)",
+          backgroundColor:
+            hovering || label ? "rgba(255,255,255,0)" : "rgba(255,255,255,1)",
         }}
-        transition={{ duration: 0.12, ease: [0.25, 0.1, 0.25, 1] }}
-      />
+        transition={{ duration: 0.14, ease: [0.25, 0.1, 0.25, 1] }}
+      >
+        {label ? (
+          <motion.span
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="font-mono text-[9px] uppercase tracking-widest text-white"
+          >
+            {label}
+          </motion.span>
+        ) : null}
+      </motion.div>
     </div>
   );
 }

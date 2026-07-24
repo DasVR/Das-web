@@ -16,6 +16,13 @@ export default function WorkPage() {
           label="Work"
           index="01"
           title="Selected stories — honest work, no fake metrics."
+          meta={
+            <>
+              <span className="text-neutral-300">Personal + client</span>
+              <span>Case studies ship as real work lands</span>
+              <span>No invented conversion numbers</span>
+            </>
+          }
         />
 
         <div className="mt-4 flex flex-col gap-4 md:gap-5">

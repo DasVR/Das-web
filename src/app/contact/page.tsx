@@ -73,7 +73,18 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen">
       <section className="px-6 pb-20 pt-32 md:px-12 md:pb-32 md:pt-40 lg:px-24">
-        <SectionHeader label="Contact" index="05" title="Tell me your story." />
+        <SectionHeader
+          label="Contact"
+          index="05"
+          title="Tell me your story."
+          meta={
+            <>
+              <span className="text-neutral-300">Taking new projects</span>
+              <span>Usually reply within 24h</span>
+              <span>hello@dasdev.net</span>
+            </>
+          }
+        />
 
         <div className="mt-4 grid max-w-5xl gap-12 lg:grid-cols-2 lg:gap-16">
           <AnimatedSection>

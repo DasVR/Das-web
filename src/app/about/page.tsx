@@ -24,6 +24,13 @@ export default function AboutPage() {
           label="About"
           index="02"
           title="Designer & builder. Personal work, client work, clear services."
+          meta={
+            <>
+              <span className="text-neutral-300">Arriq · 15</span>
+              <span>Building since 2024</span>
+              <span>Florida · remote-friendly</span>
+            </>
+          }
         />
 
         <div className="mt-4 grid max-w-5xl gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">

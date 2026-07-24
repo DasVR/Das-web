@@ -9,23 +9,47 @@ type ScrollRevealProps = {
   className?: string;
 };
 
-/** Section titles: muted → white as they enter view */
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+/**
+ * Masked word stagger — words slide up out of an overflow-hidden line box.
+ * Falls back to plain text when children aren't a string or motion is reduced.
+ */
 export function ScrollReveal({ children, className }: ScrollRevealProps) {
   const reduceMotion = useReducedMotion();
 
-  if (reduceMotion) {
+  if (reduceMotion || typeof children !== "string") {
     return <div className={cn("text-white", className)}>{children}</div>;
   }
 
+  const words = children.split(" ");
+
   return (
     <motion.div
-      className={cn(className)}
-      initial={{ color: "rgb(82 82 82)" }}
-      whileInView={{ color: "rgb(255 255 255)" }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+      className={cn("text-white", className)}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ staggerChildren: 0.035 }}
     >
-      {children}
+      {words.map((word, i) => (
+        <span
+          key={`${word}-${i}`}
+          className="inline-block overflow-hidden pb-[0.12em] align-bottom"
+        >
+          <motion.span
+            className="inline-block"
+            variants={{
+              hidden: { y: "110%", opacity: 0 },
+              visible: { y: "0%", opacity: 1 },
+            }}
+            transition={{ duration: 0.7, ease: EASE }}
+          >
+            {word}
+            {i < words.length - 1 ? "\u00A0" : ""}
+          </motion.span>
+        </span>
+      ))}
     </motion.div>
   );
 }

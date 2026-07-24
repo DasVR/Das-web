@@ -12,11 +12,11 @@ const footerLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-neutral-900 px-6 py-10 md:px-12 md:py-12 lg:px-24">
-      <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-        <div className="flex flex-col gap-4">
-          <div className="h-8 w-28 text-neutral-700">
-            <DotMatrix text="ARRIQ" gap={5} letterGap={6} radius={1.1} />
+    <footer className="border-t border-neutral-900 px-6 py-12 md:px-12 md:py-14 lg:px-24">
+      <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-5">
+          <div className="h-9 w-32 text-neutral-400">
+            <DotMatrix text="ARRIQ" gap={5} letterGap={6} radius={1.35} />
           </div>
           <nav
             className="flex flex-wrap gap-4 font-mono text-xs text-neutral-500"
@@ -26,17 +26,34 @@ export function SiteFooter() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="hover:text-neutral-300"
+                className="transition-colors hover:text-orange-400"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
-          <p className="text-xs text-neutral-600">© 2026 Arriq · Das Web Design</p>
+          <p className="text-xs text-neutral-600">
+            © 2026 Arriq · Das Web Design · Based in Florida, working widely
+          </p>
         </div>
-        <p className="font-mono text-[11px] tracking-wide text-neutral-600">
-          Built with Next.js · Tailwind · Framer Motion
-        </p>
+
+        <div className="flex flex-col gap-3 font-mono text-[11px] tracking-wide text-neutral-600 md:items-end">
+          <a
+            href="mailto:hello@dasdev.net"
+            className="text-neutral-400 transition-colors hover:text-orange-400"
+          >
+            hello@dasdev.net
+          </a>
+          <a
+            href="https://github.com/DasVR"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-orange-400"
+          >
+            github.com/DasVR
+          </a>
+          <p>Built with Next.js · Tailwind · Framer Motion</p>
+        </div>
       </div>
     </footer>
   );

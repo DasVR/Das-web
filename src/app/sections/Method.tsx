@@ -47,7 +47,17 @@ export function Method() {
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
       <div className="mx-auto max-w-6xl">
-        <SectionHeader index="03" label="Method" title="How we work" />
+        <SectionHeader
+          index="05"
+          label="Method"
+          title="How the work happens"
+          meta={
+            <>
+              <span className="text-neutral-300">Four steps</span>
+              <span>Discover → Design → Build → Launch</span>
+            </>
+          }
+        />
 
         <div className="relative mt-4 grid gap-10 md:grid-cols-[auto_1fr] md:gap-16">
           <div
@@ -85,10 +95,10 @@ export function Method() {
                       {step.num}
                     </span>
                     <div>
-                      <h3 className="font-display text-2xl font-semibold tracking-tight text-white md:text-3xl">
+                      <h3 className="font-display text-2xl font-semibold tracking-tight text-white transition-transform duration-300 md:text-4xl">
                         {step.title}
                       </h3>
-                      <p className="mt-3 max-w-xl text-base leading-relaxed text-neutral-400">
+                      <p className="mt-3 max-w-2xl text-base leading-relaxed text-neutral-400">
                         {step.body}
                       </p>
                     </div>
