@@ -1,129 +1,65 @@
-"use client";
-
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionHeader } from "@/components/SectionHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { cn } from "@/lib/utils";
+import { RepoCard } from "@/components/RepoCard";
+import { getLabRepos } from "@/lib/github";
+import { LabStudies } from "./LabStudies";
 
-const experiments = [
-  {
-    id: "01",
-    title: "Dot Matrix Wordmark",
-    description:
-      "5×7 SVG bitmaps with flicker timing — computational identity for ARRIQ.",
-    status: "live" as const,
-    href: "/",
-  },
-  {
-    id: "02",
-    title: "Grain & Vignette",
-    description:
-      "A24-style atmosphere — soft-light noise and edge falloff without muddying type.",
-    status: "live" as const,
-    href: "/",
-  },
-  {
-    id: "03",
-    title: "Snappy Cursor",
-    description:
-      "Custom crosshair/dot that expands on interactive targets — no laggy spring.",
-    status: "live" as const,
-    href: "/",
-  },
-  {
-    id: "04",
-    title: "Text Scramble",
-    description:
-      "Decode effect — characters cycle through random glyphs before settling.",
-    status: "live" as const,
-    href: "/",
-  },
-  {
-    id: "05",
-    title: "Magnetic Buttons",
-    description:
-      "Buttons that pull toward the cursor with spring physics on approach.",
-    status: "live" as const,
-    href: "/contact",
-  },
-  {
-    id: "06",
-    title: "SVG Connector Line",
-    description:
-      "Scroll-driven stroke draw that connects numbered process steps.",
-    status: "live" as const,
-    href: "/services",
-  },
-];
+export const metadata = {
+  title: "Lab",
+  description:
+    "Craft studies and open-source repositories — motion, tooling, and interaction experiments in public.",
+};
 
-export default function LabPage() {
+export default async function LabPage() {
+  const repos = await getLabRepos();
+  const live = repos.filter((repo) => !repo.stale).length;
+
   return (
     <main className="min-h-screen">
-      <section className="px-6 pb-20 pt-32 md:px-12 md:pb-32 md:pt-40 lg:px-24">
+      <section className="px-6 pb-16 pt-32 md:px-12 md:pb-20 md:pt-40 lg:px-24">
         <SectionHeader
           label="Lab"
           index="03"
-          title="Personal lab — craft studies in public."
+          title="Personal lab — craft studies and code in public."
           meta={
             <>
-              <span className="text-neutral-300">Six studies</span>
-              <span>All shipped into this site</span>
+              <span className="text-neutral-300">
+                {repos.length} repos · 6 studies
+              </span>
+              <span>Pulled from GitHub at build time</span>
               <span>No WebGL — transform &amp; opacity only</span>
             </>
           }
         />
 
-        <div className="mt-4 grid gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
-          {experiments.map((exp, i) => (
-            <AnimatedSection key={exp.id} delay={i * 0.06}>
-              <article className="group relative flex h-full flex-col overflow-hidden border border-neutral-800/80 bg-neutral-950/40 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-neutral-600 md:p-6">
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-orange-500/70 transition-transform duration-500 group-hover:scale-x-100"
-                />
-                <div className="mb-5 flex items-center justify-between">
-                  <span className="font-mono text-[10px] tracking-widest text-orange-500/80">
-                    LAB /{exp.id}
-                  </span>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 font-mono text-[10px] tracking-wide",
-                      exp.status === "live"
-                        ? "border-orange-500/30 bg-orange-500/10 text-orange-400"
-                        : "border-neutral-800 bg-neutral-900 text-neutral-500"
-                    )}
-                  >
-                    <span
-                      className="size-1 rounded-full bg-current"
-                      aria-hidden="true"
-                    />
-                    {exp.status}
-                  </span>
-                </div>
+        <div className="mb-6 flex items-baseline justify-between gap-4 border-b border-neutral-900 pb-4">
+          <h3 className="font-mono text-xs tracking-widest text-neutral-400">
+            / REPOSITORIES
+          </h3>
+          <p className="font-mono text-[10px] tracking-widest text-neutral-600">
+            {live > 0 ? "LIVE FROM GITHUB" : "CACHED"}
+          </p>
+        </div>
 
-                <h3 className="font-display text-lg font-semibold tracking-tight">
-                  {exp.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-500">
-                  {exp.description}
-                </p>
-
-                <div className="mt-auto pt-4">
-                  <Link
-                    href={exp.href}
-                    className="inline-flex items-center gap-1.5 font-mono text-[11px] text-neutral-600 transition-colors group-hover:text-orange-400"
-                  >
-                    See it live
-                    <ArrowUpRight className="size-3" aria-hidden="true" />
-                  </Link>
-                </div>
-              </article>
-            </AnimatedSection>
+        <div className="grid gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
+          {repos.map((repo, i) => (
+            <RepoCard key={repo.fullName} repo={repo} index={i} />
           ))}
         </div>
       </section>
+
+      <section className="px-6 pb-20 md:px-12 md:pb-32 lg:px-24">
+        <div className="mb-6 flex items-baseline justify-between gap-4 border-b border-neutral-900 pb-4">
+          <h3 className="font-mono text-xs tracking-widest text-neutral-400">
+            / INTERFACE STUDIES
+          </h3>
+          <p className="font-mono text-[10px] tracking-widest text-neutral-600">
+            SHIPPED INTO THIS SITE
+          </p>
+        </div>
+        <LabStudies />
+      </section>
+
       <SiteFooter />
     </main>
   );

@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Das Web — Arriq portfolio
 
-## Getting Started
+Personal portfolio, lab, and service site for Arriq / Das Web Design — [dasdev.net](https://dasdev.net).
 
-First, run the development server:
+Next.js 14 (App Router) exported as a static site, served by nginx behind Caddy and a Cloudflare Tunnel.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run lint
+npm run build    # static export → dist/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | Purpose |
+|------|---------|
+| `src/app/page.tsx` | Home — hero, featured work, lab teaser, services preview, method, CTA |
+| `src/app/work` | Full project list |
+| `src/app/services` | Services accordion + method |
+| `src/app/lab` | GitHub repos + interface studies |
+| `src/app/about`, `src/app/now`, `src/app/contact` | Personal pages |
+| `src/app/sections` | Home/shared page sections |
+| `src/components` | Chrome, motion primitives, cards |
+| `src/lib` | Project data, GitHub fetch, helpers |
+| `cursor-research/` | Design direction and research notes |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Global chrome (nav, grain, cursor, scroll progress, smooth scroll) lives once in
+`src/app/layout.tsx` via `SiteChrome`. Pages render content only.
 
-## Learn More
+## Choosing which GitHub repos appear in the Lab
 
-To learn more about Next.js, take a look at the following resources:
+Edit `LAB_REPOS` in [`src/lib/github.ts`](src/lib/github.ts):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```ts
+export const LAB_REPOS: LabRepoConfig[] = [
+  {
+    repo: "DasVR/RouteSim",   // owner/name
+    title: "RouteSim",         // optional display name
+    blurb: "Short description…", // optional — overrides GitHub's description
+    featured: true,            // optional — pins to the front
+  },
+];
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Repos are fetched from the GitHub REST API **at build time** and baked into the
+static HTML, so visitors never call the API and there are no loading states.
+Stars, forks, language, topics, last push, and a 26-week commit matrix come
+straight from GitHub. Dormant repos simply omit the matrix.
 
-## Deploy on Vercel
+If the API is unreachable or rate-limited, the build falls back to the `title`
+and `blurb` in the config, so a build never fails.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Optional: GITHUB_TOKEN
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Unauthenticated builds get 60 requests/hour per IP, which covers roughly 30
+repos per build. To lift that, export a token with `public_repo` scope before
+building:
+
+```bash
+export GITHUB_TOKEN=ghp_…
+npm run build
+```
+
+### Optional: NEXT_PUBLIC_FORMSPREE_ID
+
+The contact form posts to Formspree when this is set; otherwise it opens a
+prefilled mail draft to hello@dasdev.net.
+
+## Deploy
+
+`bash deploy.sh` pulls, installs, builds, rebuilds the Docker image, and
+restarts the container. GitHub Actions triggers it via webhook.
