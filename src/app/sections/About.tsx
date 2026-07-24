@@ -9,15 +9,14 @@ export function About() {
       id="about"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="About" index="02" title="Local, not corporate." />
+      <SectionHeader
+        label="About"
+        index="02"
+        title="Local designer. Built for trades that need calls, not fluff."
+      />
 
       <div className="grid max-w-5xl gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
         <AnimatedSection>
-          <h3 className="mb-6 font-serif text-3xl leading-tight tracking-tight text-white md:text-5xl">
-            Local designer.
-            <br />
-            <span className="text-neutral-500">Built for trades that need calls, not fluff.</span>
-          </h3>
           <div className="flex max-w-xl flex-col gap-4 text-base leading-relaxed text-neutral-400 md:text-lg">
             <p>
               I&apos;m Arriq — Das Web Design. I build fast, clean sites for
