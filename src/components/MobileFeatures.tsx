@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ReactNode } from "react";
+import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
 
 /** Parallax wrapper for images and sections */
 export function ParallaxSection({
@@ -62,12 +63,12 @@ export function PullIndicator({ isPulling }: { isPulling: boolean }) {
   );
 }
 
-/** Mobile tap target sizing helper */
+/** Touch target sizing helper with haptic feedback */
 export function TouchTarget({
   children,
   className,
   onTap,
-  hapticPattern = 10,
+  hapticPattern = HapticPatterns.light,
 }: {
   children: ReactNode;
   className?: string;
@@ -75,9 +76,7 @@ export function TouchTarget({
   hapticPattern?: number | number[];
 }) {
   const handleTap = () => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      navigator.vibrate(hapticPattern);
-    }
+    triggerHaptic(hapticPattern);
     onTap?.();
   };
 

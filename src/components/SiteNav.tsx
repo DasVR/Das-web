@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
 
 const links = [
   { href: "/work", label: "Work" },
@@ -30,19 +31,13 @@ export function SiteNav() {
     };
   }, [isOpen]);
 
-  const haptic = (pattern: number | number[] = 10) => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      navigator.vibrate(pattern);
-    }
-  };
-
   const toggleMenu = () => {
-    haptic(isOpen ? [8, 4] : 12);
+    triggerHaptic(isOpen ? HapticPatterns.toggle : HapticPatterns.medium);
     setIsOpen(!isOpen);
   };
 
   const closeMenu = () => {
-    haptic(8);
+    triggerHaptic(HapticPatterns.light);
     setIsOpen(false);
   };
 
@@ -57,8 +52,11 @@ export function SiteNav() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-mono text-xs tracking-[0.2em] text-neutral-300 transition-colors hover:text-white z-50 relative"
-            onClick={() => isOpen && closeMenu()}
+            className="relative z-50 font-mono text-xs tracking-[0.2em] text-neutral-300 transition-colors hover:text-white"
+            onClick={() => {
+              if (isOpen) closeMenu();
+              triggerHaptic(HapticPatterns.light);
+            }}
           >
             ARRIQ
           </Link>
@@ -71,6 +69,7 @@ export function SiteNav() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={() => triggerHaptic(HapticPatterns.light)}
                   className="group relative font-mono text-[11px] tracking-widest text-neutral-500 transition-colors hover:text-neutral-200"
                 >
                   /{link.label}
@@ -89,12 +88,12 @@ export function SiteNav() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="relative z-50 flex flex-col gap-1.5 md:hidden"
+            className="relative z-50 flex flex-col gap-1.5 md:hidden tap-highlight-none touch-manipulation"
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
           >
             <motion.span
-              className="block h-px w-5 bg-neutral-300"
+              className="block h-px w-5 bg-neutral-300 origin-center"
               animate={{
                 rotate: isOpen ? 45 : 0,
                 y: isOpen ? 3 : 0,
@@ -102,7 +101,7 @@ export function SiteNav() {
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             />
             <motion.span
-              className="block h-px w-5 bg-neutral-300"
+              className="block h-px w-5 bg-neutral-300 origin-center"
               animate={{
                 rotate: isOpen ? -45 : 0,
                 y: isOpen ? -3 : 0,
@@ -141,8 +140,11 @@ export function SiteNav() {
                   >
                     <Link
                       href={link.href}
-                      onClick={closeMenu}
-                      className={`block font-display text-4xl font-bold tracking-tight transition-colors ${
+                      onClick={() => {
+                        triggerHaptic(HapticPatterns.medium);
+                        closeMenu();
+                      }}
+                      className={`block font-display text-4xl font-bold tracking-tight transition-colors tap-highlight-none ${
                         isActive
                           ? "text-orange-500"
                           : "text-neutral-400 hover:text-white"
@@ -169,7 +171,7 @@ export function SiteNav() {
               exit={{ opacity: 0 }}
               transition={{ delay: 0.3 }}
               onClick={closeMenu}
-              className="absolute bottom-8 flex items-center gap-2 font-mono text-[10px] tracking-widest text-neutral-500"
+              className="absolute bottom-8 flex items-center gap-2 font-mono text-[10px] tracking-widest text-neutral-500 tap-highlight-none touch-manipulation"
             >
               <X className="size-4" />
               CLOSE
