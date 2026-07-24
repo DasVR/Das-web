@@ -50,6 +50,11 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
+  }
+
   ::selection {
     background: rgba(249, 115, 22, 0.35);
     color: #fff;

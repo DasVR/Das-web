@@ -14,9 +14,10 @@ export function Hero() {
   return (
     <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-20 pt-24 md:px-12 md:pb-24 lg:px-24">
       <AmbientDots />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,rgba(249,115,22,0.07),transparent_45%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,rgba(249,115,22,0.08),transparent_48%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,transparent_70%,#0a0a0a)]" />
 
-      <div className="absolute left-6 top-6 z-30 text-[10px] tracking-[0.2em] text-neutral-500 md:left-12 md:text-xs">
+      <div className="absolute left-6 top-6 z-30 font-mono text-[10px] tracking-[0.2em] text-neutral-500 md:left-12 md:text-xs">
         LARGO, FL · EST 2026
       </div>
       <SiteNav />
@@ -31,12 +32,12 @@ export function Hero() {
           <DotMatrix text="ARRIQ" gap={9} letterGap={12} radius={1.85} />
         </div>
 
-        <h1 className="mb-5 font-display text-[2.75rem] font-bold leading-[0.92] tracking-tight sm:text-5xl md:mb-6 md:text-7xl lg:text-8xl">
+        <h1 className="mb-5 font-serif text-[2.85rem] font-normal leading-[0.95] tracking-tight sm:text-5xl md:mb-6 md:text-7xl lg:text-[5.5rem]">
           Websites that
           <br />
           speak your
           <br />
-          brand&apos;s voice.
+          <span className="italic text-neutral-300">brand&apos;s voice.</span>
         </h1>
 
         <p className="max-w-lg text-base leading-relaxed text-neutral-400 md:text-xl">
@@ -68,7 +69,9 @@ export function Hero() {
         className="absolute bottom-8 left-6 z-10 flex items-center gap-2 text-neutral-600 md:bottom-12 md:left-12"
       >
         <Plus className="size-4 text-orange-500/80" aria-hidden="true" />
-        <span className="text-sm">Scroll to explore</span>
+        <span className="font-mono text-xs tracking-wide md:text-sm">
+          scroll to explore
+        </span>
       </motion.div>
     </section>
   );

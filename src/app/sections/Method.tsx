@@ -48,7 +48,7 @@ export function Method() {
       id="method"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="The Method" />
+      <SectionHeader label="Method" index="03" />
 
       <ol className="relative mx-auto max-w-3xl list-none p-0">
         {/* Vertical path linking 01 → 04 */}
@@ -75,7 +75,7 @@ export function Method() {
                       <span className="font-mono text-2xl font-bold text-neutral-700 md:text-4xl">
                         {step.num}
                       </span>
-                      <h3 className="font-display text-lg font-semibold md:text-xl">
+                      <h3 className="font-serif text-xl md:text-2xl">
                         {step.title}
                       </h3>
                     </div>

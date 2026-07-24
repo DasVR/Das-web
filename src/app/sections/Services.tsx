@@ -52,7 +52,7 @@ export function Services() {
       id="services"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="Services" />
+      <SectionHeader label="Services" index="04" />
 
       <div className="max-w-3xl">
         {services.map((service, i) => {

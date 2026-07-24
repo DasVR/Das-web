@@ -8,10 +8,11 @@ import { DotMatrix } from "@/components/DotMatrix";
 import { SectionHeader } from "@/components/SectionHeader";
 
 const footerLinks = [
-  { href: "#work", label: "Work" },
-  { href: "#method", label: "Method" },
-  { href: "#services", label: "Services" },
-  { href: "#contact", label: "Contact" },
+  { href: "#work", label: "/Work" },
+  { href: "#about", label: "/About" },
+  { href: "#method", label: "/Method" },
+  { href: "#services", label: "/Services" },
+  { href: "#contact", label: "/Contact" },
   { href: "mailto:hello@dasdev.net", label: "Email" },
 ] as const;
 
@@ -34,11 +35,14 @@ export function Contact() {
       id="contact"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="Contact" />
+      <SectionHeader label="Contact" index="05" />
 
       <div className="grid max-w-5xl gap-12 lg:grid-cols-2 lg:gap-16">
         <AnimatedSection>
-          <h3 className="mb-6 font-display text-3xl font-bold tracking-tight md:mb-8 md:text-5xl">
+          <p className="mb-3 font-mono text-xs tracking-widest text-orange-500/80">
+            $ open inbox — hello@dasdev.net
+          </p>
+          <h3 className="mb-6 font-serif text-3xl italic tracking-tight md:mb-8 md:text-5xl">
             Ready when you are.
           </h3>
 
@@ -66,11 +70,17 @@ export function Contact() {
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 border border-neutral-800/80 bg-neutral-950/40 p-5 md:p-6"
+          >
+            <p className="font-mono text-[10px] tracking-widest text-neutral-600">
+              NEW_MESSAGE
+            </p>
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="name"
-                className="block text-xs tracking-widest text-neutral-500"
+                className="block font-mono text-xs tracking-widest text-neutral-500"
               >
                 NAME
               </label>
@@ -80,7 +90,7 @@ export function Contact() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full rounded-md border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-700 focus:border-neutral-500"
+                className="w-full rounded-md border border-neutral-800 bg-[#0a0a0a] px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-700 focus:border-neutral-500"
                 placeholder="Your name"
                 autoComplete="name"
               />
@@ -88,7 +98,7 @@ export function Contact() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="email"
-                className="block text-xs tracking-widest text-neutral-500"
+                className="block font-mono text-xs tracking-widest text-neutral-500"
               >
                 EMAIL
               </label>
@@ -99,7 +109,7 @@ export function Contact() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-md border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-700 focus:border-neutral-500"
+                className="w-full rounded-md border border-neutral-800 bg-[#0a0a0a] px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-700 focus:border-neutral-500"
                 placeholder="you@business.com"
                 autoComplete="email"
               />
@@ -107,7 +117,7 @@ export function Contact() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="message"
-                className="block text-xs tracking-widest text-neutral-500"
+                className="block font-mono text-xs tracking-widest text-neutral-500"
               >
                 MESSAGE
               </label>
@@ -118,7 +128,7 @@ export function Contact() {
                 onChange={(e) => setMessage(e.target.value)}
                 required
                 rows={4}
-                className="w-full resize-y rounded-md border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-700 focus:border-neutral-500"
+                className="w-full resize-y rounded-md border border-neutral-800 bg-[#0a0a0a] px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-700 focus:border-neutral-500"
                 placeholder="Tell me about your business and what you need."
               />
             </div>
@@ -141,7 +151,10 @@ export function Contact() {
           <div className="h-8 w-28 text-neutral-700">
             <DotMatrix text="ARRIQ" gap={5} letterGap={6} radius={1.1} />
           </div>
-          <nav className="flex flex-wrap gap-4 text-xs text-neutral-500" aria-label="Footer">
+          <nav
+            className="flex flex-wrap gap-4 font-mono text-xs text-neutral-500"
+            aria-label="Footer"
+          >
             {footerLinks.map((link) => (
               <a
                 key={link.href}
@@ -154,8 +167,8 @@ export function Contact() {
           </nav>
           <p className="text-xs text-neutral-600">© 2026 Arriq · Das Web Design</p>
         </div>
-        <div className="flex flex-wrap gap-4 text-xs text-neutral-600">
-          <span>Built with Next.js</span>
+        <div className="flex flex-wrap gap-4 font-mono text-xs text-neutral-600">
+          <span>Next.js</span>
           <span aria-hidden="true">·</span>
           <span>Tailwind</span>
           <span aria-hidden="true">·</span>

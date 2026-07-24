@@ -90,7 +90,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
           <p className="mb-1 text-xs uppercase tracking-wider text-neutral-400">
             {project.tag}
           </p>
-          <h3 className="mb-1.5 font-display text-xl font-semibold tracking-tight">
+          <h3 className="mb-1.5 font-serif text-2xl tracking-tight">
             {project.name}
           </h3>
           <p className="text-sm text-orange-400/90">{project.stat}</p>
