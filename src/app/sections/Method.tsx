@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { SectionHeader } from "@/components/SectionHeader";
 import { AnimatedSection } from "@/components/AnimatedSection";
 
@@ -39,8 +39,6 @@ export function Method() {
     damping: 28,
     mass: 0.35,
   });
-  const glowOpacity = useTransform(scrollYProgress, [0, 0.2, 1], [0, 0.5, 0.9]);
-  const glowTop = useTransform(scrollYProgress, [0, 1], ["0%", "96%"]);
 
   return (
     <section
@@ -76,13 +74,6 @@ export function Method() {
                 style={{ pathLength }}
               />
             </svg>
-            <motion.div
-              className="absolute left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-orange-500 shadow-[0_0_16px_rgba(249,115,22,0.55)]"
-              style={{
-                top: glowTop,
-                opacity: glowOpacity,
-              }}
-            />
           </div>
 
           <ol className="space-y-0">
