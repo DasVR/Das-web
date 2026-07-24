@@ -4,6 +4,9 @@ set -e
 echo "[$(date)] Deploy triggered"
 cd /home/das/portfolio-v2
 
+echo "Stashing any local changes..."
+git stash push -m "auto-stash-deploy-$(date +%s)" || true
+
 echo "Pulling latest..."
 git pull origin master
 
