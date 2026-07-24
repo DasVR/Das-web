@@ -5,8 +5,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { AmbientDots } from "@/components/AmbientDots";
 import { DotMatrix } from "@/components/DotMatrix";
 import { MagneticButton } from "@/components/MagneticButton";
-import { SiteNav } from "@/components/SiteNav";
 import { TextScramble } from "@/components/TextScramble";
+import { haptic } from "@/lib/haptic";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 
@@ -14,15 +14,10 @@ export function Hero() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-20 pt-24 md:px-12 md:pb-24 lg:px-24">
+    <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-20 pt-28 md:px-12 md:pb-24 md:pt-32 lg:px-24">
       <AmbientDots />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,rgba(249,115,22,0.08),transparent_48%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,transparent_70%,#0a0a0a)]" />
-
-      <div className="absolute left-6 top-6 z-30 font-mono text-[10px] tracking-[0.2em] text-neutral-500 md:left-12 md:text-xs">
-        BASED IN FLORIDA · WORKING WIDELY
-      </div>
-      <SiteNav />
 
       <motion.div
         initial={reduceMotion ? false : { opacity: 0, y: 16 }}
@@ -30,6 +25,10 @@ export function Hero() {
         transition={{ duration: 0.9, ease: EASE }}
         className="relative z-10 max-w-5xl"
       >
+        <p className="mb-6 font-mono text-[10px] tracking-[0.2em] text-neutral-500 md:text-xs">
+          BASED IN FLORIDA · WORKING WIDELY
+        </p>
+
         <div className="mb-6 h-16 w-64 text-neutral-200 md:mb-8 md:h-24 md:w-[22rem] lg:h-28 lg:w-[28rem]">
           <DotMatrix text="ARRIQ" gap={9} letterGap={12} radius={1.85} />
         </div>
@@ -63,7 +62,8 @@ export function Hero() {
 
         <div className="mt-8 flex flex-wrap gap-3 md:gap-4">
           <MagneticButton
-            href="#work"
+            href="/work"
+            onActivate={() => haptic(12)}
             className="group items-center gap-2 rounded-md bg-white px-5 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 md:px-6 md:text-base"
           >
             <span className="relative overflow-hidden">
@@ -77,7 +77,8 @@ export function Hero() {
             <ArrowUpRight className="size-4" aria-hidden="true" />
           </MagneticButton>
           <MagneticButton
-            href="#contact"
+            href="/contact"
+            onActivate={() => haptic(12)}
             className="items-center gap-2 rounded-md border border-neutral-700 px-5 py-3 text-sm transition-colors hover:border-orange-500/70 hover:text-orange-400 md:px-6 md:text-base"
           >
             Start a Project

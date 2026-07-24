@@ -9,6 +9,7 @@ type MagneticButtonProps = {
   href: string;
   className?: string;
   strength?: number;
+  onActivate?: () => void;
 };
 
 /** Subtle cursor pull on CTAs — max ~12–16px */
@@ -17,6 +18,7 @@ export function MagneticButton({
   href,
   className,
   strength = 0.22,
+  onActivate,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLAnchorElement>(null);
   const reduceMotion = useReducedMotion();
@@ -44,6 +46,7 @@ export function MagneticButton({
       className={cn("inline-flex", className)}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
+      onClick={onActivate}
       animate={reduceMotion ? undefined : { x: pos.x, y: pos.y }}
       transition={{ type: "spring", stiffness: 350, damping: 22, mass: 0.2 }}
     >

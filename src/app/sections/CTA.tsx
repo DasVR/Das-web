@@ -20,7 +20,7 @@ export function CTA() {
           let&apos;s make something that works for your business.
         </p>
         <MagneticButton
-          href="#contact"
+          href="/contact"
           className="group mt-8 items-center gap-3 rounded-md bg-white px-6 py-3.5 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
         >
           <span className="relative overflow-hidden">

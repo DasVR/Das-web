@@ -125,3 +125,11 @@ Dark editorial · computational accents (dots, slash, mono) · cinematic motion 
 - Awwwards portfolio + SOTD/HM listings (2026)
 - rauno.me, brittanychiang.com patterns
 - Freelance portfolio IA guides (hero / work / about / services / contact)
+
+### v5 pass notes (in progress → ship)
+
+- Multi-page: `/work` `/about` `/services` `/lab` `/now` `/contact` + Home Option B landing
+- Shared chrome in `layout.tsx` (nav, grain, cursor, smooth scroll)
+- Contact: Formspree when `NEXT_PUBLIC_FORMSPREE_ID` set, else mailto — no `/api` under static export
+- Mobile full-screen spring nav; `/now` in footer; Lab statuses honest (live)
+- Lenis / GSAP / WebGL still deferred

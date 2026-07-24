@@ -9,7 +9,7 @@ const STEPS = [
   {
     num: "01",
     title: "Discover",
-    body: "We clarify goals, audience, and constraints — what you sell, who you serve, and what success looks like.",
+    body: "I clarify goals, audience, and constraints — what you sell, who you serve, and what success looks like.",
   },
   {
     num: "02",

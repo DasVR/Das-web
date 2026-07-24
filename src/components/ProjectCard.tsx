@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import type { Project } from "@/lib/projects";
 import { cn } from "@/lib/utils";
@@ -20,12 +21,12 @@ const KIND_BADGE: Record<Project["kind"], string> = {
 export function ProjectCard({ project, index }: ProjectCardProps) {
   const prefix =
     project.indexLabel ?? `SS /${String(index + 1).padStart(2, "0")}`;
-  const href = project.href ?? "#contact";
+  const href = project.href ?? "/contact";
   const isExternal = href.startsWith("http");
 
   return (
     <AnimatedSection delay={index * 0.1}>
-      <a
+      <motion.a
         href={href}
         {...(isExternal
           ? { target: "_blank", rel: "noopener noreferrer" }
@@ -34,7 +35,20 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
           "group relative block overflow-hidden border border-neutral-800/80 bg-neutral-950/40",
           "transition-colors duration-300 hover:border-neutral-600"
         )}
+        whileHover={{ y: -4 }}
+        transition={{ type: "spring", stiffness: 300, damping: 24 }}
       >
+        {project.image ? (
+          <div className="relative aspect-[16/9] overflow-hidden border-b border-neutral-900 bg-neutral-950">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={project.image}
+              alt={project.imageAlt ?? project.name}
+              className="h-full w-full object-cover object-top opacity-90 transition-opacity group-hover:opacity-100"
+            />
+          </div>
+        ) : null}
+
         <article className="flex flex-col gap-6 p-6 md:flex-row md:items-end md:justify-between md:gap-10 md:p-8">
           <div className="min-w-0 max-w-md">
             <p className="mb-3 font-mono text-[11px] tracking-widest text-orange-500/90">
@@ -74,7 +88,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
           }}
           aria-hidden="true"
         />
-      </a>
+      </motion.a>
     </AnimatedSection>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { SiteChrome } from "@/components/SiteChrome";
 import "./globals.css";
 
 const inter = Inter({
@@ -70,7 +71,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="bg-[#0a0a0a] font-sans text-white antialiased">
+        <SiteChrome />
+        {children}
+      </body>
     </html>
   );
 }

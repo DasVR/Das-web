@@ -9,6 +9,8 @@ export type Project = {
   kind: ProjectKind;
   href?: string;
   indexLabel?: string;
+  image?: string;
+  imageAlt?: string;
 };
 
 export const projects: Project[] = [
@@ -19,7 +21,7 @@ export const projects: Project[] = [
     result:
       "This site — personal brand, portfolio, and services for small businesses. Built with Next.js, Tailwind, and Framer Motion.",
     kind: "personal",
-    href: "#",
+    href: "/",
     indexLabel: "SS /01",
   },
   {
@@ -29,7 +31,7 @@ export const projects: Project[] = [
     result:
       "Computational wordmark experiments — SVG bitmaps, flicker timing, and editorial type as interface.",
     kind: "personal",
-    href: "#experiments",
+    href: "/lab",
     indexLabel: "SS /02",
   },
   {
@@ -39,7 +41,9 @@ export const projects: Project[] = [
     result:
       "Case studies arriving as real work ships. Want to be next? Tell me about your business.",
     kind: "cta",
-    href: "#contact",
+    href: "/contact",
     indexLabel: "SS /03",
   },
 ];
+
+export const featuredProjects = projects.slice(0, 2);
