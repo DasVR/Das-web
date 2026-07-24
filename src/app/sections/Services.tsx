@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionHeader } from "@/components/SectionHeader";
 import { cn } from "@/lib/utils";
@@ -48,7 +48,10 @@ export function Services() {
   const [open, setOpen] = useState<string | null>(null);
 
   return (
-    <section className="border-t border-neutral-900 px-6 py-24 md:px-12 md:py-32 lg:px-24">
+    <section
+      id="services"
+      className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
+    >
       <SectionHeader label="Services" />
 
       <div className="max-w-3xl">
@@ -59,27 +62,23 @@ export function Services() {
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : service.name)}
-                className="group flex w-full flex-col border-b border-neutral-800 py-4 text-left transition-colors"
+                className="group flex w-full flex-col border-b border-neutral-800 py-4 text-left transition-colors hover:border-neutral-600"
                 aria-expanded={isOpen}
               >
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-lg md:text-xl">
+                  <span className="min-w-0 text-base md:text-xl">
                     <span className="font-medium">{service.name}</span>
                     <span className="text-neutral-500"> — {service.blurb}</span>
                   </span>
                   <span className="flex shrink-0 items-center gap-3 text-neutral-500">
-                    <span className="hidden text-xs tracking-wide text-orange-500/90 sm:inline">
+                    <span className="hidden font-mono text-[11px] tracking-wide text-orange-500/90 sm:inline">
                       {service.price}
                     </span>
                     <ChevronDown
                       className={cn(
-                        "h-5 w-5 transition-transform",
-                        isOpen && "rotate-180"
+                        "size-5 transition-transform duration-300",
+                        isOpen && "rotate-180 text-orange-500"
                       )}
-                      aria-hidden="true"
-                    />
-                    <ArrowUpRight
-                      className="hidden h-5 w-5 opacity-0 transition-opacity group-hover:opacity-100 md:block"
                       aria-hidden="true"
                     />
                   </span>
@@ -91,10 +90,10 @@ export function Services() {
                   )}
                 >
                   <div className="overflow-hidden">
-                    <p className="pt-3 text-sm leading-relaxed text-neutral-400 md:pr-16">
+                    <p className="pt-3 text-sm leading-relaxed text-neutral-400 md:pr-12">
                       {service.detail}
                     </p>
-                    <p className="pt-2 text-xs text-orange-500 sm:hidden">
+                    <p className="pt-2 font-mono text-[11px] text-orange-500 sm:hidden">
                       {service.price}
                     </p>
                   </div>

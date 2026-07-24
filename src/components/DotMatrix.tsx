@@ -131,12 +131,12 @@ export function DotMatrix({
   const height = 7 * gap;
 
   return (
-    <div className={cn("relative", className)} aria-hidden="true">
-      <span className="sr-only">{text}</span>
+    <div className={cn("relative", className)}>
       <svg
         viewBox={`0 0 ${layout?.width ?? width} ${layout?.height ?? height}`}
         className="h-full w-full overflow-visible"
         role="img"
+        aria-label={text}
       >
         {(layout?.dots ?? []).map((dot) =>
           reduceMotion ? (
