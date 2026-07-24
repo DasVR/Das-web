@@ -12,7 +12,7 @@ export default function Loading() {
         transition={{ duration: 0.3 }}
       >
         {/* Dot matrix ARRIQ in loading state */}
-        <div className="relative h-10 w-36 md:h-14 md:w-48">
+        <div className="relative h-12 w-40 md:h-16 md:w-52">
           <DotMatrixLoading />
         </div>
 
@@ -101,7 +101,7 @@ function DotMatrixLoading() {
               {row.split("").map((char, ci) => (
                 <motion.span
                   key={ci}
-                  className={`block h-[3px] w-[3px] rounded-full md:h-[4px] md:w-[4px] ${
+                  className={`block h-[4px] w-[4px] rounded-full md:h-[5px] md:w-[5px] ${
                     char === "█" ? "bg-white" : "bg-transparent"
                   }`}
                   initial={{ opacity: 0.3 }}
