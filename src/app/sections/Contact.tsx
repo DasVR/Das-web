@@ -35,7 +35,7 @@ export function Contact() {
       id="contact"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="Contact" index="05" />
+      <SectionHeader label="Contact" index="05" title="Tell me your story." />
 
       <div className="grid max-w-5xl gap-12 lg:grid-cols-2 lg:gap-16">
         <AnimatedSection>

@@ -26,13 +26,13 @@ export function Hero() {
         initial={reduceMotion ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: EASE }}
-        className="relative z-10 max-w-4xl"
+        className="relative z-10 max-w-5xl"
       >
-        <div className="mb-6 h-16 w-64 text-neutral-200 md:mb-8 md:h-24 md:w-[22rem] lg:h-28 lg:w-[26rem]">
+        <div className="mb-6 h-16 w-64 text-neutral-200 md:mb-8 md:h-24 md:w-[22rem] lg:h-28 lg:w-[28rem]">
           <DotMatrix text="ARRIQ" gap={9} letterGap={12} radius={1.85} />
         </div>
 
-        <h1 className="mb-5 font-serif text-[2.85rem] font-normal leading-[0.95] tracking-tight sm:text-5xl md:mb-6 md:text-7xl lg:text-[5.5rem]">
+        <h1 className="mb-6 font-serif text-[2.85rem] font-normal leading-[0.95] tracking-tight sm:text-5xl md:mb-8 md:text-7xl lg:text-[5.75rem]">
           Websites that
           <br />
           speak your
@@ -40,17 +40,24 @@ export function Hero() {
           <span className="italic text-neutral-300">brand&apos;s voice.</span>
         </h1>
 
-        <p className="max-w-lg text-base leading-relaxed text-neutral-400 md:text-xl">
-          Web design for small businesses in Largo, Florida. Fast, clean sites
-          that look legit and turn visitors into calls — starting at $500.
+        <p className="max-w-xl text-base leading-relaxed text-neutral-400 md:text-xl">
+          Most local businesses have built something real — their site just
+          doesn&apos;t show it yet. Fast sites for Largo trades, starting at $500.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3 md:gap-4">
           <a
             href="#work"
-            className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 md:px-6 md:text-base"
+            className="group inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 md:px-6 md:text-base"
           >
-            View Work
+            <span className="relative overflow-hidden">
+              <span className="block transition-transform duration-300 group-hover:-translate-y-full">
+                View Work
+              </span>
+              <span className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
+                View Work
+              </span>
+            </span>
             <ArrowUpRight className="size-4" aria-hidden="true" />
           </a>
           <a

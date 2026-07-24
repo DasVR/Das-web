@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionHeader } from "@/components/SectionHeader";
 import { cn } from "@/lib/utils";
@@ -9,41 +9,37 @@ import { cn } from "@/lib/utils";
 const services = [
   {
     name: "Web Design",
-    blurb: "Custom sites that convert",
     detail:
       "Homepages that build trust fast — clear services, proof, and a path to call or book. Mobile-first and fast.",
     price: "Starting at $500",
   },
   {
     name: "Branding",
-    blurb: "Logo, colors, identity",
     detail:
       "A simple identity system so your site, cards, and Google listing feel like the same business.",
     price: "Starting at $350",
   },
   {
     name: "Development",
-    blurb: "Next.js, responsive, fast",
     detail:
       "Clean code, static hosting when it fits, no bloated page builders. Built to load under a few seconds.",
     price: "Included with design",
   },
   {
     name: "SEO",
-    blurb: "Get found on Google",
     detail:
       "Local SEO basics: titles, meta, structure, Google Business alignment — so Largo searches find you.",
     price: "Starting at $200",
   },
   {
     name: "Maintenance",
-    blurb: "Keep it running smooth",
     detail:
       "Updates, content tweaks, uptime checks, and small fixes so your site doesn’t go stale after launch.",
     price: "From $50 / month",
   },
 ];
 
+/** monolog giant stacked service names + expandable detail */
 export function Services() {
   const [open, setOpen] = useState<string | null>(null);
 
@@ -52,9 +48,9 @@ export function Services() {
       id="services"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="Services" index="04" />
+      <SectionHeader label="Services" index="04" title="What we do." />
 
-      <div className="max-w-3xl">
+      <div className="max-w-4xl">
         {services.map((service, i) => {
           const isOpen = open === service.name;
           return (
@@ -62,22 +58,28 @@ export function Services() {
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : service.name)}
-                className="group flex w-full flex-col border-b border-neutral-800 py-4 text-left transition-colors hover:border-neutral-600"
+                className="group flex w-full flex-col border-b border-neutral-800 py-5 text-left md:py-6"
                 aria-expanded={isOpen}
               >
-                <div className="flex items-center justify-between gap-4">
-                  <span className="min-w-0 text-base md:text-xl">
-                    <span className="font-medium">{service.name}</span>
-                    <span className="text-neutral-500"> — {service.blurb}</span>
+                <div className="flex items-baseline justify-between gap-4">
+                  <span
+                    className={cn(
+                      "font-serif text-3xl tracking-tight transition-transform duration-300 md:text-5xl lg:text-6xl",
+                      "group-hover:translate-x-2",
+                      isOpen ? "text-white" : "text-neutral-300 group-hover:text-white"
+                    )}
+                  >
+                    {service.name}
                   </span>
-                  <span className="flex shrink-0 items-center gap-3 text-neutral-500">
+                  <span className="flex shrink-0 items-center gap-3">
                     <span className="hidden font-mono text-[11px] tracking-wide text-orange-500/90 sm:inline">
                       {service.price}
                     </span>
-                    <ChevronDown
+                    <ArrowUpRight
                       className={cn(
-                        "size-5 transition-transform duration-300",
-                        isOpen && "rotate-180 text-orange-500"
+                        "size-5 text-neutral-600 transition-all duration-300",
+                        "opacity-0 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100",
+                        isOpen && "translate-x-0 opacity-100 text-orange-500"
                       )}
                       aria-hidden="true"
                     />
@@ -90,7 +92,7 @@ export function Services() {
                   )}
                 >
                   <div className="overflow-hidden">
-                    <p className="pt-3 text-sm leading-relaxed text-neutral-400 md:pr-12">
+                    <p className="max-w-2xl pt-3 text-sm leading-relaxed text-neutral-400 md:text-base">
                       {service.detail}
                     </p>
                     <p className="pt-2 font-mono text-[11px] text-orange-500 sm:hidden">

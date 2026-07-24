@@ -2,49 +2,46 @@
 
 import { ProjectCard, type Project } from "@/components/ProjectCard";
 import { SectionHeader } from "@/components/SectionHeader";
-import { cn } from "@/lib/utils";
 
-const projects: (Project & { offset?: string })[] = [
+const projects: Project[] = [
   {
     name: "Designwire",
     tag: "Media Platform",
-    stat: "2M+ Followers",
+    stat: "2M+",
+    result: "Followers reached through a media presence built to look inevitable.",
     comingSoon: true,
-    accent: "#1c1917",
-    icon: "media",
-    offset: "lg:mt-0",
+    indexLabel: "SS /01",
   },
   {
     name: "Kurogo",
     tag: "Branding Agency",
-    stat: "+23% CVR",
+    stat: "+23%",
+    result: "Conversion lift after a clearer site story and faster pages.",
     comingSoon: true,
-    accent: "#1a1a1a",
-    icon: "brand",
-    offset: "lg:mt-16",
+    indexLabel: "SS /02",
   },
   {
     name: "Local Plumber",
     tag: "Small Business",
-    stat: "3x Leads",
+    stat: "3x",
+    result: "Increase in call bookings once trust and CTA hierarchy were fixed.",
     comingSoon: true,
-    accent: "#292524",
-    icon: "trade",
-    offset: "lg:mt-8",
+    indexLabel: "SS /03",
   },
 ];
 
 export function Work() {
   return (
     <section id="work" className="px-6 py-20 md:px-12 md:py-32 lg:px-24">
-      <SectionHeader label="Work" index="01" />
+      <SectionHeader
+        label="Work"
+        index="01"
+        title="Selected stories — real results, not fluff."
+      />
 
-      {/* playfight-inspired staggered grid — still readable, not collage clutter */}
-      <div className="grid gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+      <div className="flex flex-col gap-4 md:gap-5">
         {projects.map((project, i) => (
-          <div key={project.name} className={cn(project.offset)}>
-            <ProjectCard project={project} index={i} />
-          </div>
+          <ProjectCard key={project.name} project={project} index={i} />
         ))}
       </div>
 

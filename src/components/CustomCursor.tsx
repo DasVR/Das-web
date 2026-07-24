@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useSpring } from "framer-motion";
 
-/** Soft crosshair cursor — optional polish from cursor-prompt, desktop only */
+/** Small white dot with lag; expands on interactive hover (research cursor) */
 export function CustomCursor() {
   const reduceMotion = useReducedMotion();
-  const [pos, setPos] = useState({ x: -100, y: -100 });
   const [visible, setVisible] = useState(false);
   const [enabled, setEnabled] = useState(false);
+  const [hovering, setHovering] = useState(false);
+
+  const x = useSpring(-100, { stiffness: 400, damping: 40, mass: 0.25 });
+  const y = useSpring(-100, { stiffness: 400, damping: 40, mass: 0.25 });
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
@@ -17,11 +20,19 @@ export function CustomCursor() {
     setEnabled(true);
 
     function onMove(e: MouseEvent) {
-      setPos({ x: e.clientX, y: e.clientY });
+      x.set(e.clientX);
+      y.set(e.clientY);
       setVisible(true);
+
+      const el = e.target as HTMLElement | null;
+      const interactive = Boolean(
+        el?.closest("a, button, input, textarea, [role='button']")
+      );
+      setHovering(interactive);
     }
     function onLeave() {
       setVisible(false);
+      setHovering(false);
     }
 
     window.addEventListener("mousemove", onMove);
@@ -33,26 +44,30 @@ export function CustomCursor() {
       document.documentElement.removeEventListener("mouseleave", onLeave);
       document.documentElement.classList.remove("has-custom-cursor");
     };
-  }, [reduceMotion]);
+  }, [reduceMotion, x, y]);
 
   if (!enabled) return null;
+
+  const size = hovering ? 40 : 8;
 
   return (
     <motion.div
       aria-hidden="true"
       className="pointer-events-none fixed left-0 top-0 z-[100] mix-blend-difference"
-      animate={{
-        x: pos.x - 10,
-        y: pos.y - 10,
-        opacity: visible ? 1 : 0,
-      }}
-      transition={{ type: "spring", stiffness: 500, damping: 40, mass: 0.2 }}
+      style={{ x, y }}
     >
-      <div className="relative size-5">
-        <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white" />
-        <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white" />
-        <span className="absolute left-1/2 top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500" />
-      </div>
+      <motion.div
+        className="-translate-x-1/2 -translate-y-1/2 rounded-full border border-white bg-white"
+        animate={{
+          width: size,
+          height: size,
+          backgroundColor: hovering
+            ? "rgba(255,255,255,0)"
+            : "rgba(255,255,255,1)",
+          opacity: visible ? 1 : 0,
+        }}
+        transition={{ type: "spring", stiffness: 400, damping: 28 }}
+      />
     </motion.div>
   );
 }

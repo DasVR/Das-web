@@ -9,7 +9,7 @@ export function About() {
       id="about"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="About" index="02" />
+      <SectionHeader label="About" index="02" title="Local, not corporate." />
 
       <div className="grid max-w-5xl gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
         <AnimatedSection>

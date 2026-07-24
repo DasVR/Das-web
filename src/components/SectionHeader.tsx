@@ -1,30 +1,37 @@
-import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type SectionHeaderProps = {
-  /** Display label, e.g. "Work" → renders as /Work */
+  /** Section name without slash, e.g. "Work" */
   label: string;
   className?: string;
-  /** Optional index like "01" for editorial numbering */
+  /** Index like "01" → renders "/ Work (01)" */
   index?: string;
+  /** Optional larger section title under the slash label */
+  title?: string;
 };
 
-/** mainframe-style slash headers + furo cross/plus accent */
-export function SectionHeader({ label, className, index }: SectionHeaderProps) {
-  const slashLabel = label.startsWith("/") ? label : `/${label}`;
+/** mainframe: "/ About us (01)" */
+export function SectionHeader({
+  label,
+  className,
+  index,
+  title,
+}: SectionHeaderProps) {
+  const clean = label.replace(/^\//, "").trim();
 
   return (
-    <div className={cn("mb-12 flex items-end justify-between gap-6 md:mb-16", className)}>
-      <div className="flex items-center gap-3">
-        <Plus className="size-4 text-orange-500/80" aria-hidden="true" />
-        <h2 className="font-mono text-sm tracking-wide text-neutral-400 md:text-base">
-          {slashLabel}
-        </h2>
+    <div className={cn("mb-12 md:mb-16", className)}>
+      <div className="flex items-baseline gap-2 font-mono text-sm tracking-wide text-neutral-500 md:text-base">
+        <span className="text-orange-500">/</span>
+        <h2 className="text-neutral-300">{clean}</h2>
+        {index ? (
+          <span className="text-neutral-600">({index})</span>
+        ) : null}
       </div>
-      {index ? (
-        <span className="font-mono text-xs tracking-widest text-neutral-700">
-          {index}
-        </span>
+      {title ? (
+        <p className="mt-4 max-w-3xl font-serif text-3xl tracking-tight text-white md:text-5xl">
+          {title}
+        </p>
       ) : null}
     </div>
   );

@@ -18,26 +18,26 @@ const steps: {
 }[] = [
   {
     num: "01",
-    title: "Position",
-    desc: "Brand direction & reference system. We figure out what you actually need, not what trends say.",
+    title: "We uncover your story",
+    desc: "We dig into your brand, surface what makes you irreplaceable, and shape sharp positioning for a site that gets calls.",
     icon: Compass,
   },
   {
     num: "02",
-    title: "Structure",
-    desc: "Wireframes & homepage direction. Layout that guides visitors to take action.",
+    title: "We shape your presence",
+    desc: "With the narrative locked, we design a homepage that signals credibility and gives visitors one clear reason to act.",
     icon: LayoutTemplate,
   },
   {
     num: "03",
-    title: "Build",
-    desc: "Design & development. Fast, responsive, SEO-ready code that performs.",
+    title: "We build it",
+    desc: "Fast, responsive, SEO-ready development — no page-builder bloat. Clean code that loads and ranks.",
     icon: Code2,
   },
   {
     num: "04",
-    title: "Launch",
-    desc: "Deploy & handoff. You get the files, the knowledge, and ongoing support if needed.",
+    title: "We grow it",
+    desc: "Launch, handoff, and ongoing support. SEO and maintenance so the site keeps working after day one.",
     icon: Rocket,
   },
 ];
@@ -48,10 +48,13 @@ export function Method() {
       id="method"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="Method" index="03" />
+      <SectionHeader
+        label="Method"
+        index="03"
+        title="Project journey."
+      />
 
       <ol className="relative mx-auto max-w-3xl list-none p-0">
-        {/* Vertical path linking 01 → 04 */}
         <div
           className="pointer-events-none absolute bottom-4 left-[1.35rem] top-4 w-px bg-gradient-to-b from-orange-500/50 via-neutral-700 to-neutral-800 md:left-[1.6rem]"
           aria-hidden="true"
@@ -71,8 +74,8 @@ export function Method() {
                     />
                   </div>
                   <div className="min-w-0 pt-0.5 md:pt-1">
-                    <div className="mb-2 flex items-baseline gap-3">
-                      <span className="font-mono text-2xl font-bold text-neutral-700 md:text-4xl">
+                    <div className="mb-2 flex flex-wrap items-baseline gap-3">
+                      <span className="font-mono text-sm text-neutral-600">
                         {step.num}
                       </span>
                       <h3 className="font-serif text-xl md:text-2xl">
