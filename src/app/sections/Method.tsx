@@ -19,7 +19,7 @@ const steps: {
   {
     num: "01",
     title: "We uncover your story",
-    desc: "We dig into your brand, surface what makes you irreplaceable, and shape sharp positioning for a site that gets calls.",
+    desc: "We dig into your brand, surface what makes you irreplaceable, and shape sharp positioning for a site that gets inquiries.",
     icon: Compass,
   },
   {

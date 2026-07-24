@@ -4,9 +4,9 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionHeader } from "@/components/SectionHeader";
 
 const floaters = [
-  { label: "Plumber", top: "8%", left: "62%", rotate: "-6deg" },
-  { label: "HVAC", top: "38%", left: "78%", rotate: "4deg" },
-  { label: "Electric", top: "58%", left: "58%", rotate: "-3deg" },
+  { label: "Studio", top: "8%", left: "62%", rotate: "-6deg" },
+  { label: "Retail", top: "38%", left: "78%", rotate: "4deg" },
+  { label: "Services", top: "58%", left: "58%", rotate: "-3deg" },
 ] as const;
 
 export function Gap() {
@@ -20,21 +20,20 @@ export function Gap() {
       <div className="relative grid max-w-6xl gap-12 lg:grid-cols-[1.2fr_0.8fr]">
         <AnimatedSection>
           <h3 className="max-w-3xl font-display text-3xl font-bold leading-[1.1] tracking-tight md:text-5xl lg:text-6xl">
-            Your website is where customers decide if you&apos;re{" "}
+            Your website is where people decide if you&apos;re{" "}
             <span className="text-neutral-400">worth their time.</span>
           </h3>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-neutral-400 md:text-lg">
-            Most small businesses in Largo have built something real — but their
-            site doesn&apos;t show it yet. That gap costs more than customers. It
-            costs the certainty that your business is finally being seen.
+            Most small businesses have built something real — but their site
+            doesn&apos;t show it yet. That gap costs more than customers. It costs
+            the certainty that your brand is finally being understood.
           </p>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-500 md:text-lg">
-            We take what makes you irreplaceable, shape the experience around it,
-            and make sure they feel that before they read another word.
+            I help close that gap: positioning, design, and build — so visitors
+            feel the quality of your work before they read another word.
           </p>
         </AnimatedSection>
 
-        {/* playfight / monolog scattered placeholders */}
         <div className="relative hidden min-h-[320px] lg:block" aria-hidden="true">
           {floaters.map((item) => (
             <div

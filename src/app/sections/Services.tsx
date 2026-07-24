@@ -10,36 +10,47 @@ const services = [
   {
     name: "Web Design",
     detail:
-      "Homepages that build trust fast — clear services, proof, and a path to call or book. Mobile-first and fast.",
+      "Sites that build trust fast — clear story, proof, and a path to inquire. Mobile-first and fast for small businesses of any industry.",
     price: "Starting at $500",
   },
   {
     name: "Branding",
     detail:
-      "A simple identity system so your site, cards, and Google listing feel like the same business.",
+      "Identity systems — logo, type, color — so your site, socials, and materials feel like one brand.",
     price: "Starting at $350",
   },
   {
     name: "Development",
     detail:
-      "Clean code, static hosting when it fits, no bloated page builders. Built to load under a few seconds.",
+      "Custom builds when quality matters. Clean code, performance, and hosting that fits — no bloated page builders.",
     price: "Included with design",
+  },
+  {
+    name: "Landing Pages",
+    detail:
+      "Focused pages for launches, offers, and campaigns — designed to convert without clutter.",
+    price: "Starting at $400",
   },
   {
     name: "SEO",
     detail:
-      "Local SEO basics: titles, meta, structure, Google Business alignment — so Largo searches find you.",
+      "Titles, structure, meta, and discoverability basics so the right people can find you — local or broader.",
     price: "Starting at $200",
+  },
+  {
+    name: "UI / Product",
+    detail:
+      "Interfaces for tools, apps, and product marketing pages — clear UI with the same editorial care.",
+    price: "Scoped per project",
   },
   {
     name: "Maintenance",
     detail:
-      "Updates, content tweaks, uptime checks, and small fixes so your site doesn’t go stale after launch.",
+      "Updates, content tweaks, uptime checks, and small fixes so your site stays sharp after launch.",
     price: "From $50 / month",
   },
 ];
 
-/** monolog giant stacked service names + expandable detail */
 export function Services() {
   const [open, setOpen] = useState<string | null>(null);
 
@@ -48,7 +59,11 @@ export function Services() {
       id="services"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader label="Services" index="04" title="What we do." />
+      <SectionHeader
+        label="Services"
+        index="04"
+        title="What I offer — design, build, and ongoing care."
+      />
 
       <div className="max-w-4xl">
         {services.map((service, i) => {

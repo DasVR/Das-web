@@ -15,8 +15,8 @@ export function CTA() {
           <span className="text-neutral-400">blending in?</span>
         </h2>
         <p className="mt-6 max-w-xl text-base text-neutral-400 md:text-lg">
-          Let&apos;s build a website that actually works for your business —
-          fast, clear, and built to get calls.
+          Whether you need a full site, a brand refresh, or a sharp landing page —
+          let&apos;s make something that works for your business.
         </p>
         <a
           href="#contact"

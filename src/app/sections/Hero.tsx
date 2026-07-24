@@ -18,7 +18,7 @@ export function Hero() {
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,transparent_70%,#0a0a0a)]" />
 
       <div className="absolute left-6 top-6 z-30 font-mono text-[10px] tracking-[0.2em] text-neutral-500 md:left-12 md:text-xs">
-        LARGO, FL · EST 2026
+        BASED IN FLORIDA · WORKING WIDELY
       </div>
       <SiteNav />
 
@@ -41,8 +41,9 @@ export function Hero() {
         </h1>
 
         <p className="max-w-xl text-base leading-relaxed text-neutral-400 md:text-xl">
-          Most local businesses have built something real — their site just
-          doesn&apos;t show it yet. Fast sites for Largo trades, starting at $500.
+          Personal portfolio & web design for small businesses and independents.
+          Design, brand, and build — so your presence finally matches what
+          you&apos;ve built.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3 md:gap-4">

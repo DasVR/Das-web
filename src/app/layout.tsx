@@ -19,18 +19,20 @@ const siteUrl = "https://dasdev.net";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Arriq — Web Design for Small Businesses in Largo, FL",
+    default: "Arriq — Personal Portfolio & Web Design for Small Businesses",
     template: "%s · Arriq",
   },
   description:
-    "Das Web Design by Arriq. Fast, modern websites for plumbers, HVAC, electricians, and local trades in Largo, Florida. Projects typically $500–$1,500.",
+    "Arriq / Das Web Design — personal portfolio and web design, branding, development, and more for small businesses and independents. Based in Florida, working with clients anywhere.",
   keywords: [
-    "web design Largo FL",
-    "small business website",
-    "plumber website",
-    "HVAC website",
-    "Das Web Design",
     "Arriq",
+    "Das Web Design",
+    "personal portfolio",
+    "web design",
+    "small business website",
+    "branding",
+    "freelance designer",
+    "Florida web designer",
   ],
   authors: [{ name: "Arriq", url: siteUrl }],
   creator: "Arriq",
@@ -41,13 +43,13 @@ export const metadata: Metadata = {
     siteName: "Arriq — Das Web Design",
     title: "Arriq — Websites that speak your brand's voice",
     description:
-      "Web design for small businesses in Largo, Florida. Fast, clean sites that convert — starting at $500.",
+      "Personal portfolio & web design for small businesses and independents. Design, brand, and build — starting around $500.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arriq — Web Design",
+    title: "Arriq — Portfolio & Web Design",
     description:
-      "Web design for small businesses in Largo, Florida. Starting at $500.",
+      "Personal portfolio and services for small businesses. Based in Florida, working widely.",
   },
   robots: {
     index: true,

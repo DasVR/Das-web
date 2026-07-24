@@ -7,27 +7,27 @@ const stats = [
   {
     value: 15,
     suffix: "+",
-    label: "Websites planned",
-    note: "Local trades focus",
+    label: "Projects in motion",
+    note: "Client + personal",
   },
   {
-    value: 3,
-    suffix: "x",
-    label: "Target conversion lift",
-    note: "Vs template sites",
+    value: 7,
+    suffix: "+",
+    label: "Service offerings",
+    note: "Design through care",
   },
   {
     value: 500,
     prefix: "$",
     suffix: "+",
-    label: "Project starting point",
-    note: "Typical $500–$1,500",
+    label: "Starting project size",
+    note: "Scoped to fit",
   },
   {
     value: 1,
     suffix: "wk",
     label: "Typical turnaround",
-    note: "From kickoff to launch",
+    note: "When the brief is clear",
   },
 ] as const;
 

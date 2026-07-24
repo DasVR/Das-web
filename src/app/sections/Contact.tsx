@@ -64,8 +64,8 @@ export function Contact() {
           </div>
 
           <p className="mt-10 text-sm leading-relaxed text-neutral-600 md:mt-12">
-            Based in Largo, Florida. Working with local businesses and beyond.
-            Typical projects: $500–$1,500.
+            Based in Florida. Working with small businesses and independents
+            wherever you are. Typical projects: $500–$1,500+.
           </p>
         </AnimatedSection>
 

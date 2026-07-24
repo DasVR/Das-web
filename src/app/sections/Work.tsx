@@ -8,23 +8,23 @@ const projects: Project[] = [
     name: "Designwire",
     tag: "Media Platform",
     stat: "2M+",
-    result: "Followers reached through a media presence built to look inevitable.",
+    result: "A media presence shaped to feel inevitable — brand, layout, and pace.",
     comingSoon: true,
     indexLabel: "SS /01",
   },
   {
     name: "Kurogo",
-    tag: "Branding Agency",
+    tag: "Brand Studio",
     stat: "+23%",
-    result: "Conversion lift after a clearer site story and faster pages.",
+    result: "Clearer story and faster pages for a studio that needed sharper conversion.",
     comingSoon: true,
     indexLabel: "SS /02",
   },
   {
-    name: "Local Plumber",
+    name: "Harbor & Co.",
     tag: "Small Business",
     stat: "3x",
-    result: "Increase in call bookings once trust and CTA hierarchy were fixed.",
+    result: "Inquiry lift after trust, hierarchy, and CTAs were rebuilt for the brand.",
     comingSoon: true,
     indexLabel: "SS /03",
   },
@@ -36,7 +36,7 @@ export function Work() {
       <SectionHeader
         label="Work"
         index="01"
-        title="Selected stories — real results, not fluff."
+        title="Selected stories — client work and personal experiments."
       />
 
       <div className="flex flex-col gap-4 md:gap-5">
@@ -46,8 +46,8 @@ export function Work() {
       </div>
 
       <p className="mt-10 max-w-xl text-sm leading-relaxed text-neutral-600">
-        Case studies shipping soon. Focus: local trades and service businesses
-        in the Tampa Bay area. Want one of these slots?{" "}
+        Case studies shipping soon — across industries, not one niche. Want a
+        slot in the portfolio?{" "}
         <a
           href="#contact"
           className="text-neutral-400 underline-offset-4 hover:text-orange-400 hover:underline"
