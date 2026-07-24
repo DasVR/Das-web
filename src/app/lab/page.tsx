@@ -64,26 +64,41 @@ export default function LabPage() {
       <section className="px-6 pb-20 pt-32 md:px-12 md:pb-32 md:pt-40 lg:px-24">
         <SectionHeader
           label="Lab"
-          index="01b"
+          index="03"
           title="Personal lab — craft studies in public."
+          meta={
+            <>
+              <span className="text-neutral-300">Six studies</span>
+              <span>All shipped into this site</span>
+              <span>No WebGL — transform &amp; opacity only</span>
+            </>
+          }
         />
 
         <div className="mt-4 grid gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
           {experiments.map((exp, i) => (
             <AnimatedSection key={exp.id} delay={i * 0.06}>
-              <article className="group flex h-full flex-col border border-neutral-800/80 bg-neutral-950/40 p-5 transition-colors hover:border-neutral-600 md:p-6">
+              <article className="group relative flex h-full flex-col overflow-hidden border border-neutral-800/80 bg-neutral-950/40 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-neutral-600 md:p-6">
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-orange-500/70 transition-transform duration-500 group-hover:scale-x-100"
+                />
                 <div className="mb-5 flex items-center justify-between">
                   <span className="font-mono text-[10px] tracking-widest text-orange-500/80">
                     LAB /{exp.id}
                   </span>
                   <span
                     className={cn(
-                      "rounded-md px-2 py-0.5 font-mono text-[10px] tracking-wide",
+                      "inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 font-mono text-[10px] tracking-wide",
                       exp.status === "live"
-                        ? "bg-green-500/10 text-green-400"
-                        : "bg-neutral-800 text-neutral-500"
+                        ? "border-orange-500/30 bg-orange-500/10 text-orange-400"
+                        : "border-neutral-800 bg-neutral-900 text-neutral-500"
                     )}
                   >
+                    <span
+                      className="size-1 rounded-full bg-current"
+                      aria-hidden="true"
+                    />
                     {exp.status}
                   </span>
                 </div>

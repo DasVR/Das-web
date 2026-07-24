@@ -2,6 +2,7 @@
 
 import { CustomCursor } from "@/components/CustomCursor";
 import { GrainOverlay } from "@/components/GrainOverlay";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { SiteNav } from "@/components/SiteNav";
 import { SmoothScroll } from "@/components/SmoothScroll";
 
@@ -11,6 +12,7 @@ export function SiteChrome() {
     <>
       <SmoothScroll />
       <GrainOverlay />
+      <ScrollProgress />
       <CustomCursor />
       <SiteNav />
     </>

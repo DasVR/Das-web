@@ -11,8 +11,14 @@ export default function NowPage() {
       <section className="px-6 pb-20 pt-32 md:px-12 md:pb-32 md:pt-40 lg:px-24">
         <SectionHeader
           label="Now"
-          index="03"
+          index="06"
           title="What I'm doing right now."
+          meta={
+            <>
+              <span className="text-neutral-300">Updated July 2026</span>
+              <span>Inspired by nownownow.com</span>
+            </>
+          }
         />
 
         <p className="mb-10 max-w-xl text-sm text-neutral-500">
