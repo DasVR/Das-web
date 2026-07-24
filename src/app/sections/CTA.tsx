@@ -10,9 +10,9 @@ export function CTA() {
         <p className="mb-4 font-mono text-xs tracking-widest text-orange-500/80">
           / Next
         </p>
-        <h2 className="max-w-4xl font-serif text-4xl leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
+        <h2 className="max-w-4xl font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
           Ready to stop{" "}
-          <span className="italic text-neutral-400">blending in?</span>
+          <span className="text-neutral-400">blending in?</span>
         </h2>
         <p className="mt-6 max-w-xl text-base text-neutral-400 md:text-lg">
           Let&apos;s build a website that actually works for your business —

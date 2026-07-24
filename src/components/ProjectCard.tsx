@@ -45,7 +45,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
             <p className="mb-1 text-xs uppercase tracking-wider text-neutral-500">
               {project.tag}
             </p>
-            <h3 className="font-serif text-2xl tracking-tight md:text-3xl">
+            <h3 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
               {project.name}
             </h3>
             <p className="mt-3 text-sm leading-relaxed text-neutral-400">
@@ -54,7 +54,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
           </div>
 
           <div className="flex shrink-0 items-end justify-between gap-4 md:flex-col md:items-end">
-            <p className="font-serif text-5xl tracking-tight text-white transition-transform duration-300 group-hover:scale-105 md:text-6xl lg:text-7xl">
+            <p className="font-display text-5xl font-bold tracking-tight text-white transition-transform duration-300 group-hover:scale-105 md:text-6xl lg:text-7xl">
               {project.stat}
             </p>
             <ArrowUpRight

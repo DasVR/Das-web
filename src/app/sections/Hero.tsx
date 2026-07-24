@@ -32,12 +32,12 @@ export function Hero() {
           <DotMatrix text="ARRIQ" gap={9} letterGap={12} radius={1.85} />
         </div>
 
-        <h1 className="mb-6 font-serif text-[2.85rem] font-normal leading-[0.95] tracking-tight sm:text-5xl md:mb-8 md:text-7xl lg:text-[5.75rem]">
+        <h1 className="mb-6 font-display text-[2.85rem] font-bold leading-[0.92] tracking-tight sm:text-5xl md:mb-8 md:text-7xl lg:text-[5.75rem]">
           Websites that
           <br />
           speak your
           <br />
-          <span className="italic text-neutral-300">brand&apos;s voice.</span>
+          brand&apos;s voice.
         </h1>
 
         <p className="max-w-xl text-base leading-relaxed text-neutral-400 md:text-xl">

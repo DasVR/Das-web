@@ -78,7 +78,7 @@ export function Method() {
                       <span className="font-mono text-sm text-neutral-600">
                         {step.num}
                       </span>
-                      <h3 className="font-serif text-xl md:text-2xl">
+                      <h3 className="font-display text-xl font-semibold md:text-2xl">
                         {step.title}
                       </h3>
                     </div>

@@ -64,7 +64,7 @@ export function Services() {
                 <div className="flex items-baseline justify-between gap-4">
                   <span
                     className={cn(
-                      "font-serif text-3xl tracking-tight transition-transform duration-300 md:text-5xl lg:text-6xl",
+                      "font-display text-3xl font-bold tracking-tight transition-transform duration-300 md:text-5xl lg:text-6xl",
                       "group-hover:translate-x-2",
                       isOpen ? "text-white" : "text-neutral-300 group-hover:text-white"
                     )}

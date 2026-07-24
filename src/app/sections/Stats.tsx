@@ -41,7 +41,7 @@ export function Stats() {
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, i) => (
           <AnimatedSection key={stat.label} delay={i * 0.08}>
-            <p className="font-serif text-5xl tracking-tight text-white md:text-6xl">
+            <p className="font-display text-5xl font-bold tracking-tight text-white md:text-6xl">
               <AnimatedCounter
                 value={stat.value}
                 prefix={"prefix" in stat ? stat.prefix : ""}

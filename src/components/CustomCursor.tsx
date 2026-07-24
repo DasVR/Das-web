@@ -1,17 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion, useSpring } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
-/** Small white dot with lag; expands on interactive hover (research cursor) */
+/** Tight follow cursor — no spring lag; expands on interactive hover */
 export function CustomCursor() {
   const reduceMotion = useReducedMotion();
+  const [pos, setPos] = useState({ x: -100, y: -100 });
   const [visible, setVisible] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [hovering, setHovering] = useState(false);
-
-  const x = useSpring(-100, { stiffness: 400, damping: 40, mass: 0.25 });
-  const y = useSpring(-100, { stiffness: 400, damping: 40, mass: 0.25 });
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
@@ -20,22 +18,19 @@ export function CustomCursor() {
     setEnabled(true);
 
     function onMove(e: MouseEvent) {
-      x.set(e.clientX);
-      y.set(e.clientY);
+      setPos({ x: e.clientX, y: e.clientY });
       setVisible(true);
-
       const el = e.target as HTMLElement | null;
-      const interactive = Boolean(
-        el?.closest("a, button, input, textarea, [role='button']")
+      setHovering(
+        Boolean(el?.closest("a, button, input, textarea, [role='button']"))
       );
-      setHovering(interactive);
     }
     function onLeave() {
       setVisible(false);
       setHovering(false);
     }
 
-    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", onMove, { passive: true });
     document.documentElement.addEventListener("mouseleave", onLeave);
     document.documentElement.classList.add("has-custom-cursor");
 
@@ -44,17 +39,20 @@ export function CustomCursor() {
       document.documentElement.removeEventListener("mouseleave", onLeave);
       document.documentElement.classList.remove("has-custom-cursor");
     };
-  }, [reduceMotion, x, y]);
+  }, [reduceMotion]);
 
   if (!enabled) return null;
 
-  const size = hovering ? 40 : 8;
+  const size = hovering ? 36 : 8;
 
   return (
-    <motion.div
+    <div
       aria-hidden="true"
       className="pointer-events-none fixed left-0 top-0 z-[100] mix-blend-difference"
-      style={{ x, y }}
+      style={{
+        transform: `translate3d(${pos.x}px, ${pos.y}px, 0)`,
+        opacity: visible ? 1 : 0,
+      }}
     >
       <motion.div
         className="-translate-x-1/2 -translate-y-1/2 rounded-full border border-white bg-white"
@@ -64,10 +62,9 @@ export function CustomCursor() {
           backgroundColor: hovering
             ? "rgba(255,255,255,0)"
             : "rgba(255,255,255,1)",
-          opacity: visible ? 1 : 0,
         }}
-        transition={{ type: "spring", stiffness: 400, damping: 28 }}
+        transition={{ duration: 0.12, ease: [0.25, 0.1, 0.25, 1] }}
       />
-    </motion.div>
+    </div>
   );
 }

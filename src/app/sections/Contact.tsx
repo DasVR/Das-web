@@ -42,7 +42,7 @@ export function Contact() {
           <p className="mb-3 font-mono text-xs tracking-widest text-orange-500/80">
             $ open inbox — hello@dasdev.net
           </p>
-          <h3 className="mb-6 font-serif text-3xl italic tracking-tight md:mb-8 md:text-5xl">
+          <h3 className="mb-6 font-display text-3xl font-bold tracking-tight md:mb-8 md:text-5xl">
             Ready when you are.
           </h3>
 

@@ -19,9 +19,9 @@ export function Gap() {
 
       <div className="relative grid max-w-6xl gap-12 lg:grid-cols-[1.2fr_0.8fr]">
         <AnimatedSection>
-          <h3 className="max-w-3xl font-serif text-3xl leading-[1.1] tracking-tight md:text-5xl lg:text-6xl">
+          <h3 className="max-w-3xl font-display text-3xl font-bold leading-[1.1] tracking-tight md:text-5xl lg:text-6xl">
             Your website is where customers decide if you&apos;re{" "}
-            <span className="italic text-neutral-400">worth their time.</span>
+            <span className="text-neutral-400">worth their time.</span>
           </h3>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-neutral-400 md:text-lg">
             Most small businesses in Largo have built something real — but their

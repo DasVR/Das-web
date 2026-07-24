@@ -29,7 +29,7 @@ export function SectionHeader({
         ) : null}
       </div>
       {title ? (
-        <p className="mt-4 max-w-3xl font-serif text-3xl tracking-tight text-white md:text-5xl">
+        <p className="mt-4 max-w-3xl font-display text-3xl font-bold tracking-tight text-white md:text-5xl">
           {title}
         </p>
       ) : null}
