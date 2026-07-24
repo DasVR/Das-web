@@ -65,6 +65,27 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .overscroll-none {
+    overscroll-behavior: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes grain-shift {

@@ -1,230 +1,181 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { haptic } from "@/lib/haptic";
-import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 
 const links = [
   { href: "/work", label: "Work" },
   { href: "/lab", label: "Lab" },
   { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
+  { href: "/", label: "Services" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
-const springMenu = {
-  type: "spring" as const,
-  stiffness: 150,
-  damping: 18,
-  mass: 1.1,
-};
-const springMask = { type: "spring" as const, stiffness: 320, damping: 30 };
-
-type MaskRect = { left: number; width: number };
-
 export function SiteNav() {
   const pathname = usePathname();
-  const reduceMotion = useReducedMotion();
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [mask, setMask] = useState<MaskRect | null>(null);
-  const listRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
+  // Prevent body scroll when menu is open
   useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
     return () => {
-      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, [isOpen]);
 
-  function trackMask(el: HTMLElement | null) {
-    if (!el || !listRef.current) return;
-    const parent = listRef.current.getBoundingClientRect();
-    const rect = el.getBoundingClientRect();
-    setMask({ left: rect.left - parent.left, width: rect.width });
-  }
+  const haptic = (pattern: number | number[] = 10) => {
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      navigator.vibrate(pattern);
+    }
+  };
+
+  const toggleMenu = () => {
+    haptic(isOpen ? [8, 4] : 12);
+    setIsOpen(!isOpen);
+  };
+
+  const closeMenu = () => {
+    haptic(8);
+    setIsOpen(false);
+  };
 
   return (
     <>
+      {/* Desktop + Mobile Nav Bar */}
       <nav
         aria-label="Primary"
-        className={cn(
-          "fixed left-0 right-0 top-0 z-50 px-6 py-4 transition-colors duration-500 md:px-12 md:py-5 lg:px-24",
-          scrolled &&
-            "border-b border-neutral-900/80 bg-[#0a0a0a]/70 backdrop-blur-md"
-        )}
+        className="fixed left-0 right-0 top-0 z-50 px-6 py-4 md:px-12 md:py-5 lg:px-24"
       >
         <div className="flex items-center justify-between">
+          {/* Logo */}
           <Link
             href="/"
-            onClick={() => haptic(10)}
-            className="font-mono text-xs tracking-[0.2em] text-neutral-300 transition-colors hover:text-white"
+            className="font-mono text-xs tracking-[0.2em] text-neutral-300 transition-colors hover:text-white z-50 relative"
+            onClick={() => isOpen && closeMenu()}
           >
             ARRIQ
           </Link>
 
-          <div
-            ref={listRef}
-            className="relative hidden items-center gap-4 md:flex md:gap-5"
-            onMouseLeave={() => setMask(null)}
-          >
-            <AnimatePresence>
-              {mask && !reduceMotion ? (
-                <motion.span
-                  aria-hidden="true"
-                  className="absolute -inset-y-1 rounded-md bg-neutral-800/60"
-                  initial={{ opacity: 0, left: mask.left, width: mask.width }}
-                  animate={{ opacity: 1, left: mask.left, width: mask.width }}
-                  exit={{ opacity: 0 }}
-                  transition={springMask}
-                />
-              ) : null}
-            </AnimatePresence>
-
+          {/* Desktop Links */}
+          <div className="hidden items-center gap-4 md:flex md:gap-5">
             {links.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  onClick={() => haptic(10)}
-                  onMouseEnter={(e) => trackMask(e.currentTarget)}
-                  onFocus={(e) => trackMask(e.currentTarget)}
-                  className={cn(
-                    "relative z-10 px-1.5 py-1 font-mono text-[11px] tracking-widest transition-colors",
-                    isActive
-                      ? "text-neutral-100"
-                      : "text-neutral-500 hover:text-neutral-200"
-                  )}
+                  className="group relative font-mono text-[11px] tracking-widest text-neutral-500 transition-colors hover:text-neutral-200"
                 >
                   /{link.label}
-                  {isActive ? (
+                  {isActive && (
                     <motion.span
                       layoutId="activeNav"
-                      className="absolute -bottom-0.5 left-1.5 right-1.5 h-px bg-orange-500"
-                      transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 30,
-                      }}
+                      className="absolute -bottom-1 left-0 right-0 h-px bg-orange-500"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
-                  ) : null}
+                  )}
                 </Link>
               );
             })}
           </div>
 
+          {/* Mobile Menu Button */}
           <button
-            type="button"
-            className="relative z-[60] flex h-10 w-10 items-center justify-center md:hidden"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => {
-              haptic(10);
-              setOpen((v) => !v);
-            }}
+            onClick={toggleMenu}
+            className="relative z-50 flex flex-col gap-1.5 md:hidden"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
           >
-            <span className="flex flex-col gap-1.5">
-              <span
-                className={cn(
-                  "block h-px w-5 bg-neutral-300 transition-transform duration-300",
-                  open && "translate-y-[3.5px] rotate-45"
-                )}
-              />
-              <span
-                className={cn(
-                  "block h-px w-5 bg-neutral-300 transition-transform duration-300",
-                  open && "-translate-y-[3.5px] -rotate-45"
-                )}
-              />
-            </span>
+            <motion.span
+              className="block h-px w-5 bg-neutral-300"
+              animate={{
+                rotate: isOpen ? 45 : 0,
+                y: isOpen ? 3 : 0,
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            />
+            <motion.span
+              className="block h-px w-5 bg-neutral-300"
+              animate={{
+                rotate: isOpen ? -45 : 0,
+                y: isOpen ? -3 : 0,
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            />
           </button>
         </div>
       </nav>
 
+      {/* Mobile Full-Screen Menu */}
       <AnimatePresence>
-        {open ? (
+        {isOpen && (
           <motion.div
-            key="mobile-menu"
-            className="fixed inset-0 z-40 flex flex-col bg-[#0a0a0a] px-6 pb-10 pt-24 md:hidden"
-            initial={reduceMotion ? false : { opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? undefined : { opacity: 0, y: -12 }}
-            transition={springMenu}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Mobile navigation"
+            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#0a0a0a]/98 backdrop-blur-xl md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <button
-              type="button"
-              className="absolute inset-0 -z-10"
-              aria-label="Close menu"
-              onClick={() => {
-                haptic(10);
-                setOpen(false);
-              }}
-            />
-            <ul className="relative z-10 flex flex-1 flex-col justify-center gap-2">
+            <nav aria-label="Mobile" className="flex flex-col items-center gap-6">
               {links.map((link, i) => {
                 const isActive = pathname === link.href;
                 return (
-                  <motion.li
+                  <motion.div
                     key={link.href}
-                    initial={reduceMotion ? false : { opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{
-                      ...springMenu,
-                      delay: reduceMotion ? 0 : 0.04 * i,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 22,
+                      delay: i * 0.06,
                     }}
                   >
                     <Link
                       href={link.href}
-                      onClick={() => haptic(10)}
-                      className={cn(
-                        "flex items-baseline gap-3 font-display text-5xl font-bold tracking-tight transition-colors",
+                      onClick={closeMenu}
+                      className={`block font-display text-4xl font-bold tracking-tight transition-colors ${
                         isActive
-                          ? "text-white"
-                          : "text-neutral-500 hover:text-white"
-                      )}
+                          ? "text-orange-500"
+                          : "text-neutral-400 hover:text-white"
+                      }`}
                     >
-                      <span className="font-mono text-[11px] text-orange-500/80">
-                        0{i + 1}
-                      </span>
+                      {isActive && (
+                        <motion.span
+                          layoutId="mobileActive"
+                          className="mr-2 inline-block h-2 w-2 rounded-full bg-orange-500"
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        />
+                      )}
                       {link.label}
                     </Link>
-                  </motion.li>
+                  </motion.div>
                 );
               })}
-            </ul>
-            <Link
-              href="/now"
-              onClick={() => haptic(10)}
-              className="relative z-10 font-mono text-xs tracking-widest text-neutral-600 hover:text-orange-400"
+            </nav>
+
+            {/* Close button at bottom */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.3 }}
+              onClick={closeMenu}
+              className="absolute bottom-8 flex items-center gap-2 font-mono text-[10px] tracking-widest text-neutral-500"
             >
-              / Now — what I&apos;m doing
-            </Link>
+              <X className="size-4" />
+              CLOSE
+            </motion.button>
           </motion.div>
-        ) : null}
+        )}
       </AnimatePresence>
     </>
   );

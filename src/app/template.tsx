@@ -1,29 +1,63 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 
-const premiumSpring = {
-  type: "spring" as const,
-  stiffness: 110,
-  damping: 20,
-  mass: 1,
+const slideVariants = {
+  initial: (direction: number) => ({
+    x: direction > 0 ? "100%" : "-100%",
+    opacity: 0.8,
+  }),
+  animate: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+      damping: 22,
+      mass: 1,
+    },
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? "-40%" : "40%",
+    opacity: 0.4,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+      damping: 22,
+      mass: 1,
+    },
+  }),
+};
+
+/** Map routes to numeric order for directional sliding */
+const routeOrder: Record<string, number> = {
+  "/": 0,
+  "/work": 1,
+  "/lab": 2,
+  "/about": 3,
+  "/contact": 4,
+  "/now": 5,
 };
 
 export default function Template({ children }: { children: React.ReactNode }) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <>{children}</>;
-  }
+  const pathname = usePathname();
+  const currentOrder = routeOrder[pathname] ?? 99;
+  const direction = currentOrder;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16, scale: 0.995 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -12, scale: 0.995 }}
-      transition={premiumSpring}
-    >
-      {children}
-    </motion.div>
+    <AnimatePresence mode="wait" custom={direction}>
+      <motion.div
+        key={pathname}
+        custom={direction}
+        variants={slideVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        className="will-change-transform"
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
   );
 }
