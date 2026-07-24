@@ -6,7 +6,7 @@ import { AmbientDots } from "@/components/AmbientDots";
 import { DotMatrix } from "@/components/DotMatrix";
 import { MagneticButton } from "@/components/MagneticButton";
 import { TextScramble } from "@/components/TextScramble";
-import { haptic } from "@/lib/haptic";
+import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 
@@ -71,7 +71,7 @@ export function Hero() {
           <div className="mt-8 flex flex-wrap gap-3 md:gap-4">
             <MagneticButton
               href="/work"
-              onActivate={() => haptic(12)}
+              onActivate={() => triggerHaptic(HapticPatterns.medium)}
               className="group items-center gap-2 rounded-md bg-white px-5 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 md:px-6 md:text-base"
             >
               <span className="relative overflow-hidden">
@@ -86,7 +86,7 @@ export function Hero() {
             </MagneticButton>
             <MagneticButton
               href="/contact"
-              onActivate={() => haptic(12)}
+              onActivate={() => triggerHaptic(HapticPatterns.medium)}
               className="items-center gap-2 rounded-md border border-neutral-700 px-5 py-3 text-sm transition-colors hover:border-orange-500/70 hover:text-orange-400 md:px-6 md:text-base"
             >
               Start a Project

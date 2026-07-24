@@ -6,7 +6,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MagneticButton } from "@/components/MagneticButton";
 import { projects } from "@/lib/projects";
-import { haptic } from "@/lib/haptic";
+import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
 
 export default function WorkPage() {
   return (
@@ -50,7 +50,7 @@ export default function WorkPage() {
         </p>
         <MagneticButton
           href="/contact"
-          onActivate={() => haptic(12)}
+          onActivate={() => triggerHaptic(HapticPatterns.medium)}
           className="group mt-8 items-center gap-3 rounded-md bg-white px-6 py-3.5 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
         >
           <span className="relative overflow-hidden">

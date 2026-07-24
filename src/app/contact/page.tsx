@@ -5,7 +5,7 @@ import { ArrowUpRight, Mail, Phone } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionHeader } from "@/components/SectionHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { haptic } from "@/lib/haptic";
+import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
 
 const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID;
 
@@ -37,7 +37,7 @@ export default function ContactPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    haptic(12);
+    triggerHaptic(HapticPatterns.medium);
 
     if (!FORMSPREE_ID) {
       const subject = encodeURIComponent(

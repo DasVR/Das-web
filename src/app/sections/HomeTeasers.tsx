@@ -7,7 +7,7 @@ import { Marquee } from "@/components/Marquee";
 import { ProjectCard } from "@/components/ProjectCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { featuredProjects } from "@/lib/projects";
-import { haptic } from "@/lib/haptic";
+import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
 
 const servicePreview = [
   { name: "Web Design", price: "From $500" },
@@ -40,7 +40,7 @@ function TeaserLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      onClick={() => haptic(10)}
+      onClick={() => triggerHaptic(HapticPatterns.light)}
       className="group mt-8 inline-flex items-center gap-2 font-mono text-xs tracking-widest text-neutral-500 transition-colors hover:text-orange-400"
     >
       {label}
@@ -144,7 +144,7 @@ export function HomeTeasers() {
             <li key={service.name}>
               <Link
                 href="/services"
-                onClick={() => haptic(10)}
+                onClick={() => triggerHaptic(HapticPatterns.light)}
                 className="group flex items-baseline justify-between gap-6 border-b border-neutral-800 py-4 transition-colors hover:border-neutral-600"
               >
                 <span className="flex items-baseline gap-4">

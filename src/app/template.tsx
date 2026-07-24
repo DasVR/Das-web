@@ -1,7 +1,14 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { usePathname } from "next/navigation";
+
+const pageSpring = {
+  type: "spring" as const,
+  stiffness: 120,
+  damping: 22,
+  mass: 1,
+};
 
 const slideVariants = {
   initial: (direction: number) => ({
@@ -11,22 +18,12 @@ const slideVariants = {
   animate: {
     x: 0,
     opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 120,
-      damping: 22,
-      mass: 1,
-    },
+    transition: pageSpring,
   },
   exit: (direction: number) => ({
     x: direction > 0 ? "-40%" : "40%",
     opacity: 0.4,
-    transition: {
-      type: "spring",
-      stiffness: 120,
-      damping: 22,
-      mass: 1,
-    },
+    transition: pageSpring,
   }),
 };
 
@@ -36,14 +33,19 @@ const routeOrder: Record<string, number> = {
   "/work": 1,
   "/lab": 2,
   "/about": 3,
-  "/contact": 4,
-  "/now": 5,
+  "/services": 4,
+  "/contact": 5,
+  "/now": 6,
 };
 
 export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const currentOrder = routeOrder[pathname] ?? 99;
-  const direction = currentOrder;
+  const reduceMotion = useReducedMotion();
+  const direction = routeOrder[pathname] ?? 99;
+
+  if (reduceMotion) {
+    return <>{children}</>;
+  }
 
   return (
     <AnimatePresence mode="wait" custom={direction}>
