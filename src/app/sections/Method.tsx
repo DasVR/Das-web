@@ -44,48 +44,51 @@ const steps: {
 
 export function Method() {
   return (
-    <section className="border-t border-neutral-900 px-6 py-24 md:px-12 md:py-32 lg:px-24">
+    <section
+      id="method"
+      className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
+    >
       <SectionHeader label="The Method" />
 
-      <div className="relative max-w-4xl">
+      <ol className="relative mx-auto max-w-3xl list-none p-0">
+        {/* Vertical path linking 01 → 04 */}
         <div
-          className="pointer-events-none absolute left-[1.15rem] top-3 hidden h-[calc(100%-1.5rem)] w-px bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent md:block"
+          className="pointer-events-none absolute bottom-4 left-[1.35rem] top-4 w-px bg-gradient-to-b from-orange-500/50 via-neutral-700 to-neutral-800 md:left-[1.6rem]"
           aria-hidden="true"
         />
 
-        <ol className="grid list-none gap-12 p-0 md:grid-cols-2 md:gap-x-12 md:gap-y-16">
-          {steps.map((step, i) => {
-            const Icon = step.icon;
-            return (
-              <li key={step.num} className="relative">
-                <AnimatedSection delay={i * 0.1}>
-                  <div className="flex gap-6">
-                    <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-700 bg-[#0a0a0a]">
-                      <Icon
-                        className="h-4 w-4 text-orange-500"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <div>
-                      <div className="mb-2 flex items-baseline gap-3">
-                        <span className="font-mono text-sm text-neutral-600">
-                          {step.num}
-                        </span>
-                        <h3 className="font-display text-xl font-semibold">
-                          {step.title}
-                        </h3>
-                      </div>
-                      <p className="leading-relaxed text-neutral-400">
-                        {step.desc}
-                      </p>
-                    </div>
+        {steps.map((step, i) => {
+          const Icon = step.icon;
+          const isLast = i === steps.length - 1;
+          return (
+            <li key={step.num} className={isLast ? "" : "mb-12 md:mb-14"}>
+              <AnimatedSection delay={i * 0.1}>
+                <div className="relative flex gap-5 md:gap-8">
+                  <div className="relative z-10 flex size-11 shrink-0 items-center justify-center rounded-md border border-neutral-700 bg-[#0a0a0a] md:size-14">
+                    <Icon
+                      className="size-4 text-orange-500 md:size-5"
+                      aria-hidden="true"
+                    />
                   </div>
-                </AnimatedSection>
-              </li>
-            );
-          })}
-        </ol>
-      </div>
+                  <div className="min-w-0 pt-0.5 md:pt-1">
+                    <div className="mb-2 flex items-baseline gap-3">
+                      <span className="font-mono text-2xl font-bold text-neutral-700 md:text-4xl">
+                        {step.num}
+                      </span>
+                      <h3 className="font-display text-lg font-semibold md:text-xl">
+                        {step.title}
+                      </h3>
+                    </div>
+                    <p className="max-w-md text-sm leading-relaxed text-neutral-400 md:text-base">
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
+              </AnimatedSection>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
