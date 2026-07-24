@@ -69,14 +69,22 @@ Dark editorial · computational accents (dots, slash, mono) · cinematic motion 
 
 ## Section inspo checklist (for next design passes)
 
-- [ ] Hero: personal brand + one outcome line + two CTAs
-- [ ] Work: 3–6 stories, mixed industries when available
-- [ ] About: photo optional later; philosophy + who you help (broad SMB)
-- [ ] Services: Web, Brand, Dev, Landing, SEO, UI, Maintenance (+ creative)
-- [ ] Method: keep 4-step journey (universal, not trade-specific)
-- [ ] Contact: email + phone + form; timezone / base city once
-- [ ] Footer: personal wordmark + nav + credits
-- [ ] Optional later: Notes / Experiments for personal depth
+- [x] Hero: personal brand + one outcome line + two CTAs
+- [x] Work: honest stories (this site + experiments + open slot; no fake metrics)
+- [x] About: first person + NOW + tools stack
+- [x] Services: Web, Brand, Dev, Landing, SEO, UI, Maintenance (accordion)
+- [x] Method: 4-step journey + SVG pathLength draw on scroll
+- [x] Contact: email + phone + form; 24h reply; availability; GitHub
+- [x] Footer: personal wordmark + nav + credits
+- [x] Experiments lab strip for personal depth
+
+### v4 pass notes (shipped)
+
+- IA: `Hero → Work → Experiments → About → Gap → Method → Services → Stats → CTA → Contact`
+- Stats: static honesty strip (2024 / 7 offerings / $500+ / FL) — no count-up zeros
+- Motion: TextScramble hero, MagneticButton CTAs, Method path draw, grain-shift, ScrollReveal titles
+- Lenis deferred (CSS smooth scroll only) to keep bundle/feel snappy
+- Cursor: keep snappy expand-on-hover; no WebGL this pass
 
 ---
 

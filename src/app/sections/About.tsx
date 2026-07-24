@@ -3,6 +3,17 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionHeader } from "@/components/SectionHeader";
 
+const tools = [
+  "Next.js",
+  "React",
+  "TypeScript",
+  "Tailwind",
+  "Framer Motion",
+  "Figma",
+  "Git",
+  "Cloudflare",
+];
+
 export function About() {
   return (
     <section
@@ -34,6 +45,17 @@ export function About() {
               bloat — just clean design and code you can grow with.
             </p>
           </div>
+
+          <div className="mt-10 border-t border-neutral-900 pt-8">
+            <p className="mb-3 font-mono text-[10px] tracking-widest text-orange-500/80">
+              NOW
+            </p>
+            <p className="max-w-xl text-sm leading-relaxed text-neutral-400 md:text-base">
+              Shipping this portfolio in public, taking new small-business
+              projects, and expanding the experiments lab (motion, type, and
+              interaction studies).
+            </p>
+          </div>
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
@@ -52,6 +74,23 @@ export function About() {
               </div>
             ))}
           </dl>
+
+          <div className="mt-6">
+            <p className="mb-3 font-mono text-[10px] tracking-widest text-neutral-600">
+              TOOLS
+            </p>
+            <ul className="flex flex-wrap gap-2">
+              {tools.map((tool) => (
+                <li
+                  key={tool}
+                  className="rounded-md border border-neutral-800 px-2.5 py-1 font-mono text-[11px] text-neutral-400"
+                >
+                  {tool}
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <p className="mt-4 font-mono text-[11px] tracking-wide text-neutral-700">
             {"// personal brand · portfolio · services"}
           </p>

@@ -1,97 +1,113 @@
 "use client";
 
-import {
-  Compass,
-  LayoutTemplate,
-  Code2,
-  Rocket,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { AnimatedSection } from "@/components/AnimatedSection";
+import { useRef } from "react";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { SectionHeader } from "@/components/SectionHeader";
+import { AnimatedSection } from "@/components/AnimatedSection";
 
-const steps: {
-  num: string;
-  title: string;
-  desc: string;
-  icon: LucideIcon;
-}[] = [
+const STEPS = [
   {
     num: "01",
-    title: "We uncover your story",
-    desc: "We dig into your brand, surface what makes you irreplaceable, and shape sharp positioning for a site that gets inquiries.",
-    icon: Compass,
+    title: "Discover",
+    body: "We clarify goals, audience, and constraints — what you sell, who you serve, and what success looks like.",
   },
   {
     num: "02",
-    title: "We shape your presence",
-    desc: "With the narrative locked, we design a homepage that signals credibility and gives visitors one clear reason to act.",
-    icon: LayoutTemplate,
+    title: "Design",
+    body: "Structure, visual system, and interaction details that feel intentional on every screen size.",
   },
   {
     num: "03",
-    title: "We build it",
-    desc: "Fast, responsive, SEO-ready development — no page-builder bloat. Clean code that loads and ranks.",
-    icon: Code2,
+    title: "Build",
+    body: "Production-ready Next.js or static delivery: fast loads, clean markup, and content you can update.",
   },
   {
     num: "04",
-    title: "We grow it",
-    desc: "Launch, handoff, and ongoing support. SEO and maintenance so the site keeps working after day one.",
-    icon: Rocket,
+    title: "Launch",
+    body: "Ship, measure, and iterate — SEO basics, analytics hooks, and a clear path for the next release.",
   },
-];
+] as const;
 
 export function Method() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 80%", "end 40%"],
+  });
+  const pathLength = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 28,
+    mass: 0.35,
+  });
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.2, 1], [0, 0.5, 0.9]);
+  const glowTop = useTransform(scrollYProgress, [0, 1], ["0%", "96%"]);
+
   return (
     <section
+      ref={sectionRef}
       id="method"
       className="border-t border-neutral-900 px-6 py-20 md:px-12 md:py-32 lg:px-24"
     >
-      <SectionHeader
-        label="Method"
-        index="03"
-        title="Project journey."
-      />
+      <div className="mx-auto max-w-6xl">
+        <SectionHeader index="03" label="Method" title="How we work" />
 
-      <ol className="relative mx-auto max-w-3xl list-none p-0">
-        <div
-          className="pointer-events-none absolute bottom-4 left-[1.35rem] top-4 w-px bg-gradient-to-b from-orange-500/50 via-neutral-700 to-neutral-800 md:left-[1.6rem]"
-          aria-hidden="true"
-        />
+        <div className="relative mt-4 grid gap-10 md:grid-cols-[auto_1fr] md:gap-16">
+          <div
+            className="relative mx-auto hidden h-full min-h-[28rem] w-12 md:block"
+            aria-hidden="true"
+          >
+            <svg
+              className="absolute inset-0 h-full w-full overflow-visible"
+              viewBox="0 0 48 448"
+              fill="none"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M24 8 V440"
+                stroke="rgba(255,255,255,0.08)"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <motion.path
+                d="M24 8 V440"
+                stroke="#f97316"
+                strokeWidth="2"
+                strokeLinecap="round"
+                style={{ pathLength }}
+              />
+            </svg>
+            <motion.div
+              className="absolute left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-orange-500 shadow-[0_0_16px_rgba(249,115,22,0.55)]"
+              style={{
+                top: glowTop,
+                opacity: glowOpacity,
+              }}
+            />
+          </div>
 
-        {steps.map((step, i) => {
-          const Icon = step.icon;
-          const isLast = i === steps.length - 1;
-          return (
-            <li key={step.num} className={isLast ? "" : "mb-12 md:mb-14"}>
-              <AnimatedSection delay={i * 0.1}>
-                <div className="relative flex gap-5 md:gap-8">
-                  <div className="relative z-10 flex size-11 shrink-0 items-center justify-center rounded-md border border-neutral-700 bg-[#0a0a0a] md:size-14">
-                    <Icon
-                      className="size-4 text-orange-500 md:size-5"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div className="min-w-0 pt-0.5 md:pt-1">
-                    <div className="mb-2 flex flex-wrap items-baseline gap-3">
-                      <span className="font-mono text-sm text-neutral-600">
-                        {step.num}
-                      </span>
-                      <h3 className="font-display text-xl font-semibold md:text-2xl">
+          <ol className="space-y-0">
+            {STEPS.map((step, i) => (
+              <li key={step.num}>
+                <AnimatedSection delay={i * 0.06}>
+                  <div className="grid gap-3 border-b border-neutral-800 py-8 md:grid-cols-[5rem_1fr] md:gap-8 md:py-10">
+                    <span className="font-mono text-sm text-orange-500">
+                      {step.num}
+                    </span>
+                    <div>
+                      <h3 className="font-display text-2xl font-semibold tracking-tight text-white md:text-3xl">
                         {step.title}
                       </h3>
+                      <p className="mt-3 max-w-xl text-base leading-relaxed text-neutral-400">
+                        {step.body}
+                      </p>
                     </div>
-                    <p className="max-w-md text-sm leading-relaxed text-neutral-400 md:text-base">
-                      {step.desc}
-                    </p>
                   </div>
-                </div>
-              </AnimatedSection>
-            </li>
-          );
-        })}
-      </ol>
+                </AnimatedSection>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
     </section>
   );
 }

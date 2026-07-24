@@ -2,8 +2,8 @@
 
 const links = [
   { href: "#work", label: "Work" },
+  { href: "#experiments", label: "Lab" },
   { href: "#about", label: "About" },
-  { href: "#method", label: "Method" },
   { href: "#services", label: "Services" },
   { href: "#contact", label: "Contact" },
 ] as const;

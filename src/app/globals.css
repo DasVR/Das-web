@@ -67,6 +67,28 @@
   }
 }
 
+@keyframes grain-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-8%, -6%);
+  }
+  100% {
+    transform: translate(-3%, -10%);
+  }
+}
+
+.grain-anim {
+  animation: grain-shift 8s steps(6) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain-anim {
+    animation: none;
+  }
+}
+
 /* Soft vignette for cinematic A24 feel */
 body::after {
   content: "";

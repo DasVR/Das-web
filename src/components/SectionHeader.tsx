@@ -1,16 +1,16 @@
+"use client";
+
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { cn } from "@/lib/utils";
 
 type SectionHeaderProps = {
-  /** Section name without slash, e.g. "Work" */
   label: string;
   className?: string;
-  /** Index like "01" → renders "/ Work (01)" */
   index?: string;
-  /** Optional larger section title under the slash label */
   title?: string;
 };
 
-/** mainframe: "/ About us (01)" */
+/** mainframe: "/ About (01)" + scroll title reveal */
 export function SectionHeader({
   label,
   className,
@@ -24,14 +24,12 @@ export function SectionHeader({
       <div className="flex items-baseline gap-2 font-mono text-sm tracking-wide text-neutral-500 md:text-base">
         <span className="text-orange-500">/</span>
         <h2 className="text-neutral-300">{clean}</h2>
-        {index ? (
-          <span className="text-neutral-600">({index})</span>
-        ) : null}
+        {index ? <span className="text-neutral-600">({index})</span> : null}
       </div>
       {title ? (
-        <p className="mt-4 max-w-3xl font-display text-3xl font-bold tracking-tight text-white md:text-5xl">
+        <ScrollReveal className="mt-4 max-w-3xl font-display text-3xl font-bold tracking-tight md:text-5xl">
           {title}
-        </p>
+        </ScrollReveal>
       ) : null}
     </div>
   );

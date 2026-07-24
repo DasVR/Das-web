@@ -4,7 +4,9 @@ import { ArrowUpRight, Plus } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { AmbientDots } from "@/components/AmbientDots";
 import { DotMatrix } from "@/components/DotMatrix";
+import { MagneticButton } from "@/components/MagneticButton";
 import { SiteNav } from "@/components/SiteNav";
+import { TextScramble } from "@/components/TextScramble";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 
@@ -33,11 +35,24 @@ export function Hero() {
         </div>
 
         <h1 className="mb-6 font-display text-[2.85rem] font-bold leading-[0.92] tracking-tight sm:text-5xl md:mb-8 md:text-7xl lg:text-[5.75rem]">
-          Websites that
-          <br />
-          speak your
-          <br />
-          brand&apos;s voice.
+          <TextScramble
+            text="Websites that"
+            as="span"
+            className="block"
+            delay={150}
+          />
+          <TextScramble
+            text="speak your"
+            as="span"
+            className="block"
+            delay={320}
+          />
+          <TextScramble
+            text="brand's voice."
+            as="span"
+            className="block"
+            delay={480}
+          />
         </h1>
 
         <p className="max-w-xl text-base leading-relaxed text-neutral-400 md:text-xl">
@@ -47,9 +62,9 @@ export function Hero() {
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3 md:gap-4">
-          <a
+          <MagneticButton
             href="#work"
-            className="group inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 md:px-6 md:text-base"
+            className="group items-center gap-2 rounded-md bg-white px-5 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 md:px-6 md:text-base"
           >
             <span className="relative overflow-hidden">
               <span className="block transition-transform duration-300 group-hover:-translate-y-full">
@@ -60,13 +75,13 @@ export function Hero() {
               </span>
             </span>
             <ArrowUpRight className="size-4" aria-hidden="true" />
-          </a>
-          <a
+          </MagneticButton>
+          <MagneticButton
             href="#contact"
-            className="inline-flex items-center gap-2 rounded-md border border-neutral-700 px-5 py-3 text-sm transition-colors hover:border-orange-500/70 hover:text-orange-400 md:px-6 md:text-base"
+            className="items-center gap-2 rounded-md border border-neutral-700 px-5 py-3 text-sm transition-colors hover:border-orange-500/70 hover:text-orange-400 md:px-6 md:text-base"
           >
             Start a Project
-          </a>
+          </MagneticButton>
         </div>
       </motion.div>
 

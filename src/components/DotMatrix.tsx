@@ -155,11 +155,11 @@ export function DotMatrix({
               cy={dot.cy}
               r={radius}
               fill="currentColor"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0.25, 1, 0.55, 1] }}
+              initial={{ opacity: 0, scale: 0.4 }}
+              animate={{ opacity: [0.2, 1, 0.5, 1], scale: 1 }}
               transition={{
-                duration: 2.8,
-                delay: dot.delay,
+                duration: 2.6,
+                delay: dot.delay * 0.85,
                 repeat: Infinity,
                 repeatType: "reverse",
                 ease: [0.25, 0.1, 0.25, 1],

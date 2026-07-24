@@ -2,6 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { MagneticButton } from "@/components/MagneticButton";
 
 export function CTA() {
   return (
@@ -18,9 +19,9 @@ export function CTA() {
           Whether you need a full site, a brand refresh, or a sharp landing page —
           let&apos;s make something that works for your business.
         </p>
-        <a
+        <MagneticButton
           href="#contact"
-          className="group mt-8 inline-flex items-center gap-3 rounded-md bg-white px-6 py-3.5 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
+          className="group mt-8 items-center gap-3 rounded-md bg-white px-6 py-3.5 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
         >
           <span className="relative overflow-hidden">
             <span className="block transition-transform duration-300 group-hover:-translate-y-full">
@@ -31,7 +32,7 @@ export function CTA() {
             </span>
           </span>
           <ArrowUpRight className="size-4" aria-hidden="true" />
-        </a>
+        </MagneticButton>
       </AnimatedSection>
     </section>
   );

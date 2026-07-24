@@ -9,8 +9,8 @@ import { SectionHeader } from "@/components/SectionHeader";
 
 const footerLinks = [
   { href: "#work", label: "/Work" },
+  { href: "#experiments", label: "/Lab" },
   { href: "#about", label: "/About" },
-  { href: "#method", label: "/Method" },
   { href: "#services", label: "/Services" },
   { href: "#contact", label: "/Contact" },
   { href: "mailto:hello@dasdev.net", label: "Email" },
@@ -39,6 +39,16 @@ export function Contact() {
 
       <div className="grid max-w-5xl gap-12 lg:grid-cols-2 lg:gap-16">
         <AnimatedSection>
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-md border border-orange-500/30 bg-orange-500/10 px-2.5 py-1 font-mono text-[10px] tracking-widest text-orange-400">
+              <span className="size-1.5 rounded-full bg-orange-400" aria-hidden="true" />
+              TAKING NEW PROJECTS
+            </span>
+            <span className="font-mono text-[10px] tracking-widest text-neutral-600">
+              USUALLY REPLY WITHIN 24H
+            </span>
+          </div>
+
           <p className="mb-3 font-mono text-xs tracking-widest text-orange-500/80">
             $ open inbox — hello@dasdev.net
           </p>
@@ -61,11 +71,20 @@ export function Contact() {
               <Phone className="size-5" aria-hidden="true" />
               (727) 507-1194
             </a>
+            <a
+              href="https://github.com/DasVR"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 text-lg transition-colors hover:text-orange-400"
+            >
+              <ArrowUpRight className="size-5" aria-hidden="true" />
+              github.com/DasVR
+            </a>
           </div>
 
           <p className="mt-10 text-sm leading-relaxed text-neutral-600 md:mt-12">
-            Based in Florida. Working with small businesses and independents
-            wherever you are. Typical projects: $500–$1,500+.
+            Based in Florida · working with clients wherever you are. Typical
+            projects: $500–$1,500+.
           </p>
         </AnimatedSection>
 
