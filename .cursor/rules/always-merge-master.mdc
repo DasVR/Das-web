@@ -1,0 +1,13 @@
+---
+description: Always land work on master for this portfolio repo
+alwaysApply: true
+---
+
+# Always merge to master
+
+For this project (Das-web / dasdev.net portfolio):
+
+- After finishing a feature branch, **merge into `master` and push** without waiting to be asked.
+- Prefer `master` as the integration branch (not only opening a PR and stopping).
+- Feature branches may still be used for work, but shipping means: merge → push `origin/master`.
+- Do not leave completed work only on a feature branch.
