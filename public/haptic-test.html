@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haptic Test</title>
+<style>
+body { font-family: system-ui; padding: 40px 20px; background: #0a0a0a; color: white; }
+button, input { font-size: 18px; padding: 16px 24px; margin: 8px 0; width: 100%; }
+button { background: #333; color: white; border: none; border-radius: 8px; }
+.result { margin-top: 20px; padding: 16px; background: #1a1a1a; border-radius: 8px; }
+</style>
+</head>
+<body>
+<h2>Haptic Test Page</h2>
+<p>Tap each button. If u feel a buzz, that method works.</p>
+
+<button onclick="testVibrate()">Test navigator.vibrate()</button>
+<button onclick="testSwitch()">Test checkbox switch</button>
+<button onclick="testLabel()">Test label click</button>
+
+<div class="result" id="out"></div>
+
+<input type="checkbox" switch id="s1" style="display:none">
+
+<script>
+function log(msg) {
+  document.getElementById('out').innerHTML += msg + '<br>';
+}
+
+function testVibrate() {
+  if ('vibrate' in navigator) {
+    navigator.vibrate(200);
+    log('navigator.vibrate(200) called — feel anything?');
+  } else {
+    log('navigator.vibrate NOT supported');
+  }
+}
+
+function testSwitch() {
+  const s = document.getElementById('s1');
+  s.checked = !s.checked;
+  setTimeout(() => s.checked = !s.checked, 50);
+  log('toggled hidden switch — feel anything?');
+}
+
+function testLabel() {
+  document.getElementById('s1').parentElement?.click?.();
+  log('label click — feel anything?');
+}
+</script>
+</body>
+</html>
