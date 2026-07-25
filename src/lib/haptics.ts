@@ -1,27 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
-/** iOS Taptic Engine hack — hidden checkbox toggle triggers haptic feedback */
-let iosHapticElement: HTMLInputElement | null = null;
-
-function getIosHapticElement(): HTMLInputElement {
-  if (iosHapticElement) return iosHapticElement;
-
-  const input = document.createElement("input");
-  input.type = "checkbox";
-  input.style.position = "absolute";
-  input.style.opacity = "0";
-  input.style.pointerEvents = "none";
-  input.style.width = "0";
-  input.style.height = "0";
-  document.body.appendChild(input);
-  iosHapticElement = input;
-  return input;
-}
-
-/** Detect iOS Safari */
-function isIOSSafari(): boolean {
+/** iOS Safari user-agent detection */
+export function isIOSSafari(): boolean {
   if (typeof navigator === "undefined") return false;
   const ua = navigator.userAgent;
   return (
@@ -31,53 +13,162 @@ function isIOSSafari(): boolean {
   );
 }
 
-/** Detect Android */
-function isAndroid(): boolean {
+/** Android detection */
+export function isAndroid(): boolean {
   if (typeof navigator === "undefined") return false;
   return /Android/.test(navigator.userAgent);
 }
 
-/** Cross-platform haptic feedback */
+/** Whether this device supports any haptic feedback */
+export function supportsHaptics(): boolean {
+  if (typeof window === "undefined") return false;
+  return isIOSSafari() || (isAndroid() && "vibrate" in navigator);
+}
+
+/**
+ * iOS overlay haptic system.
+ *
+ * iOS 26.5+ patched programmatic checkbox toggling.
+ * The ONLY way to trigger Taptic Engine from web now is:
+ *   1. Create an <input type="checkbox" switch>
+ *   2. Overlay it on top of the interactive element
+ *   3. User physically taps it -> native haptic fires automatically
+ *   4. We handle the change event and forward to the real button
+ */
+const overlayRegistry = new WeakMap<HTMLElement, HTMLInputElement>();
+
+function createIOSSwitchOverlay(target: HTMLElement): HTMLInputElement {
+  const switchEl = document.createElement("input");
+  switchEl.type = "checkbox";
+  switchEl.setAttribute("switch", ""); // iOS native switch = haptic on tap
+  switchEl.setAttribute("aria-hidden", "true");
+  switchEl.tabIndex = -1;
+
+  Object.assign(switchEl.style, {
+    position: "absolute",
+    inset: "0",
+    width: "100%",
+    height: "100%",
+    margin: "0",
+    opacity: "0",
+    clipPath: "inset(0 round 999px)",
+    touchAction: "manipulation",
+    cursor: "pointer",
+    zIndex: "9999",
+  });
+
+  switchEl.style.setProperty("-webkit-tap-highlight-color", "transparent");
+
+  // Ensure parent can contain absolute child
+  const computed = getComputedStyle(target);
+  if (computed.position === "static") {
+    target.style.position = "relative";
+  }
+
+  target.appendChild(switchEl);
+  overlayRegistry.set(target, switchEl);
+
+  return switchEl;
+}
+
+function removeIOSSwitchOverlay(target: HTMLElement) {
+  const existing = overlayRegistry.get(target);
+  if (existing) {
+    existing.remove();
+    overlayRegistry.delete(target);
+  }
+}
+
+/** Attach iOS haptic overlay to a DOM element. Returns cleanup function. */
+export function attachHapticOverlay(
+  target: HTMLElement | null,
+  onActivate?: () => void
+): () => void {
+  if (!target || !isIOSSafari()) return () => {};
+
+  // Remove any existing overlay first
+  removeIOSSwitchOverlay(target);
+
+  const switchEl = createIOSSwitchOverlay(target);
+
+  const handleChange = () => {
+    // Reset checkbox immediately
+    switchEl.checked = false;
+    // Forward to actual handler
+    onActivate?.();
+  };
+
+  const handleClick = (e: Event) => {
+    // Prevent the switch click from bubbling to avoid double-fires
+    e.stopPropagation();
+  };
+
+  switchEl.addEventListener("change", handleChange);
+  switchEl.addEventListener("click", handleClick);
+
+  return () => {
+    switchEl.removeEventListener("change", handleChange);
+    switchEl.removeEventListener("click", handleClick);
+    removeIOSSwitchOverlay(target);
+  };
+}
+
+/** Hook: attach iOS haptic overlay to a ref'd element */
+export function useHapticOverlay<T extends HTMLElement>(
+  onActivate?: () => void
+) {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    return attachHapticOverlay(ref.current, onActivate);
+  }, [onActivate]);
+
+  return ref;
+}
+
+/** Legacy cross-platform trigger (Android + desktop fallback) */
 export function triggerHaptic(
   pattern: number | number[] = 10
 ): void {
-  // iOS — use checkbox toggle hack
-  if (isIOSSafari()) {
-    const input = getIosHapticElement();
-    // Rapid toggle triggers Taptic Engine
-    input.checked = !input.checked;
-    requestAnimationFrame(() => {
-      input.checked = !input.checked;
-    });
-    return;
-  }
+  // iOS — overlays handle haptics automatically via native switch.
+  // This function is a no-op on iOS; real haptics come from the overlay.
+  if (isIOSSafari()) return;
 
-  // Android — use Vibration API
+  // Android — Vibration API
   if (isAndroid() && typeof navigator !== "undefined" && "vibrate" in navigator) {
     navigator.vibrate(pattern);
     return;
   }
 
-  // Desktop — silent fallback, no haptics available
+  // Desktop — silent fallback
 }
 
-/** Hook for components — auto-detects platform and provides haptic function */
+/** Hook: detect platform + provide helpers */
 export function useHaptic() {
-  const isMobile = useRef(false);
+  const state = useRef({
+    ios: false,
+    android: false,
+    supported: false,
+  });
 
   useEffect(() => {
-    isMobile.current = isIOSSafari() || isAndroid();
+    state.current = {
+      ios: isIOSSafari(),
+      android: isAndroid(),
+      supported: supportsHaptics(),
+    };
   }, []);
 
   return {
     trigger: triggerHaptic,
-    isSupported: isMobile.current,
-    isIOS: isIOSSafari(),
-    isAndroid: isAndroid(),
+    isSupported: state.current.supported,
+    isIOS: state.current.ios,
+    isAndroid: state.current.android,
   };
 }
 
-/** Pre-defined haptic patterns */
+/** Pre-defined haptic patterns (Android / Vibration API values) */
 export const HapticPatterns = {
   /** Light tap — nav links, small buttons */
   light: 8,
@@ -97,7 +188,7 @@ export const HapticPatterns = {
   toggle: [6, 20, 6] as number[],
 } as const;
 
-/** Higher-order component wrapper for haptic on click */
+/** Higher-order handler: legacy non-overlay tap (Android/desktop only) */
 export function withHaptic<T extends HTMLElement>(
   handler?: (e: React.MouseEvent<T>) => void,
   pattern: number | number[] = HapticPatterns.light

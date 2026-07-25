@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
-import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
+import { isIOSSafari, triggerHaptic, HapticPatterns } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -19,6 +19,168 @@ const links = [
 const springMask = { type: "spring" as const, stiffness: 320, damping: 30 };
 
 type MaskRect = { left: number; width: number };
+
+/**
+ * iOS Haptic Link
+ *
+ * iOS 26.5+ requires an actual <input type="checkbox" switch> overlay.
+ * When the user physically taps the switch, the native Taptic Engine fires.
+ * We then forward navigation via onChange.
+ */
+function HapticLink({
+  href,
+  onClick,
+  children,
+  className,
+  active,
+}: {
+  href: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+  className?: string;
+  active?: boolean;
+}) {
+  const containerRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Only iOS needs the overlay hack
+    if (!isIOSSafari()) return;
+
+    // Ensure container can hold absolute child
+    const computed = getComputedStyle(container);
+    if (computed.position === "static") {
+      container.style.position = "relative";
+    }
+
+    const switchEl = document.createElement("input");
+    switchEl.type = "checkbox";
+    switchEl.setAttribute("switch", ""); // iOS native switch = haptic on tap
+    switchEl.setAttribute("aria-hidden", "true");
+    switchEl.tabIndex = -1;
+
+    Object.assign(switchEl.style, {
+      position: "absolute",
+      inset: "0",
+      width: "100%",
+      height: "100%",
+      margin: "0",
+      opacity: "0",
+      clipPath: "inset(0 round 999px)",
+      touchAction: "manipulation",
+      cursor: "pointer",
+      zIndex: "9999",
+    });
+
+    switchEl.style.setProperty("-webkit-tap-highlight-color", "transparent");
+    container.appendChild(switchEl);
+
+    const handleChange = () => {
+      switchEl.checked = false; // reset immediately
+      triggerHaptic(HapticPatterns.light); // fallback for Android
+      onClick?.();
+    };
+
+    switchEl.addEventListener("change", handleChange);
+
+    return () => {
+      switchEl.removeEventListener("change", handleChange);
+      switchEl.remove();
+    };
+  }, [href, onClick]);
+
+  return (
+    <Link
+      ref={containerRef}
+      href={href}
+      onClick={(e) => {
+        // Non-iOS: use normal trigger
+        if (!isIOSSafari()) triggerHaptic(HapticPatterns.light);
+        onClick?.();
+      }}
+      className={className}
+      data-active={active ? "true" : undefined}
+    >
+      {children}
+    </Link>
+  );
+}
+
+/** iOS Haptic button overlay for toggles */
+function HapticButton({
+  onClick,
+  children,
+  className,
+  label,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+  className?: string;
+  label?: string;
+}) {
+  const containerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    if (!isIOSSafari()) return;
+
+    const computed = getComputedStyle(container);
+    if (computed.position === "static") {
+      container.style.position = "relative";
+    }
+
+    const switchEl = document.createElement("input");
+    switchEl.type = "checkbox";
+    switchEl.setAttribute("switch", "");
+    switchEl.setAttribute("aria-hidden", "true");
+    switchEl.tabIndex = -1;
+
+    Object.assign(switchEl.style, {
+      position: "absolute",
+      inset: "0",
+      width: "100%",
+      height: "100%",
+      margin: "0",
+      opacity: "0",
+      clipPath: "inset(0 round 999px)",
+      touchAction: "manipulation",
+      cursor: "pointer",
+      zIndex: "9999",
+    });
+
+    switchEl.style.setProperty("-webkit-tap-highlight-color", "transparent");
+    container.appendChild(switchEl);
+
+    const handleChange = () => {
+      switchEl.checked = false;
+      onClick();
+    };
+
+    switchEl.addEventListener("change", handleChange);
+
+    return () => {
+      switchEl.removeEventListener("change", handleChange);
+      switchEl.remove();
+    };
+  }, [onClick]);
+
+  return (
+    <button
+      ref={containerRef}
+      onClick={() => {
+        if (!isIOSSafari()) triggerHaptic(HapticPatterns.medium);
+        onClick();
+      }}
+      className={className}
+      aria-label={label}
+    >
+      {children}
+    </button>
+  );
+}
 
 export function SiteNav() {
   const pathname = usePathname();
@@ -82,16 +244,15 @@ export function SiteNav() {
         )}
       >
         <div className="flex items-center justify-between">
-          <Link
+          <HapticLink
             href="/"
-            className="relative z-50 font-mono text-xs tracking-[0.2em] text-neutral-300 transition-colors hover:text-white"
             onClick={() => {
               if (isOpen) closeMenu();
-              triggerHaptic(HapticPatterns.light);
             }}
+            className="relative z-50 font-mono text-xs tracking-[0.2em] text-neutral-300 transition-colors hover:text-white"
           >
             ARRIQ
-          </Link>
+          </HapticLink>
 
           <div
             ref={listRef}
@@ -114,12 +275,10 @@ export function SiteNav() {
             {links.map((link) => {
               const isActive = pathname === link.href;
               return (
-                <Link
+                <HapticLink
                   key={link.href}
                   href={link.href}
-                  onClick={() => triggerHaptic(HapticPatterns.light)}
-                  onMouseEnter={(e) => trackMask(e.currentTarget)}
-                  onFocus={(e) => trackMask(e.currentTarget)}
+                  active={isActive}
                   className={cn(
                     "relative z-10 px-1.5 py-1 font-mono text-[11px] tracking-widest transition-colors",
                     isActive
@@ -127,7 +286,12 @@ export function SiteNav() {
                       : "text-neutral-500 hover:text-neutral-200"
                   )}
                 >
-                  /{link.label}
+                  <span
+                    onMouseEnter={(e) => trackMask(e.currentTarget)}
+                    onFocus={(e) => trackMask(e.currentTarget)}
+                  >
+                    /{link.label}
+                  </span>
                   {isActive ? (
                     <motion.span
                       layoutId="activeNav"
@@ -139,16 +303,15 @@ export function SiteNav() {
                       }}
                     />
                   ) : null}
-                </Link>
+                </HapticLink>
               );
             })}
           </div>
 
-          <button
+          <HapticButton
             onClick={toggleMenu}
             className="tap-highlight-none relative z-50 flex touch-manipulation flex-col gap-1.5 md:hidden"
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isOpen}
+            label={isOpen ? "Close menu" : "Open menu"}
           >
             <motion.span
               className="block h-px w-5 origin-center bg-neutral-300"
@@ -160,7 +323,7 @@ export function SiteNav() {
               animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? -3 : 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             />
-          </button>
+          </HapticButton>
         </div>
       </nav>
 
@@ -192,10 +355,9 @@ export function SiteNav() {
                       delay: i * 0.06,
                     }}
                   >
-                    <Link
+                    <HapticLink
                       href={link.href}
                       onClick={() => {
-                        triggerHaptic(HapticPatterns.medium);
                         closeMenu();
                       }}
                       className={cn(
@@ -217,7 +379,7 @@ export function SiteNav() {
                         />
                       )}
                       {link.label}
-                    </Link>
+                    </HapticLink>
                   </motion.div>
                 );
               })}
@@ -227,30 +389,26 @@ export function SiteNav() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.35 }}
               >
-                <Link
+                <HapticLink
                   href="/now"
                   onClick={() => {
-                    triggerHaptic(HapticPatterns.light);
                     closeMenu();
                   }}
                   className="font-mono text-xs tracking-widest text-neutral-600 hover:text-orange-400"
                 >
-                  / Now — what I&apos;m doing
-                </Link>
+                  / Now. what I&apos;m doing
+                </HapticLink>
               </motion.div>
             </nav>
 
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.3 }}
+            <HapticButton
               onClick={closeMenu}
               className="tap-highlight-none absolute bottom-8 flex touch-manipulation items-center gap-2 font-mono text-[10px] tracking-widest text-neutral-500"
+              label="Close menu"
             >
               <X className="size-4" />
               CLOSE
-            </motion.button>
+            </HapticButton>
           </motion.div>
         )}
       </AnimatePresence>
