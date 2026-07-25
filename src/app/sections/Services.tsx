@@ -10,37 +10,37 @@ const services = [
   {
     name: "Web Design",
     detail:
-      "Sites that build trust fast — clear story, proof, and a path to inquire. Mobile-first and fast for small businesses of any industry.",
+      "Sites that build trust fast. Clear story, proof, and a path to inquire. Mobile-first and fast for small businesses of any industry.",
     price: "From $500",
   },
   {
     name: "Branding",
     detail:
-      "Identity systems — logo, type, color — so your site, socials, and materials feel like one brand.",
+      "Identity systems: logo, type, color. Your site, socials, and materials should feel like one brand.",
     price: "From $350",
   },
   {
     name: "Development",
     detail:
-      "Custom builds when quality matters. Clean code, performance, and hosting that fits — no bloated page builders.",
+      "Custom builds when quality matters. Clean code, performance, and hosting that fits. No bloated page builders.",
     price: "With design",
   },
   {
     name: "Landing Pages",
     detail:
-      "Focused pages for launches, offers, and campaigns — designed to convert without clutter.",
+      "Focused pages for launches, offers, and campaigns. Designed to convert without clutter.",
     price: "From $400",
   },
   {
     name: "SEO",
     detail:
-      "Titles, structure, meta, and discoverability basics so the right people can find you — local or broader.",
+      "Titles, structure, meta, and discoverability basics so the right people can find you. Local or broader.",
     price: "From $200",
   },
   {
     name: "UI / Product",
     detail:
-      "Interfaces for tools, apps, and product marketing pages — clear UI with the same editorial care.",
+      "Interfaces for tools, apps, and product marketing pages. Clear UI with the same editorial care.",
     price: "Per project",
   },
   {
@@ -59,7 +59,7 @@ export function Services() {
       <SectionHeader
         label="Services"
         index="04"
-        title="What I offer — design, build, and ongoing care."
+        title="What I offer. Design, build, and ongoing care."
         meta={
           <>
             <span className="text-neutral-300">Seven offerings</span>

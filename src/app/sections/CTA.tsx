@@ -16,8 +16,7 @@ export function CTA() {
           <span className="text-neutral-400">blending in?</span>
         </h2>
         <p className="mt-6 max-w-xl text-base text-neutral-400 md:text-lg">
-          Whether you need a full site, a brand refresh, or a sharp landing page —
-          let&apos;s make something that works for your business.
+          Need a full site, a brand refresh, or a landing page that actually converts? Let&apos;s build something that works for your business.
         </p>
         <MagneticButton
           href="/contact"

@@ -64,8 +64,8 @@ export function Hero() {
 
           <p className="max-w-xl text-base leading-relaxed text-neutral-400 md:text-xl">
             Personal portfolio & web design for small businesses and
-            independents. Design, brand, and build — so your presence finally
-            matches what you&apos;ve built.
+            independents. Design, brand, and build. Your presence should finally
+            match what you actually built.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3 md:gap-4">

@@ -20,11 +20,11 @@ const siteUrl = "https://dasdev.net";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Arriq — Personal Portfolio & Web Design for Small Businesses",
+    default: "Arriq. Personal Portfolio & Web Design for Small Businesses",
     template: "%s · Arriq",
   },
   description:
-    "Arriq / Das Web Design — personal portfolio and web design, branding, development, and more for small businesses and independents. Based in Florida, working with clients anywhere.",
+    "Personal portfolio and web design for small businesses and independents. Based in Florida, working with clients anywhere.",
   keywords: [
     "Arriq",
     "Das Web Design",
@@ -41,14 +41,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Arriq — Das Web Design",
-    title: "Arriq — Websites that speak your brand's voice",
+    siteName: "Arriq. Das Web Design",
+    title: "Arriq. Websites that speak your brand's voice",
     description:
-      "Personal portfolio & web design for small businesses and independents. Design, brand, and build — starting around $500.",
+      "Personal portfolio and web design for small businesses and independents. Starting around $500.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arriq — Portfolio & Web Design",
+    title: "Arriq. Portfolio & Web Design",
     description:
       "Personal portfolio and services for small businesses. Based in Florida, working widely.",
   },

@@ -9,7 +9,7 @@ const STEPS = [
   {
     num: "01",
     title: "Discover",
-    body: "I clarify goals, audience, and constraints — what you sell, who you serve, and what success looks like.",
+    body: "I clarify goals, audience, and constraints. What you sell, who you serve, and what success looks like.",
   },
   {
     num: "02",
@@ -24,7 +24,7 @@ const STEPS = [
   {
     num: "04",
     title: "Launch",
-    body: "Ship, measure, and iterate — SEO basics, analytics hooks, and a clear path for the next release.",
+    body: "Ship, measure, and iterate. SEO basics, analytics hooks, and a clear path for the next release.",
   },
 ] as const;
 

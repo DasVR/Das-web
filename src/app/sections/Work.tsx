@@ -10,7 +10,7 @@ export function Work() {
       <SectionHeader
         label="Work"
         index="01"
-        title="Selected stories — honest work, no fake metrics."
+        title="Selected stories. Honest work, no fake metrics."
       />
 
       <div className="flex flex-col gap-4 md:gap-5">

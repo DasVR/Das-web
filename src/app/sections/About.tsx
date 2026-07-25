@@ -35,14 +35,14 @@ export function About() {
               like the people behind them.
             </p>
             <p>
-              I work with small businesses and independents across industries —
+              I work with small businesses and independents across industries:
               consultants, shops, hospitality, creators, service businesses, and
               more. If you need a presence that looks legit and gets inquiries,
               that&apos;s the work.
             </p>
             <p>
               Based in Florida. Happy to collaborate remotely. No page-builder
-              bloat — just clean design and code you can grow with.
+              bloat. Just clean design and code you can grow with.
             </p>
           </div>
 
