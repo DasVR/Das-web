@@ -36,3 +36,6 @@ yarn-error.log*
 next-env.d.ts
 dist/
 *.log
+
+# deno lockfile is scoped to supabase/functions, not the repo root
+/deno.lock
