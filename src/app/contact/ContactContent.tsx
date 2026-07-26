@@ -5,7 +5,13 @@ import { ArrowUpRight, Mail, Phone } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionHeader } from "@/components/SectionHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Turnstile, isTurnstileEnabled } from "@/components/Turnstile";
 import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
+import {
+  functionsUrl,
+  isSupabaseConfigured,
+  supabaseAnonKey,
+} from "@/lib/supabase";
 
 const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID;
 
@@ -34,12 +40,18 @@ export function ContactContent() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle"
   );
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
+  /**
+   * Prefers the submit-lead Edge Function, which verifies Turnstile and lands
+   * the enquiry in the admin Leads view. Falls back to Formspree, then to a
+   * mailto, so the form still works before the backend is provisioned.
+   */
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     triggerHaptic(HapticPatterns.medium);
 
-    if (!FORMSPREE_ID) {
+    if (!isSupabaseConfigured && !FORMSPREE_ID) {
       const subject = encodeURIComponent(
         `Project inquiry from ${name || "website"}`
       );
@@ -50,15 +62,30 @@ export function ContactContent() {
       return;
     }
 
+    if (isSupabaseConfigured && isTurnstileEnabled && !captchaToken) {
+      setStatus("error");
+      return;
+    }
+
     setStatus("sending");
+
+    const endpoint = isSupabaseConfigured
+      ? functionsUrl("submit-lead")
+      : `https://formspree.io/f/${FORMSPREE_ID}`;
+
     try {
-      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          ...(isSupabaseConfigured ? { apikey: supabaseAnonKey } : {}),
         },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify(
+          isSupabaseConfigured
+            ? { name, email, message, turnstile_token: captchaToken }
+            : { name, email, message }
+        ),
       });
       if (!res.ok) throw new Error("send failed");
       setStatus("sent");
@@ -226,6 +253,7 @@ export function ContactContent() {
                   className="w-full resize-y rounded-md border border-neutral-800 bg-[#0a0a0a] px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-700 focus:border-neutral-500"
                 />
               </div>
+              {isSupabaseConfigured && <Turnstile onVerify={setCaptchaToken} />}
               <button
                 type="submit"
                 disabled={status === "sending"}
@@ -245,9 +273,11 @@ export function ContactContent() {
                 </p>
               ) : null}
               <p className="text-xs text-neutral-600">
-                {FORMSPREE_ID
-                  ? "Sends via Formspree to hello@dasdev.net."
-                  : "Opens your email client with a draft to hello@dasdev.net."}
+                {isSupabaseConfigured
+                  ? "Goes straight to my inbox and my leads board."
+                  : FORMSPREE_ID
+                    ? "Sends via Formspree to hello@dasdev.net."
+                    : "Opens your email client with a draft to hello@dasdev.net."}
               </p>
             </form>
           </AnimatedSection>
