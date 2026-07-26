@@ -141,10 +141,15 @@ export const services: Service[] = [
 
 export const serviceCount = services.length;
 
-export function getService(id: ServiceId): Service | undefined {
+export function getService(id: string): Service | undefined {
   return services.find((s) => s.id === id);
 }
 
-export function getServiceName(id: ServiceId): string {
+/**
+ * Service ids are stored as plain text in the database so the catalog can grow
+ * without a migration, which means a stored value may not match this list. Fall
+ * back to the raw id rather than rendering nothing.
+ */
+export function getServiceName(id: string): string {
   return getService(id)?.name ?? id;
 }

@@ -1,129 +1,30 @@
-import type { ServiceId } from "@/lib/services";
+import { getSupabase } from "@/lib/supabase";
+import type {
+  CarePlanRow,
+  ClientRow,
+  FileRow,
+  MessageRow,
+  ProjectRow,
+  ProjectStatus,
+  UpdateRow,
+} from "@/lib/database.types";
 
-export type ProjectStatus = "live" | "in progress" | "in review" | "queued";
+export type { ProjectStatus };
 
-export type DashboardProject = {
-  id: string;
-  name: string;
-  url: string;
-  status: ProjectStatus;
-  /** Services active on this engagement */
-  services: ServiceId[];
-  industry: string;
-  note?: string;
-};
-
-export type DashboardUpdate = {
-  id: string;
-  text: string;
-  done: boolean;
-  date: string;
-  projectId?: string;
-};
-
-export type CarePlan = {
-  active: boolean;
-  plan: string;
-  renews: string;
-  included: string[];
+/** A project plus the update items belonging to it. */
+export type ProjectWithUpdates = ProjectRow & {
+  updates: UpdateRow[];
 };
 
 export type ClientWorkspace = {
-  clientId: string;
-  businessName: string;
-  contactName: string;
-  industry: string;
-  since: string;
-  projects: DashboardProject[];
-  updates: DashboardUpdate[];
-  care: CarePlan;
-  /** Service ids the client has engaged historically or currently */
-  engagedServices: ServiceId[];
+  client: ClientRow;
+  projects: ProjectWithUpdates[];
+  care: CarePlanRow | null;
+  messages: MessageRow[];
+  files: FileRow[];
 };
 
-/**
- * Demo workspace for the static client portal scaffold.
- * Replace with real auth + per-client data when a backend lands.
- * Industries stay deliberately broad (not trades-only).
- */
-export const demoWorkspace: ClientWorkspace = {
-  clientId: "demo-northline",
-  businessName: "Northline Studio",
-  contactName: "Jordan",
-  industry: "Creative studio",
-  since: "2026",
-  engagedServices: [
-    "web-design",
-    "branding",
-    "content",
-    "hosting-launch",
-    "maintenance",
-  ],
-  projects: [
-    {
-      id: "proj-site",
-      name: "Northline marketing site",
-      url: "https://example.com/northline",
-      status: "live",
-      services: ["web-design", "development", "hosting-launch"],
-      industry: "Creative studio",
-      note: "Primary public site",
-    },
-    {
-      id: "proj-brand",
-      name: "Identity refresh",
-      url: "#",
-      status: "in review",
-      services: ["branding", "creative"],
-      industry: "Creative studio",
-      note: "Logo + type system",
-    },
-    {
-      id: "proj-launch",
-      name: "Spring offer landing page",
-      url: "#",
-      status: "in progress",
-      services: ["landing-pages", "content", "seo"],
-      industry: "Creative studio",
-    },
-  ],
-  updates: [
-    {
-      id: "u1",
-      text: "Review brand mark options for Identity refresh",
-      done: false,
-      date: "Jul 25",
-      projectId: "proj-brand",
-    },
-    {
-      id: "u2",
-      text: "Approve spring offer headline copy",
-      done: false,
-      date: "Jul 24",
-      projectId: "proj-launch",
-    },
-    {
-      id: "u3",
-      text: "Launch checklist: DNS + SSL confirmed",
-      done: true,
-      date: "Jul 18",
-      projectId: "proj-site",
-    },
-  ],
-  care: {
-    active: true,
-    plan: "Maintenance",
-    renews: "Aug 1",
-    included: [
-      "Content tweaks",
-      "Uptime checks",
-      "Small fixes",
-      "Priority reply",
-    ],
-  },
-};
-
-/** Example industries the portal is built to support (marketing + ops). */
+/** Industries the portal is built to serve. Deliberately broad, not one vertical. */
 export const supportedIndustries = [
   "Professional services",
   "Retail & makers",
@@ -135,19 +36,16 @@ export const supportedIndustries = [
   "Early startups",
 ] as const;
 
-export const DASH_AUTH_KEY = "dash_auth";
-export const DASH_CLIENT_KEY = "dash_client";
-
-export function projectStatusCounts(projects: DashboardProject[]) {
-  const counts = {
+export function projectStatusCounts(projects: ProjectRow[]) {
+  const counts: Record<ProjectStatus, number> = {
     live: 0,
     "in progress": 0,
     "in review": 0,
     queued: 0,
-  } satisfies Record<ProjectStatus, number>;
+  };
 
-  for (const p of projects) {
-    counts[p.status] += 1;
+  for (const project of projects) {
+    counts[project.status] += 1;
   }
 
   return counts;
@@ -164,8 +62,139 @@ export function statusBadgeClass(status: ProjectStatus): string {
     case "queued":
       return "bg-neutral-500/10 text-neutral-400";
     default: {
-      const _exhaustive: never = status;
-      return _exhaustive;
+      const exhaustive: never = status;
+      return exhaustive;
     }
   }
+}
+
+export function formatDate(value: string | null): string {
+  if (!value) return "—";
+  return new Date(value).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+export function formatBytes(bytes: number | null): string {
+  if (!bytes) return "—";
+  const units = ["B", "KB", "MB", "GB"];
+  const exponent = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1
+  );
+  const value = bytes / 1024 ** exponent;
+  return `${value.toFixed(exponent === 0 ? 0 : 1)} ${units[exponent]}`;
+}
+
+/**
+ * Loads the signed-in client's workspace.
+ *
+ * No client_id filter is applied: RLS scopes every one of these tables to the
+ * caller's own client, so a filter here would be cosmetic. An admin calling
+ * this would see all rows, which is why the admin pages use their own queries.
+ */
+export async function fetchWorkspace(): Promise<ClientWorkspace | null> {
+  const supabase = getSupabase();
+
+  const { data: client, error: clientError } = await supabase
+    .from("clients")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
+
+  if (clientError) throw clientError;
+  if (!client) return null;
+
+  const [projects, care, messages, files] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("*")
+      .eq("client_id", client.id)
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("care_plans")
+      .select("*")
+      .eq("client_id", client.id)
+      .maybeSingle(),
+    supabase
+      .from("messages")
+      .select("*")
+      .eq("client_id", client.id)
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("files")
+      .select("*")
+      .eq("client_id", client.id)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  if (projects.error) throw projects.error;
+
+  const projectIds = (projects.data ?? []).map((project) => project.id);
+  let updates: UpdateRow[] = [];
+
+  if (projectIds.length > 0) {
+    const { data, error } = await supabase
+      .from("updates")
+      .select("*")
+      .in("project_id", projectIds)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    updates = data ?? [];
+  }
+
+  return {
+    client,
+    projects: (projects.data ?? []).map((project) => ({
+      ...project,
+      updates: updates.filter((update) => update.project_id === project.id),
+    })),
+    care: care.data ?? null,
+    messages: messages.data ?? [],
+    files: files.data ?? [],
+  };
+}
+
+export function allUpdates(workspace: ClientWorkspace): UpdateRow[] {
+  return workspace.projects.flatMap((project) => project.updates);
+}
+
+/** Posts a message from the client. Provenance is set by database trigger. */
+export async function sendClientMessage(
+  clientId: string,
+  body: string,
+  serviceId?: string
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from("messages")
+    .insert({ client_id: clientId, body, service_id: serviceId ?? null });
+  if (error) throw error;
+}
+
+export async function acknowledgeUpdate(updateId: string): Promise<void> {
+  const { error } = await getSupabase()
+    .from("updates")
+    .update({ acknowledged_at: new Date().toISOString() })
+    .eq("id", updateId);
+  if (error) throw error;
+}
+
+export async function markMessagesRead(clientId: string): Promise<void> {
+  const { error } = await getSupabase()
+    .from("messages")
+    .update({ read_at: new Date().toISOString() })
+    .eq("client_id", clientId)
+    .is("read_at", null)
+    .eq("from_admin", true);
+  if (error) throw error;
+}
+
+/** Files live in a private bucket; hand out short-lived signed URLs only. */
+export async function signedFileUrl(path: string): Promise<string | null> {
+  const { data, error } = await getSupabase()
+    .storage.from("client-files")
+    .createSignedUrl(path, 60);
+  if (error) return null;
+  return data.signedUrl;
 }

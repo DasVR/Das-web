@@ -36,16 +36,19 @@ const routeOrder: Record<string, number> = {
   "/services": 4,
   "/contact": 5,
   "/now": 6,
-  "/dashboard": 99,
-  "/dashboard/login": 99,
 };
+
+/** Portal routes are a tool, not a narrative; sliding between them feels wrong. */
+const portalPrefixes = ["/dashboard", "/admin"];
 
 export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
   const direction = routeOrder[pathname] ?? 99;
 
-  if (reduceMotion) {
+  const isPortal = portalPrefixes.some((prefix) => pathname.startsWith(prefix));
+
+  if (reduceMotion || isPortal) {
     return <>{children}</>;
   }
 

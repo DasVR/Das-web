@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "Client Dashboard",
-  description: "Private client workspace for DasDev projects and care plans.",
+  title: "Admin",
+  description: "DasDev admin dashboard.",
   robots: { index: false, follow: false },
 };
 
-export default function DashboardLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
