@@ -9,7 +9,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: privatePaths.map((path) => `${path}/`),
+        // No trailing slash: "/dashboard/" would leave /dashboard itself and
+        // the /dashboard.txt RSC payload crawlable. As a bare prefix this
+        // covers the route, its children, and the payloads beside them.
+        disallow: privatePaths,
       },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),
