@@ -2,20 +2,24 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { RepoCard } from "@/components/RepoCard";
 import { getLabRepos } from "@/lib/github";
+import { BreadcrumbJsonLd } from "@/components/StructuredData";
+import { pageMetadata } from "@/lib/site";
 import { LabStudies } from "./LabStudies";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Lab",
   description:
     "Craft studies and open-source repositories — motion, tooling, and interaction experiments in public.",
-};
+  path: "/lab",
+});
 
 export default async function LabPage() {
   const repos = await getLabRepos();
   const live = repos.filter((repo) => !repo.stale).length;
 
   return (
-    <main className="min-h-screen">
+    <main id="main" className="min-h-screen">
+      <BreadcrumbJsonLd name="Lab" path="/lab" />
       <section className="px-6 pb-16 pt-32 md:px-12 md:pb-20 md:pt-40 lg:px-24">
         <SectionHeader
           label="Lab"

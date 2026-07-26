@@ -7,7 +7,7 @@ import { GrainOverlay } from "@/components/GrainOverlay";
 
 export default function NotFound() {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] text-white px-6">
+    <main id="main" className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] text-white px-6">
       <GrainOverlay />
 
       <motion.div
