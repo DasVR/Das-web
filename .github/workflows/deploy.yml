@@ -9,9 +9,23 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger deploy via webhook
+      - name: Trigger deploy via signed webhook
+        env:
+          DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
         run: |
-          curl -X POST https://webhook.dasdev.net/deploy \
-            -H "X-Deploy-Token: das-web-autodeploy-2026" \
-            -H "Content-Length: 0" \
+          if [ -z "$DEPLOY_SECRET" ]; then
+            echo "DEPLOY_SECRET repository secret is not set."
+            exit 1
+          fi
+
+          body="{\"timestamp\":$(date +%s),\"sha\":\"${GITHUB_SHA}\"}"
+          signature=$(printf '%s' "$body" \
+            | openssl dgst -sha256 -hmac "$DEPLOY_SECRET" \
+            | awk '{print $2}')
+
+          curl -sS -X POST https://webhook.dasdev.net/deploy \
+            -H "Content-Type: application/json" \
+            -H "X-Deploy-Signature: ${signature}" \
+            --data "$body" \
+            --fail-with-body \
             --max-time 30
