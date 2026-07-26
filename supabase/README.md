@@ -20,6 +20,8 @@ functions/
   submit-lead/            contact form -> leads (verifies Turnstile)
   invite-client/          create client + invite user by email
   send-message/           admin message + email notification
+  notify-update/          email a client when an update needs their attention
+  _shared/lib.ts          auth, CORS, Turnstile, Resend, input validation
 tests/
   run-rls-tests.sh        runs the suite against a throwaway local Postgres
   rls_test.sql            56 assertions, each phrased as an attack
@@ -67,8 +69,11 @@ Asserting only for exceptions would silently pass a real breach.
 ```bash
 supabase link --project-ref <ref>
 supabase db push
-supabase functions deploy submit-lead invite-client send-message
+supabase functions deploy submit-lead invite-client send-message notify-update
 ```
+
+See `cursor-research/security.md` for the threat model, key inventory, and
+rotation runbook.
 
 ## Bootstrapping the first admin
 
