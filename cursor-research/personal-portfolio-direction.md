@@ -7,7 +7,7 @@ Status: **Active north star** (supersedes trade-only / Largo-only framing)
 
 ## Who this site is for now
 
-**Arriq / Das Web Design** is a **personal website + portfolio + service offering**.
+**DasDev** (founded by Arriq) is a **personal website + portfolio + service offering**.
 
 Not a niche “plumber websites only” shop. Not a faceless agency.
 
@@ -100,7 +100,7 @@ Trades remain *examples*, not the category label.
 ## Copy framework (use on site)
 
 ### Hero
-- Brand: ARRIQ (DotMatrix)
+- Brand: DASDEV (DotMatrix); founder: Arriq
 - Headline: keep strong / editorial (“Websites that speak your brand’s voice.” or iterate)
 - Sub: small businesses & independents · design + build · based in Florida, working widely
 - CTAs: View Work · Start a Project
