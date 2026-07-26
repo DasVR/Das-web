@@ -21,6 +21,7 @@ export function AboutContent() {
     <main id="main" className="min-h-screen">
       <section className="px-6 pb-20 pt-32 md:px-12 md:pb-32 md:pt-40 lg:px-24">
         <SectionHeader
+          titleAs="h1"
           label="About"
           index="02"
           title="Designer & builder. Personal work, client work, clear services."

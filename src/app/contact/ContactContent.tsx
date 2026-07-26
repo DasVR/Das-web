@@ -101,6 +101,7 @@ export function ContactContent() {
     <main id="main" className="min-h-screen">
       <section className="px-6 pb-20 pt-32 md:px-12 md:pb-32 md:pt-40 lg:px-24">
         <SectionHeader
+          titleAs="h1"
           label="Contact"
           index="05"
           title="Tell me your story."
@@ -131,9 +132,9 @@ export function ContactContent() {
             <p className="mb-3 font-mono text-xs tracking-widest text-orange-500/80">
               $ open inbox — hello@dasdev.net
             </p>
-            <h3 className="mb-6 font-display text-3xl font-bold tracking-tight md:mb-8 md:text-5xl">
+            <h2 className="mb-6 font-display text-3xl font-bold tracking-tight md:mb-8 md:text-5xl">
               Ready when you are.
-            </h3>
+            </h2>
 
             <div className="flex flex-col gap-4">
               <a

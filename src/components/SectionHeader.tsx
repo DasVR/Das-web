@@ -9,6 +9,11 @@ type SectionHeaderProps = {
   className?: string;
   index?: string;
   title?: string;
+  /**
+   * Heading level for `title`. Page-level headers use "h1"; a header used
+   * partway down a page that already has an h1 uses "h2".
+   */
+  titleAs?: "h1" | "h2";
   /** Right-rail meta — keeps wide screens from feeling half-empty */
   meta?: ReactNode;
 };
@@ -19,21 +24,27 @@ export function SectionHeader({
   className,
   index,
   title,
+  titleAs = "h2",
   meta,
 }: SectionHeaderProps) {
   const clean = label.replace(/^\//, "").trim();
 
   return (
     <div className={cn("mb-12 md:mb-16", className)}>
-      <div className="flex items-baseline gap-2 font-mono text-sm tracking-wide text-neutral-500 md:text-base">
+      {/* Eyebrow, not a heading: the visible page title below carries the
+          document outline. */}
+      <p className="flex items-baseline gap-2 font-mono text-sm tracking-wide text-neutral-500 md:text-base">
         <span className="text-orange-500">/</span>
-        <h2 className="text-neutral-300">{clean}</h2>
+        <span className="text-neutral-300">{clean}</span>
         {index ? <span className="text-neutral-600">({index})</span> : null}
-      </div>
+      </p>
 
       <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-16">
         {title ? (
-          <ScrollReveal className="max-w-3xl font-display text-3xl font-bold tracking-tight md:text-5xl">
+          <ScrollReveal
+            as={titleAs}
+            className="max-w-3xl font-display text-3xl font-bold tracking-tight md:text-5xl"
+          >
             {title}
           </ScrollReveal>
         ) : (

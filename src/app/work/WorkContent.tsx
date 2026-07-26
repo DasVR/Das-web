@@ -13,6 +13,7 @@ export function WorkContent() {
     <main id="main" className="min-h-screen">
       <section className="px-6 pb-20 pt-32 md:px-12 md:pb-32 md:pt-40 lg:px-24">
         <SectionHeader
+          titleAs="h1"
           label="Work"
           index="01"
           title="Selected stories — honest work, no fake metrics."
@@ -27,7 +28,12 @@ export function WorkContent() {
 
         <div className="mt-4 flex flex-col gap-4 md:gap-5">
           {projects.map((project, i) => (
-            <ProjectCard key={project.name} project={project} index={i} />
+            <ProjectCard
+              key={project.name}
+              project={project}
+              index={i}
+              headingAs="h2"
+            />
           ))}
         </div>
 

@@ -22,6 +22,7 @@ export default async function LabPage() {
       <BreadcrumbJsonLd name="Lab" path="/lab" />
       <section className="px-6 pb-16 pt-32 md:px-12 md:pb-20 md:pt-40 lg:px-24">
         <SectionHeader
+          titleAs="h1"
           label="Lab"
           index="03"
           title="Personal lab — craft studies and code in public."
@@ -37,9 +38,9 @@ export default async function LabPage() {
         />
 
         <div className="mb-6 flex items-baseline justify-between gap-4 border-b border-neutral-900 pb-4">
-          <h3 className="font-mono text-xs tracking-widest text-neutral-400">
+          <h2 className="font-mono text-xs tracking-widest text-neutral-400">
             / REPOSITORIES
-          </h3>
+          </h2>
           <p className="font-mono text-[10px] tracking-widest text-neutral-600">
             {live > 0 ? "LIVE FROM GITHUB" : "CACHED"}
           </p>
@@ -54,9 +55,9 @@ export default async function LabPage() {
 
       <section className="px-6 pb-20 md:px-12 md:pb-32 lg:px-24">
         <div className="mb-6 flex items-baseline justify-between gap-4 border-b border-neutral-900 pb-4">
-          <h3 className="font-mono text-xs tracking-widest text-neutral-400">
+          <h2 className="font-mono text-xs tracking-widest text-neutral-400">
             / INTERFACE STUDIES
-          </h3>
+          </h2>
           <p className="font-mono text-[10px] tracking-widest text-neutral-600">
             SHIPPED INTO THIS SITE
           </p>

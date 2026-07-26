@@ -2,11 +2,14 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
+import { useMounted } from "@/lib/useMounted";
 import { cn } from "@/lib/utils";
 
 type ScrollRevealProps = {
   children: ReactNode;
   className?: string;
+  /** Rendered element. Page titles should pass "h1". */
+  as?: "div" | "h1" | "h2" | "h3";
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -14,18 +17,31 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /**
  * Masked word stagger — words slide up out of an overflow-hidden line box.
  * Falls back to plain text when children aren't a string or motion is reduced.
+ *
+ * The reduced-motion branch waits for mount. The prerender cannot read a media
+ * query, so it always emits the split-word markup; taking the plain-text branch
+ * while hydrating made every page mismatch for reduced-motion visitors and cost
+ * a full client re-render of the root.
  */
-export function ScrollReveal({ children, className }: ScrollRevealProps) {
+export function ScrollReveal({
+  children,
+  className,
+  as = "div",
+}: ScrollRevealProps) {
   const reduceMotion = useReducedMotion();
+  const mounted = useMounted();
 
-  if (reduceMotion || typeof children !== "string") {
-    return <div className={cn("text-white", className)}>{children}</div>;
+  const Plain = as;
+
+  if (typeof children !== "string" || (mounted && reduceMotion)) {
+    return <Plain className={cn("text-white", className)}>{children}</Plain>;
   }
 
+  const MotionTag = motion[as];
   const words = children.split(" ");
 
   return (
-    <motion.div
+    <MotionTag
       className={cn("text-white", className)}
       initial="hidden"
       whileInView="visible"
@@ -50,6 +66,6 @@ export function ScrollReveal({ children, className }: ScrollRevealProps) {
           </motion.span>
         </span>
       ))}
-    </motion.div>
+    </MotionTag>
   );
 }

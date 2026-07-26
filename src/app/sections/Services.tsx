@@ -13,6 +13,7 @@ export function Services() {
   return (
     <section id="services" className="px-6 py-20 md:px-12 md:py-32 lg:px-24">
       <SectionHeader
+        titleAs="h1"
         label="Services"
         index="04"
         title="What I offer. Design, build, grow, and ongoing care."

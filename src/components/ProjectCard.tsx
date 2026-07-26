@@ -10,6 +10,12 @@ import { cn } from "@/lib/utils";
 type ProjectCardProps = {
   project: Project;
   index: number;
+  /**
+   * Depth of the card title in the document outline. Cards listed under a
+   * section heading are "h3"; on /work they are the page's top-level sections,
+   * so they are "h2".
+   */
+  headingAs?: "h2" | "h3";
 };
 
 const KIND_BADGE: Record<Project["kind"], string> = {
@@ -25,7 +31,11 @@ const CURSOR_LABEL: Record<Project["kind"], string> = {
 };
 
 /** monolog-style row: meta | story | honest label — no fake metrics */
-export function ProjectCard({ project, index }: ProjectCardProps) {
+export function ProjectCard({
+  project,
+  index,
+  headingAs: Heading = "h3",
+}: ProjectCardProps) {
   const prefix =
     project.indexLabel ?? `SS /${String(index + 1).padStart(2, "0")}`;
   const href = project.href ?? "/contact";
@@ -91,9 +101,9 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
             <p className="mb-1 text-xs uppercase tracking-wider text-neutral-500">
               {project.tag}
             </p>
-            <h3 className="font-display text-2xl font-semibold tracking-tight transition-transform duration-300 group-hover:translate-x-1 md:text-3xl">
+            <Heading className="font-display text-2xl font-semibold tracking-tight transition-transform duration-300 group-hover:translate-x-1 md:text-3xl">
               {project.name}
-            </h3>
+            </Heading>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral-400">
               {project.result}
             </p>

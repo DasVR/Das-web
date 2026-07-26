@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useMounted } from "@/lib/useMounted";
 
 const pageSpring = {
   type: "spring" as const,
@@ -44,11 +45,14 @@ const portalPrefixes = ["/dashboard", "/admin"];
 export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
+  const mounted = useMounted();
   const direction = routeOrder[pathname] ?? 99;
 
   const isPortal = portalPrefixes.some((prefix) => pathname.startsWith(prefix));
 
-  if (reduceMotion || isPortal) {
+  // The reduced-motion branch waits for mount: the prerender always takes the
+  // animated path, so deciding differently while hydrating would mismatch.
+  if (isPortal || (mounted && reduceMotion)) {
     return <>{children}</>;
   }
 
