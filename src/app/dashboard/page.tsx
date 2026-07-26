@@ -25,10 +25,10 @@ export default function DashboardHome() {
   }, [router]);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:py-8">
       {/* header */}
-      <div className="mb-10 flex items-center justify-between">
-        <h1 className="font-display text-xl font-medium tracking-tight">
+      <div className="mb-8 flex items-center justify-between sm:mb-10">
+        <h1 className="font-display text-lg font-medium tracking-tight sm:text-xl">
           Dashboard
         </h1>
         <button
@@ -43,7 +43,7 @@ export default function DashboardHome() {
       </div>
 
       {/* stats row */}
-      <div className="mb-10 grid grid-cols-3 gap-4">
+      <div className="mb-8 grid grid-cols-3 gap-3 sm:mb-10 sm:gap-4">
         {[
           { label: "Live", count: 1 },
           { label: "In Progress", count: 1 },
@@ -51,31 +51,29 @@ export default function DashboardHome() {
         ].map((s) => (
           <motion.div
             key={s.label}
-            whileHover={{ y: -2 }}
-            className="rounded-lg border border-neutral-800 bg-[#111] p-4"
+            className="rounded-lg border border-neutral-800 bg-[#111] p-3 sm:p-4"
           >
-            <p className="text-2xl font-medium">{s.count}</p>
-            <p className="text-xs text-neutral-500">{s.label}</p>
+            <p className="text-xl font-medium sm:text-2xl">{s.count}</p>
+            <p className="mt-0.5 text-[10px] text-neutral-500 sm:text-xs">{s.label}</p>
           </motion.div>
         ))}
       </div>
 
       {/* projects */}
-      <section className="mb-10">
-        <h2 className="mb-4 text-sm font-medium text-neutral-400">Projects</h2>
-        <div className="space-y-3">
+      <section className="mb-8 sm:mb-10">
+        <h2 className="mb-3 text-sm font-medium text-neutral-400 sm:mb-4">Projects</h2>
+        <div className="space-y-2 sm:space-y-3">
           {projects.map((p) => (
-            <motion.div
+            <div
               key={p.name}
-              whileHover={{ x: 4 }}
-              className="flex items-center justify-between rounded-lg border border-neutral-800 bg-[#111] px-4 py-3"
+              className="flex flex-col gap-2 rounded-lg border border-neutral-800 bg-[#111] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
             >
-              <div>
-                <p className="text-sm font-medium">{p.name}</p>
-                <p className="text-xs text-neutral-500">{p.url}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium">{p.name}</p>
+                <p className="truncate text-xs text-neutral-500">{p.url}</p>
               </div>
               <span
-                className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
+                className={`w-fit rounded-full px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
                   p.status === "live"
                     ? "bg-green-500/10 text-green-400"
                     : p.status === "in review"
@@ -85,35 +83,35 @@ export default function DashboardHome() {
               >
                 {p.status}
               </span>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
 
       {/* updates */}
       <section>
-        <h2 className="mb-4 text-sm font-medium text-neutral-400">Updates</h2>
+        <h2 className="mb-3 text-sm font-medium text-neutral-400 sm:mb-4">Updates</h2>
         <div className="space-y-2">
           {updates.map((u) => (
             <div
               key={u.text}
-              className="flex items-center gap-3 rounded-lg border border-neutral-800 bg-[#111] px-4 py-3"
+              className="flex items-start gap-3 rounded-lg border border-neutral-800 bg-[#111] px-4 py-3 sm:items-center"
             >
               <div
-                className={`h-3 w-3 rounded-full border ${
+                className={`mt-0.5 h-3.5 w-3.5 flex-shrink-0 rounded-full border sm:mt-0 ${
                   u.done
                     ? "border-green-500 bg-green-500"
                     : "border-neutral-600"
                 }`}
               />
               <p
-                className={`flex-1 text-sm ${
+                className={`flex-1 text-sm leading-snug ${
                   u.done ? "text-neutral-500 line-through" : "text-white"
                 }`}
               >
                 {u.text}
               </p>
-              <span className="text-xs text-neutral-600">{u.date}</span>
+              <span className="flex-shrink-0 text-xs text-neutral-600">{u.date}</span>
             </div>
           ))}
         </div>

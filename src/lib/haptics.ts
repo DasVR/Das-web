@@ -1,17 +1,9 @@
 "use client";
 
-// Polyfill: patches navigator.vibrate() to work on iOS Safari
-import "ios-vibrator-pro-max";
-
-/** Trigger haptic feedback. Works on iOS (via polyfill) and Android (native). */
+/** Trigger haptic feedback. Works on Android natively; silently no-ops on iOS Safari. */
 export function triggerHaptic(pattern: number | number[] = 10): void {
   if (typeof navigator === "undefined" || !("vibrate" in navigator)) return;
-
-  // Defer to let the click event bubble to the polyfill's window listener first.
-  // The polyfill needs the trusted event "grant" before it can fire haptics.
-  queueMicrotask(() => {
-    navigator.vibrate(pattern);
-  });
+  navigator.vibrate(pattern);
 }
 
 /** Pre-defined haptic patterns */
