@@ -37,8 +37,8 @@ export function Hero() {
             BASED IN FLORIDA · WORKING WIDELY
           </p>
 
-          <div className="mb-8 h-24 w-80 text-neutral-200 md:mb-10 md:h-32 md:w-[28rem] lg:h-40 lg:w-[36rem]">
-            <DotMatrix text="ARRIQ" gap={7} letterGap={10} radius={2.4} />
+          <div className="mb-8 h-20 w-full max-w-xl text-neutral-200 sm:h-24 md:mb-10 md:h-28 md:max-w-2xl lg:h-36 lg:max-w-3xl">
+            <DotMatrix text="DASDEV" gap={6} letterGap={8} radius={2.1} />
           </div>
 
           <h1 className="mb-6 font-display text-[2.85rem] font-bold leading-[0.92] tracking-tight sm:text-5xl md:mb-8 md:text-7xl lg:text-[5.5rem]">

@@ -11,12 +11,10 @@ export default function Loading() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Dot matrix ARRIQ in loading state */}
-        <div className="relative h-12 w-40 md:h-16 md:w-52">
+        <div className="relative h-10 w-48 md:h-14 md:w-64">
           <DotMatrixLoading />
         </div>
 
-        {/* Progress bar */}
         <div className="w-32 overflow-hidden rounded-full bg-neutral-900 md:w-40">
           <motion.div
             className="h-px bg-orange-500"
@@ -40,60 +38,70 @@ export default function Loading() {
 
 function DotMatrixLoading() {
   const letters = [
-    // A — 5×7 grid
+    // D
     [
-      "··██··",
+      "█████·",
+      "██··██",
+      "██··██",
+      "██··██",
+      "██··██",
+      "██··██",
+      "█████·",
+    ],
+    // A
+    [
       "·████·",
       "██··██",
       "██··██",
       "██████",
       "██··██",
       "██··██",
+      "██··██",
     ],
-    // R
+    // S
+    [
+      "·█████",
+      "██····",
+      "██····",
+      "·████·",
+      "····██",
+      "····██",
+      "█████·",
+    ],
+    // D
     [
       "█████·",
       "██··██",
       "██··██",
-      "█████·",
-      "██·██·",
       "██··██",
-      "██··██",
-    ],
-    // R
-    [
-      "█████·",
       "██··██",
       "██··██",
       "█████·",
-      "██·██·",
-      "██··██",
-      "██··██",
     ],
-    // I
+    // E
     [
-      "·████·",
-      "··██··",
-      "··██··",
-      "··██··",
-      "··██··",
-      "··██··",
-      "·████·",
+      "██████",
+      "██····",
+      "██····",
+      "█████·",
+      "██····",
+      "██····",
+      "██████",
     ],
-    // Q
+    // V
     [
+      "██··██",
+      "██··██",
+      "██··██",
+      "██··██",
+      "██··██",
       "·████·",
-      "██··██",
-      "██··██",
-      "██··██",
-      "██·███",
-      "██··██",
-      "·████·",
+      "··██··",
     ],
   ];
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1.5 md:gap-2">
       {letters.map((letter, li) => (
         <div key={li} className="flex flex-col gap-[2px]">
           {letter.map((row, ri) => (
@@ -101,7 +109,7 @@ function DotMatrixLoading() {
               {row.split("").map((char, ci) => (
                 <motion.span
                   key={ci}
-                  className={`block h-[4px] w-[4px] rounded-full md:h-[5px] md:w-[5px] ${
+                  className={`block h-[3px] w-[3px] rounded-full md:h-[4px] md:w-[4px] ${
                     char === "█" ? "bg-white" : "bg-transparent"
                   }`}
                   initial={{ opacity: 0.3 }}
@@ -109,7 +117,7 @@ function DotMatrixLoading() {
                   transition={{
                     duration: 1.5,
                     repeat: Infinity,
-                    delay: li * 0.1 + ci * 0.05,
+                    delay: li * 0.08 + ci * 0.04,
                     ease: "easeInOut",
                   }}
                 />

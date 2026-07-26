@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Client Dashboard",
-  description: "Private client workspace for Arriq projects and care plans.",
+  description: "Private client workspace for DasDev projects and care plans.",
   robots: {
     index: false,
     follow: false,

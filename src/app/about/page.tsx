@@ -38,7 +38,7 @@ export default function AboutPage() {
             <div className="flex max-w-xl flex-col gap-4 text-base leading-relaxed text-neutral-400 md:text-lg">
               <p>
                 I&apos;m Arriq — 15, building in public. This site is my portfolio
-                and the front door to Das Web Design. I care about taste, speed,
+                and the front door to DasDev. I care about taste, speed,
                 and sites that feel like the people behind them.
               </p>
               <p>

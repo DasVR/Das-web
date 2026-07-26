@@ -1,5 +1,5 @@
-Name: Arriq
-Brand: Das Web Design / ARRIQ
+Name: Arriq (founder)
+Company / Brand: DasDev
 Phone: 727-507-1194
 Email: hello@dasdev.net
 Domain: dasdev.net
@@ -9,7 +9,7 @@ Industries: Broad SMB — professional services, retail, hospitality, creators, 
 Services: Web design, branding/identity, development, landing pages, SEO, UI/product, content & copy, e-commerce lite, hosting & launch, strategy session, maintenance, creative direction; experimental work in portfolio
 Price range: typically $500–$1,500+ depending on scope
 Client portal: /dashboard (scaffold — demo auth; see cursor-research/client-dashboard.md)
-
-Site type: Personal website + portfolio + services
+Site type: Personal website + portfolio + services under DasDev
 Portfolio: Building — mix of client work and personal projects
 Cursor: Keep custom cursor (snappy); part of the brand feel
+Wordmark: DASDEV (dot matrix)

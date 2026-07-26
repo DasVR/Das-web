@@ -7,7 +7,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 const experiments = [
   {
     title: "Dot Matrix Wordmark",
-    blurb: "5×7 SVG bitmaps with flicker timing — computational identity for ARRIQ.",
+    blurb: "5×7 SVG bitmaps with flicker timing — computational identity for DasDev.",
     visual: "dots" as const,
   },
   {
@@ -41,7 +41,7 @@ export function Experiments() {
               <div className="relative mb-5 flex h-28 items-center justify-center overflow-hidden border border-neutral-900 bg-[#0a0a0a]">
                 {item.visual === "dots" ? (
                   <div className="h-10 w-36 text-neutral-400">
-                    <DotMatrix text="ARRIQ" gap={5} letterGap={6} radius={1.2} />
+                    <DotMatrix text="DASDEV" gap={4} letterGap={5} radius={1.1} />
                   </div>
                 ) : null}
                 {item.visual === "grain" ? (

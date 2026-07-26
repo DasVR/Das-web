@@ -31,7 +31,7 @@ export function About() {
           <div className="flex max-w-xl flex-col gap-4 text-base leading-relaxed text-neutral-400 md:text-lg">
             <p>
               I&apos;m Arriq — this site is my portfolio and the front door to
-              Das Web Design. I care about taste, speed, and sites that feel
+              DasDev. I care about taste, speed, and sites that feel
               like the people behind them.
             </p>
             <p>

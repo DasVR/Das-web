@@ -89,7 +89,7 @@ export function SiteNav() {
             }}
             className="relative z-50 font-mono text-xs tracking-[0.2em] text-neutral-300 transition-colors hover:text-white"
           >
-            ARRIQ
+            DASDEV
           </Link>
 
           <div

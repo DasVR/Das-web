@@ -20,37 +20,37 @@ const siteUrl = "https://dasdev.net";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Arriq. Personal Portfolio & Web Design for Small Businesses",
-    template: "%s · Arriq",
+    default: "DasDev. Web Design & Digital Services for Small Businesses",
+    template: "%s · DasDev",
   },
   description:
-    "Personal portfolio and web design for small businesses and independents. Based in Florida, working with clients anywhere.",
+    "DasDev — web design and digital services for small businesses and independents. Based in Florida, working with clients anywhere.",
   keywords: [
+    "DasDev",
     "Arriq",
-    "Das Web Design",
-    "personal portfolio",
     "web design",
+    "personal portfolio",
     "small business website",
     "branding",
     "freelance designer",
     "Florida web designer",
   ],
   authors: [{ name: "Arriq", url: siteUrl }],
-  creator: "Arriq",
+  creator: "DasDev",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Arriq. Das Web Design",
-    title: "Arriq. Websites that speak your brand's voice",
+    siteName: "DasDev",
+    title: "DasDev. Websites that speak your brand's voice",
     description:
-      "Personal portfolio and web design for small businesses and independents. Starting around $500.",
+      "Web design and digital services for small businesses and independents. Starting around $500.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arriq. Portfolio & Web Design",
+    title: "DasDev. Portfolio & Web Design",
     description:
-      "Personal portfolio and services for small businesses. Based in Florida, working widely.",
+      "Web design and services for small businesses. Based in Florida, working widely.",
   },
   robots: {
     index: true,

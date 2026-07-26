@@ -15,7 +15,7 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    name: "Das Web — Portfolio",
+    name: "DasDev — Portfolio",
     tag: "Personal Project",
     label: "Live",
     result:

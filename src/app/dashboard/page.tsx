@@ -278,7 +278,7 @@ export default function DashboardHome() {
             href="/contact"
             className="text-neutral-400 underline-offset-2 hover:text-neutral-300 hover:underline"
           >
-            Contact Arriq
+            Contact DasDev
           </Link>
         </p>
       </section>

@@ -38,7 +38,7 @@ Do not put real secrets or client PII in static JS.
 1. **Active project client** — wants status, open approvals, next milestone  
 2. **Care / retainer client** — wants “is my site ok?” + easy tweak requests  
 3. **Multi-service client** — brand + site + landing + SEO over time  
-4. **Arriq (operator)** — later: multi-client admin; out of MVP scope for the client-facing UI
+4. **DasDev operator (Arriq)** — later: multi-client admin; out of MVP scope for the client-facing UI
 
 ---
 
@@ -92,7 +92,7 @@ Pricing stays approachable ($500–$1,500+ typical projects; Maintenance $50/mo)
 
 1. **Now:** Demo key + sample workspace (Northline Studio)  
 2. **Next:** Per-client invite codes hashed server-side; session cookies  
-3. **Later:** Magic link / email OTP; Arriq admin to provision workspaces  
+3. **Later:** Magic link / email OTP; DasDev admin to provision workspaces  
 
 Never ship “any non-empty password” to real clients.
 

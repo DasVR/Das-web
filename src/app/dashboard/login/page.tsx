@@ -57,7 +57,7 @@ export default function LoginPage() {
           Client portal
         </p>
         <h1 className="mb-1 text-center font-display text-2xl font-medium tracking-tight text-white">
-          Arriq
+          DasDev
         </h1>
         <p className="mb-8 text-center text-sm text-neutral-500">
           Projects, updates, and care — in one place.
@@ -105,7 +105,7 @@ export default function LoginPage() {
             href="/contact"
             className="text-neutral-400 underline-offset-2 hover:text-neutral-300 hover:underline"
           >
-            Contact Arriq
+            Contact DasDev
           </Link>
         </p>
       </motion.div>

@@ -10,7 +10,7 @@ const studies = [
     id: "01",
     title: "Dot Matrix Wordmark",
     description:
-      "5×7 SVG bitmaps with flicker timing — computational identity for ARRIQ.",
+      "5×7 SVG bitmaps with flicker timing — computational identity for DasDev.",
     href: "/",
   },
   {

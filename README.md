@@ -1,6 +1,6 @@
-# Das Web — Arriq portfolio
+# DasDev
 
-Personal portfolio, lab, and service site for Arriq / Das Web Design — [dasdev.net](https://dasdev.net).
+Personal portfolio, lab, and service site for **DasDev** (founded by Arriq) — [dasdev.net](https://dasdev.net).
 
 Next.js 14 (App Router) exported as a static site, served by nginx behind Caddy and a Cloudflare Tunnel.
 

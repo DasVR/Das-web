@@ -15,8 +15,8 @@ export function SiteFooter() {
     <footer className="border-t border-neutral-900 px-6 py-12 md:px-12 md:py-14 lg:px-24">
       <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-5">
-          <div className="h-9 w-32 text-neutral-400">
-            <DotMatrix text="ARRIQ" gap={5} letterGap={6} radius={1.35} />
+          <div className="h-8 w-44 text-neutral-400 sm:h-9 sm:w-52">
+            <DotMatrix text="DASDEV" gap={4} letterGap={5} radius={1.2} />
           </div>
           <nav
             className="flex flex-wrap gap-4 font-mono text-xs text-neutral-500"
@@ -33,7 +33,7 @@ export function SiteFooter() {
             ))}
           </nav>
           <p className="text-xs text-neutral-600">
-            © 2026 Arriq · Das Web Design · Based in Florida, working widely
+            © 2026 DasDev · Founded by Arriq · Based in Florida, working widely
           </p>
         </div>
 

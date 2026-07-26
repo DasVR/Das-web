@@ -12,7 +12,7 @@ const DOT = 4;
 const GAP = 2.5;
 
 /**
- * Commit history as a dot matrix — same visual language as the ARRIQ wordmark.
+ * Commit history as a dot matrix — same visual language as the DASDEV wordmark.
  * Each column is a week; dots light from the bottom up with commit volume.
  */
 export function CommitMatrix({ activity, rows = 5 }: CommitMatrixProps) {

@@ -1,8 +1,8 @@
 # Portfolio Design Research — Cursor Prompt Reference
 
 ## User Identity
-- Name: Arriq
-- Brand: Das Web Design / ARRIQ
+- Name: Arriq (founder)
+- Company / Brand: DasDev (wordmark: DASDEV)
 - Home base: Largo / Tampa Bay, Florida
 - Reach: Clients welcome anywhere (not Largo-only)
 - Phone: (727) 507-1194

@@ -168,7 +168,7 @@ export function Contact() {
       <footer className="mt-20 flex flex-col gap-8 border-t border-neutral-900 pt-8 md:mt-24 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-4">
           <div className="h-8 w-28 text-neutral-700">
-            <DotMatrix text="ARRIQ" gap={5} letterGap={6} radius={1.1} />
+            <DotMatrix text="DASDEV" gap={4} letterGap={5} radius={1.0} />
           </div>
           <nav
             className="flex flex-wrap gap-4 font-mono text-xs text-neutral-500"
@@ -184,7 +184,7 @@ export function Contact() {
               </a>
             ))}
           </nav>
-          <p className="text-xs text-neutral-600">© 2026 Arriq · Das Web Design</p>
+          <p className="text-xs text-neutral-600">© 2026 DasDev</p>
         </div>
         <div className="flex flex-wrap gap-4 font-mono text-xs text-neutral-600">
           <span>Next.js</span>
