@@ -36,6 +36,8 @@ const routeOrder: Record<string, number> = {
   "/services": 4,
   "/contact": 5,
   "/now": 6,
+  "/dashboard": 99,
+  "/dashboard/login": 99,
 };
 
 export default function Template({ children }: { children: React.ReactNode }) {

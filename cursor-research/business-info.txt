@@ -6,8 +6,10 @@ Domain: dasdev.net
 Home base: Largo / Tampa Bay, Florida (clients welcome anywhere)
 Offer: Personal portfolio + web design & related services for small businesses and independents
 Industries: Broad SMB — professional services, retail, hospitality, creators, trades, and more (not niche-locked)
-Services: Web design, branding/identity, development, landing pages, SEO, UI/product pages, maintenance; creative/experimental work in portfolio
+Services: Web design, branding/identity, development, landing pages, SEO, UI/product, content & copy, e-commerce lite, hosting & launch, strategy session, maintenance, creative direction; experimental work in portfolio
 Price range: typically $500–$1,500+ depending on scope
+Client portal: /dashboard (scaffold — demo auth; see cursor-research/client-dashboard.md)
+
 Site type: Personal website + portfolio + services
 Portfolio: Building — mix of client work and personal projects
 Cursor: Keep custom cursor (snappy); part of the brand feel

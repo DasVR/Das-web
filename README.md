@@ -22,9 +22,10 @@ npm run build    # static export → dist/
 | `src/app/services` | Services accordion + method |
 | `src/app/lab` | GitHub repos + interface studies |
 | `src/app/about`, `src/app/now`, `src/app/contact` | Personal pages |
+| `src/app/dashboard` | Client portal scaffold (login + workspace) |
 | `src/app/sections` | Home/shared page sections |
 | `src/components` | Chrome, motion primitives, cards |
-| `src/lib` | Project data, GitHub fetch, helpers |
+| `src/lib` | Projects, services catalog, dashboard data, GitHub |
 | `cursor-research/` | Design direction and research notes |
 
 Global chrome (nav, grain, cursor, scroll progress, smooth scroll) lives once in

@@ -5,51 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionHeader } from "@/components/SectionHeader";
 import { cn } from "@/lib/utils";
-
-const services = [
-  {
-    name: "Web Design",
-    detail:
-      "Sites that build trust fast. Clear story, proof, and a path to inquire. Mobile-first and fast for small businesses of any industry.",
-    price: "From $500",
-  },
-  {
-    name: "Branding",
-    detail:
-      "Identity systems: logo, type, color. Your site, socials, and materials should feel like one brand.",
-    price: "From $350",
-  },
-  {
-    name: "Development",
-    detail:
-      "Custom builds when quality matters. Clean code, performance, and hosting that fits. No bloated page builders.",
-    price: "With design",
-  },
-  {
-    name: "Landing Pages",
-    detail:
-      "Focused pages for launches, offers, and campaigns. Designed to convert without clutter.",
-    price: "From $400",
-  },
-  {
-    name: "SEO",
-    detail:
-      "Titles, structure, meta, and discoverability basics so the right people can find you. Local or broader.",
-    price: "From $200",
-  },
-  {
-    name: "UI / Product",
-    detail:
-      "Interfaces for tools, apps, and product marketing pages. Clear UI with the same editorial care.",
-    price: "Per project",
-  },
-  {
-    name: "Maintenance",
-    detail:
-      "Updates, content tweaks, uptime checks, and small fixes so your site stays sharp after launch.",
-    price: "$50 / month",
-  },
-];
+import { serviceCount, services } from "@/lib/services";
 
 export function Services() {
   const [open, setOpen] = useState<string | null>(null);
@@ -59,10 +15,12 @@ export function Services() {
       <SectionHeader
         label="Services"
         index="04"
-        title="What I offer. Design, build, and ongoing care."
+        title="What I offer. Design, build, grow, and ongoing care."
         meta={
           <>
-            <span className="text-neutral-300">Seven offerings</span>
+            <span className="text-neutral-300">
+              {serviceCount} offerings
+            </span>
             <span>Most projects land $500–$1,500</span>
             <span>Tap a service for detail</span>
           </>
@@ -71,19 +29,20 @@ export function Services() {
 
       <div className="max-w-5xl">
         {services.map((service, i) => {
-          const isOpen = open === service.name;
+          const isOpen = open === service.id;
+          const indexLabel = String(i + 1).padStart(2, "0");
           return (
-            <AnimatedSection key={service.name} delay={i * 0.04}>
+            <AnimatedSection key={service.id} delay={i * 0.04}>
               <button
                 type="button"
-                onClick={() => setOpen(isOpen ? null : service.name)}
+                onClick={() => setOpen(isOpen ? null : service.id)}
                 className="group flex w-full flex-col border-b border-neutral-800 py-5 text-left transition-colors hover:border-neutral-600 md:py-6"
                 aria-expanded={isOpen}
               >
                 <div className="flex items-baseline justify-between gap-6">
                   <span className="flex items-baseline gap-4">
                     <span className="font-mono text-[11px] text-neutral-700">
-                      0{i + 1}
+                      {indexLabel}
                     </span>
                     <span
                       className={cn(
@@ -105,7 +64,8 @@ export function Services() {
                       className={cn(
                         "size-5 text-neutral-600 transition-all duration-300",
                         "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100",
-                        isOpen && "translate-x-0 rotate-90 opacity-100 text-orange-500"
+                        isOpen &&
+                          "translate-x-0 rotate-90 opacity-100 text-orange-500"
                       )}
                       aria-hidden="true"
                     />
@@ -120,6 +80,9 @@ export function Services() {
                   <div className="overflow-hidden">
                     <p className="max-w-2xl pt-3 text-sm leading-relaxed text-neutral-400 md:text-base">
                       {service.detail}
+                    </p>
+                    <p className="pt-2 font-mono text-[11px] tracking-wide text-neutral-600">
+                      Fits: {service.fits.join(" · ")}
                     </p>
                     <p className="pt-2 font-mono text-xs text-orange-400 sm:hidden">
                       {service.price}

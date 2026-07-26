@@ -1,7 +1,12 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dashboard · Arriq",
+  title: "Client Dashboard",
+  description: "Private client workspace for Arriq projects and care plans.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function DashboardLayout({
@@ -10,7 +15,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#0a0a0a] text-white antialiased">
       {children}
     </div>
   );

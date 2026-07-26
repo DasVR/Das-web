@@ -8,16 +8,12 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { featuredProjects } from "@/lib/projects";
 import { triggerHaptic, HapticPatterns } from "@/lib/haptics";
+import { serviceCount, services } from "@/lib/services";
 
-const servicePreview = [
-  { name: "Web Design", price: "From $500" },
-  { name: "Branding", price: "From $350" },
-  { name: "Development", price: "With design" },
-  { name: "Landing Pages", price: "From $400" },
-  { name: "SEO", price: "From $200" },
-  { name: "UI / Product", price: "Per project" },
-  { name: "Maintenance", price: "$50 / month" },
-] as const;
+const servicePreview = services.map((s) => ({
+  name: s.name,
+  price: s.price,
+}));
 
 const labStudies = [
   { id: "01", name: "Dot matrix wordmark" },
@@ -30,8 +26,10 @@ const marqueeItems = [
   "TAKING NEW PROJECTS",
   "WEB DESIGN",
   "BRANDING",
-  "LANDING PAGES",
+  "E-COMMERCE",
+  "CONTENT",
   "SEO",
+  "MAINTENANCE",
   "BASED IN FLORIDA",
   "WORKING WIDELY",
 ] as const;
@@ -131,10 +129,12 @@ export function HomeTeasers() {
         <SectionHeader
           label="Services"
           index="04"
-          title="Design, build, and ongoing care."
+          title="Design, build, grow, and ongoing care."
           meta={
             <>
-              <span className="text-neutral-300">Seven offerings</span>
+              <span className="text-neutral-300">
+                {serviceCount} offerings
+              </span>
               <span>Most projects $500–$1,500</span>
             </>
           }
@@ -149,7 +149,7 @@ export function HomeTeasers() {
               >
                 <span className="flex items-baseline gap-4">
                   <span className="font-mono text-[11px] text-neutral-700">
-                    0{i + 1}
+                    {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="font-display text-2xl font-semibold tracking-tight text-neutral-300 transition-all duration-300 group-hover:translate-x-2 group-hover:text-white md:text-4xl">
                     {service.name}
