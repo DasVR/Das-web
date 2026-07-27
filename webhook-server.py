@@ -20,6 +20,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 DEPLOY_SCRIPT = os.environ.get("DEPLOY_SCRIPT", "/home/das/portfolio-v2/deploy.sh")
 REPO_DIR = os.environ.get("REPO_DIR", "/home/das/portfolio-v2")
 DEPLOY_LOG = os.environ.get("DEPLOY_LOG", "/tmp/deploy.log")
+STATUS_FILE = os.environ.get("DEPLOY_STATUS_FILE", "/tmp/deploy-status.json")
 
 SECRET = os.environ.get("DEPLOY_SECRET", "").encode()
 if not SECRET:
@@ -34,6 +35,17 @@ def expected_signature(raw_body: bytes) -> str:
     return hmac.new(SECRET, raw_body, hashlib.sha256).hexdigest()
 
 
+def write_status(running: bool = False, success: bool = False, error: str = "", log_tail: str = ""):
+    with open(STATUS_FILE, "w") as f:
+        json.dump({
+            "timestamp": int(time.time()),
+            "running": running,
+            "success": success,
+            "error": error,
+            "log_tail": log_tail,
+        }, f)
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "deploy-webhook"
     sys_version = ""
@@ -43,6 +55,25 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Length", "0")
         self.end_headers()
+
+    def _json(self, data: dict, code: int = 200) -> None:
+        body = json.dumps(data).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_GET(self):
+        if self.path == "/deploy/status":
+            try:
+                with open(STATUS_FILE, "r") as f:
+                    status = json.load(f)
+            except (FileNotFoundError, json.JSONDecodeError):
+                status = {"timestamp": 0, "running": False, "success": False, "error": "", "log_tail": ""}
+            self._json(status)
+            return
+        self._deny(404)
 
     def do_POST(self):
         if self.path != "/deploy":
@@ -74,13 +105,26 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", "0")
         self.end_headers()
 
-        with open(DEPLOY_LOG, "a") as log:
-            subprocess.Popen(
-                ["bash", DEPLOY_SCRIPT],
-                cwd=REPO_DIR,
-                stdout=log,
-                stderr=subprocess.STDOUT,
-            )
+        write_status(running=True, success=False)
+        try:
+            with open(DEPLOY_LOG, "a") as log:
+                proc = subprocess.run(
+                    ["bash", DEPLOY_SCRIPT],
+                    cwd=REPO_DIR,
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    capture_output=False,
+                )
+            # Read last 10 lines of log for status
+            try:
+                with open(DEPLOY_LOG, "r") as f:
+                    lines = f.readlines()
+                    log_tail = "".join(lines[-10:]).strip()
+            except Exception:
+                log_tail = ""
+            write_status(running=False, success=proc.returncode == 0, error="" if proc.returncode == 0 else f"deploy script exited {proc.returncode}", log_tail=log_tail)
+        except Exception as e:
+            write_status(running=False, success=False, error=str(e), log_tail="")
 
     def _timestamp_fresh(self, raw_body: bytes) -> bool:
         try:
