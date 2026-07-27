@@ -44,8 +44,8 @@ export function requireEnv(name: string): string {
 /** Privileged client. Bypasses RLS, so every caller must be checked first. */
 export function serviceClient(): SupabaseClient {
   return createClient(
-    requireEnv("SUPABASE_URL"),
-    requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
+    requireEnv("SB_URL"),
+    requireEnv("SERVICE_ROLE_KEY"),
     { auth: { persistSession: false } }
   );
 }
