@@ -11,25 +11,31 @@ import {
   PortalShell,
   SectionTitle,
 } from "@/components/portal/PortalShell";
+import { StatusBadge } from "@/components/portal/StatusBadge";
 import { useRequireAuth } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase";
-import { getServiceName, services } from "@/lib/services";
+import { getServiceName, services, type ServiceCategory } from "@/lib/services";
 import {
   acknowledgeUpdate,
-  allUpdates,
   fetchWorkspace,
   formatBytes,
   formatDate,
   markMessagesRead,
-  projectStatusCounts,
   sendClientMessage,
   signedFileUrl,
-  statusBadgeClass,
-  supportedIndustries,
   type ClientWorkspace,
+  type ProjectWithUpdates,
 } from "@/lib/dashboard";
+import type { UpdateRow } from "@/lib/database.types";
 
 const navLinks = [{ href: "/dashboard", label: "Workspace" }];
+
+const CATEGORY_LABELS: Record<ServiceCategory, string> = {
+  build: "Build something new",
+  grow: "Grow what you have",
+  care: "Keep it running",
+  special: "Something different",
+};
 
 export function DashboardContent() {
   const { allowed, loading, role, profile, session } = useRequireAuth();
@@ -122,6 +128,10 @@ export function DashboardContent() {
   );
 }
 
+type AttentionItem =
+  | { kind: "update"; update: UpdateRow; project: ProjectWithUpdates }
+  | { kind: "review"; project: ProjectWithUpdates };
+
 function Workspace({
   workspace,
   greetingName,
@@ -132,16 +142,39 @@ function Workspace({
   onChanged: () => Promise<void>;
 }) {
   const { client, projects, care, messages, files } = workspace;
-  const counts = useMemo(() => projectStatusCounts(projects), [projects]);
-  const updates = useMemo(() => allUpdates(workspace), [workspace]);
-  const openUpdates = updates.filter((update) => !update.done);
+  const generalFiles = useMemo(
+    () => files.filter((file) => !file.project_id),
+    [files]
+  );
+
+  const attentionItems = useMemo<AttentionItem[]>(() => {
+    const items: AttentionItem[] = [];
+    for (const project of projects) {
+      const open = project.updates.filter((update) => !update.done);
+      for (const update of open) items.push({ kind: "update", update, project });
+      if (project.status === "in review" && open.length === 0) {
+        items.push({ kind: "review", project });
+      }
+    }
+    return items;
+  }, [projects]);
 
   const engaged = useMemo(() => {
     const ids = new Set(projects.flatMap((project) => project.services));
     return Array.from(ids);
   }, [projects]);
 
-  const available = services.filter((service) => !engaged.includes(service.id));
+  const availableByCategory = useMemo(() => {
+    const available = services.filter((service) => !engaged.includes(service.id));
+    const grouped: Record<ServiceCategory, typeof services> = {
+      build: [],
+      grow: [],
+      care: [],
+      special: [],
+    };
+    for (const service of available) grouped[service.category].push(service);
+    return grouped;
+  }, [engaged]);
 
   // Clear the unread badge once the thread has actually been rendered.
   useEffect(() => {
@@ -166,30 +199,66 @@ function Workspace({
         )}
       </header>
 
-      <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {(
-          [
-            { label: "Live", count: counts.live },
-            { label: "In progress", count: counts["in progress"] },
-            { label: "In review", count: counts["in review"] },
-            { label: "Updates", count: openUpdates.length },
-          ] as const
-        ).map((stat, index) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.35 }}
-          >
-            <PortalCard className="p-3 sm:p-4">
-              <p className="text-xl font-medium sm:text-2xl">{stat.count}</p>
-              <p className="mt-0.5 text-[10px] text-neutral-500 sm:text-xs">
-                {stat.label}
-              </p>
-            </PortalCard>
-          </motion.div>
-        ))}
-      </div>
+      <section className="mb-8">
+        <SectionTitle>Needs your attention</SectionTitle>
+        {attentionItems.length === 0 ? (
+          <EmptyState
+            title="Nothing needs you right now"
+            body="Action items and progress notes show up here the moment they do."
+          />
+        ) : (
+          <div className="space-y-2">
+            {attentionItems.map((item) =>
+              item.kind === "update" ? (
+                <motion.div
+                  key={item.update.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <PortalCard className="px-4 py-3">
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 h-3.5 w-3.5 flex-shrink-0 rounded-full border border-orange-500 bg-orange-500/40" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] text-neutral-500">{item.project.name}</p>
+                        <p className="text-sm leading-snug text-white">{item.update.body}</p>
+                        <p className="mt-1 text-[11px] text-neutral-600">
+                          {item.update.due_date
+                            ? `Due ${formatDate(item.update.due_date)}`
+                            : formatDate(item.update.created_at)}
+                        </p>
+                      </div>
+                      {!item.update.acknowledged_at && (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            await acknowledgeUpdate(item.update.id);
+                            await onChanged();
+                          }}
+                          className="flex-shrink-0 rounded border border-neutral-700 px-2 py-1 text-[11px] text-neutral-300 transition-colors hover:border-neutral-500 hover:text-white"
+                        >
+                          Got it
+                        </button>
+                      )}
+                    </div>
+                  </PortalCard>
+                </motion.div>
+              ) : (
+                <Link key={item.project.id} href={`/dashboard/projects?id=${item.project.id}`}>
+                  <PortalCard className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:border-neutral-600">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm">
+                        <span className="font-medium">{item.project.name}</span> is waiting
+                        on your OK
+                      </p>
+                    </div>
+                    <StatusBadge status={item.project.status} audience="client" />
+                  </PortalCard>
+                </Link>
+              )
+            )}
+          </div>
+        )}
+      </section>
 
       <section className="mb-8">
         <SectionTitle
@@ -199,7 +268,7 @@ function Workspace({
             </span>
           }
         >
-          Projects
+          Your projects
         </SectionTitle>
 
         {projects.length === 0 ? (
@@ -208,144 +277,39 @@ function Workspace({
             body="Your first project will appear here once it kicks off."
           />
         ) : (
-          <div className="space-y-2 sm:space-y-3">
-            {projects.map((project) => (
-              <PortalCard key={project.id}>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
-                      {project.name}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {projects.map((project) => {
+              const openCount = project.updates.filter((u) => !u.done).length;
+              return (
+                <Link key={project.id} href={`/dashboard/projects?id=${project.id}`}>
+                  <PortalCard className="h-full transition-colors hover:border-neutral-600">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="truncate text-sm font-medium">{project.name}</p>
+                      <StatusBadge status={project.status} audience="client" />
+                    </div>
+                    <p className="mt-2 text-xs text-neutral-500">
+                      {project.services.length} service
+                      {project.services.length === 1 ? "" : "s"}
+                      {openCount > 0
+                        ? ` · ${openCount} open item${openCount === 1 ? "" : "s"}`
+                        : ""}
                     </p>
-                    <p className="truncate text-xs text-neutral-500">
-                      {project.url ? (
-                        <a
-                          href={project.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-neutral-300"
-                        >
-                          {project.url}
-                        </a>
-                      ) : (
-                        "URL pending"
-                      )}
-                      {project.note ? ` · ${project.note}` : ""}
+                    <p className="mt-3 text-xs text-neutral-400 group-hover:text-neutral-200">
+                      View full details →
                     </p>
-                  </div>
-                  <span
-                    className={`w-fit rounded-full px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${statusBadgeClass(project.status)}`}
-                  >
-                    {project.status}
-                  </span>
-                </div>
-
-                {project.services.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {project.services.map((serviceId) => (
-                      <span
-                        key={serviceId}
-                        className="rounded border border-neutral-800 px-2 py-0.5 font-mono text-[10px] text-neutral-400"
-                      >
-                        {getServiceName(serviceId)}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {project.reviews.length > 0 && (
-                  <div className="mt-2 space-y-1.5">
-                    {project.reviews.map((review) => {
-                      const link = `${typeof window !== "undefined" ? window.location.origin : "https://dasdev.net"}/review?token=${review.token}`;
-                      return (
-                        <div
-                          key={review.id}
-                          className="flex items-center justify-between gap-2 rounded border border-green-900/40 bg-green-500/5 px-2.5 py-1.5"
-                        >
-                          <div className="min-w-0">
-                            <p className="font-mono text-[10px] text-green-400/80">
-                              Review link · expires{" "}
-                              {new Date(review.expires_at).toLocaleDateString("en-US")}
-                            </p>
-                            <p className="break-all text-[11px] text-neutral-400">
-                              {link}
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => navigator.clipboard.writeText(link)}
-                            className="flex-shrink-0 rounded border border-green-900/40 px-2 py-1 text-[10px] text-green-400/80 transition-colors hover:text-green-300"
-                          >
-                            Copy
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </PortalCard>
-            ))}
+                  </PortalCard>
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>
 
       <section className="mb-8">
-        <SectionTitle>Updates</SectionTitle>
-        {updates.length === 0 ? (
-          <EmptyState
-            title="Nothing needs you right now"
-            body="Action items and progress notes show up here."
-          />
-        ) : (
-          <div className="space-y-2">
-            {updates.map((update) => (
-              <PortalCard key={update.id} className="px-4 py-3">
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`mt-1 h-3.5 w-3.5 flex-shrink-0 rounded-full border ${
-                      update.done
-                        ? "border-green-500 bg-green-500"
-                        : "border-neutral-600"
-                    }`}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className={`text-sm leading-snug ${
-                        update.done ? "text-neutral-500 line-through" : "text-white"
-                      }`}
-                    >
-                      {update.body}
-                    </p>
-                    <p className="mt-1 text-[11px] text-neutral-600">
-                      {update.due_date
-                        ? `Due ${formatDate(update.due_date)}`
-                        : formatDate(update.created_at)}
-                      {update.acknowledged_at ? " · acknowledged" : ""}
-                    </p>
-                  </div>
-                  {!update.done && !update.acknowledged_at && (
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        await acknowledgeUpdate(update.id);
-                        await onChanged();
-                      }}
-                      className="flex-shrink-0 rounded border border-neutral-700 px-2 py-1 text-[11px] text-neutral-300 transition-colors hover:border-neutral-500 hover:text-white"
-                    >
-                      Acknowledge
-                    </button>
-                  )}
-                </div>
-              </PortalCard>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="mb-8">
-        <SectionTitle>Care plan</SectionTitle>
+        <SectionTitle>Care & support</SectionTitle>
         <PortalCard>
           {care?.active ? (
-            <>
+            <div className="mb-4 border-b border-neutral-900 pb-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <p className="text-sm font-medium">{care.plan}</p>
                 <p className="font-mono text-[10px] uppercase tracking-wider text-green-400">
@@ -365,9 +329,9 @@ function Workspace({
                   ))}
                 </ul>
               )}
-            </>
+            </div>
           ) : (
-            <p className="text-sm text-neutral-400">
+            <p className="mb-4 border-b border-neutral-900 pb-4 text-sm text-neutral-400">
               No care plan yet.{" "}
               <Link href="/contact" className="text-neutral-300 underline">
                 Ask about Maintenance
@@ -375,52 +339,38 @@ function Workspace({
               .
             </p>
           )}
+          {generalFiles.length > 0 && (
+            <div className="mb-4 space-y-2 border-b border-neutral-900 pb-4">
+              <p className="text-xs text-neutral-500">Files</p>
+              {generalFiles.map((file) => (
+                <div
+                  key={file.id}
+                  className="flex items-center justify-between gap-3 rounded-md border border-neutral-800 bg-[#0e0e0e] px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm">{file.label}</p>
+                    <p className="text-[11px] text-neutral-600">
+                      {formatBytes(file.size_bytes)} · {formatDate(file.created_at)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const url = await signedFileUrl(file.storage_path);
+                      if (url) window.open(url, "_blank", "noopener");
+                    }}
+                    className="flex flex-shrink-0 items-center gap-1.5 rounded border border-neutral-700 px-2.5 py-1.5 text-[11px] text-neutral-300 transition-colors hover:border-neutral-500 hover:text-white"
+                  >
+                    <Download className="size-3" aria-hidden="true" />
+                    Download
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <MessageThread clientId={client.id} messages={messages} onSent={onChanged} />
         </PortalCard>
       </section>
-
-      <section className="mb-8">
-        <SectionTitle>Files</SectionTitle>
-        {files.length === 0 ? (
-          <EmptyState
-            title="No deliverables yet"
-            body="Logos, exports, and handoff files will be downloadable here."
-          />
-        ) : (
-          <div className="space-y-2">
-            {files.map((file) => (
-              <PortalCard
-                key={file.id}
-                className="flex items-center justify-between gap-3 px-4 py-3"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm">{file.label}</p>
-                  <p className="text-[11px] text-neutral-600">
-                    {formatBytes(file.size_bytes)} ·{" "}
-                    {formatDate(file.created_at)}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const url = await signedFileUrl(file.storage_path);
-                    if (url) window.open(url, "_blank", "noopener");
-                  }}
-                  className="flex flex-shrink-0 items-center gap-1.5 rounded border border-neutral-700 px-2.5 py-1.5 text-[11px] text-neutral-300 transition-colors hover:border-neutral-500 hover:text-white"
-                >
-                  <Download className="size-3" aria-hidden="true" />
-                  Download
-                </button>
-              </PortalCard>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <MessageThread
-        clientId={client.id}
-        messages={workspace.messages}
-        onSent={onChanged}
-      />
 
       <section className="mb-8">
         <SectionTitle
@@ -433,7 +383,7 @@ function Workspace({
             </Link>
           }
         >
-          Your services
+          Explore services
         </SectionTitle>
 
         {engaged.length > 0 && (
@@ -449,50 +399,49 @@ function Workspace({
           </div>
         )}
 
-        {available.length > 0 && (
-          <>
-            <p className="mb-2 text-xs text-neutral-500">
-              Add on. Ask and it lands in our thread above.
-            </p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {available.slice(0, 6).map((service) => (
-                <button
-                  key={service.id}
-                  type="button"
-                  onClick={async () => {
-                    await sendClientMessage(
-                      client.id,
-                      `I would like to add ${service.name}.`,
-                      service.id
-                    );
-                    await onChanged();
-                  }}
-                  className="group rounded-lg border border-neutral-800 bg-[#0e0e0e] px-3 py-3 text-left transition-colors hover:border-neutral-600"
-                >
-                  <div className="flex items-baseline justify-between gap-2">
-                    <p className="text-sm font-medium group-hover:text-white">
-                      {service.name}
-                    </p>
-                    <span className="font-mono text-[10px] text-orange-400/80">
-                      {service.price}
-                    </span>
-                  </div>
-                  <p className="mt-1 line-clamp-2 text-xs text-neutral-500">
-                    {service.detail}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
+        <div className="space-y-6">
+          {(Object.keys(CATEGORY_LABELS) as ServiceCategory[]).map((category) => {
+            const items = availableByCategory[category];
+            if (items.length === 0) return null;
+            return (
+              <div key={category}>
+                <p className="mb-2 text-xs text-neutral-500">
+                  {CATEGORY_LABELS[category]}
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {items.map((service) => (
+                    <button
+                      key={service.id}
+                      type="button"
+                      onClick={async () => {
+                        await sendClientMessage(
+                          client.id,
+                          `I would like to add ${service.name}.`,
+                          service.id
+                        );
+                        await onChanged();
+                      }}
+                      className="group rounded-lg border border-neutral-800 bg-[#0e0e0e] px-3 py-3 text-left transition-colors hover:border-neutral-600"
+                    >
+                      <div className="flex items-baseline justify-between gap-2">
+                        <p className="text-sm font-medium group-hover:text-white">
+                          {service.name}
+                        </p>
+                        <span className="font-mono text-[10px] text-orange-400/80">
+                          {service.price}
+                        </span>
+                      </div>
+                      <p className="mt-1 line-clamp-2 text-xs text-neutral-500">
+                        {service.detail}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </section>
-
-      <footer className="border-t border-neutral-900 pt-6">
-        <p className="text-xs text-neutral-600">
-          Built for broad small business work:{" "}
-          {supportedIndustries.slice(0, 4).join(", ")}, and more.
-        </p>
-      </footer>
     </>
   );
 }
@@ -528,15 +477,12 @@ function MessageThread({
   }
 
   return (
-    <section className="mb-8">
-      <SectionTitle>Messages</SectionTitle>
-
-      <div className="space-y-2">
+    <div>
+      <div className="mb-3 max-h-72 space-y-2 overflow-y-auto">
         {messages.length === 0 ? (
-          <EmptyState
-            title="No messages yet"
-            body="Ask a question or request a change. It reaches me directly."
-          />
+          <p className="text-xs text-neutral-500">
+            Ask a question or request a change. It reaches DasDev directly.
+          </p>
         ) : (
           messages.map((message) => (
             <div
@@ -559,7 +505,7 @@ function MessageThread({
         )}
       </div>
 
-      <form onSubmit={handleSend} className="mt-3 flex gap-2">
+      <form onSubmit={handleSend} className="flex gap-2">
         <label htmlFor="message-body" className="sr-only">
           Message
         </label>
@@ -586,6 +532,6 @@ function MessageThread({
           <PortalNotice tone="error">{error}</PortalNotice>
         </div>
       )}
-    </section>
+    </div>
   );
 }

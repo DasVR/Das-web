@@ -22,7 +22,7 @@ import {
   fetchProjectReviews,
   setReviewFeedbackStatus,
 } from "@/lib/reviews";
-import { getServiceName, services } from "@/lib/services";
+import { services } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
 const statuses: ProjectStatus[] = ["queued", "in progress", "in review", "live"];

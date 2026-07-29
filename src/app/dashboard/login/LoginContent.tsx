@@ -223,11 +223,7 @@ export function LoginContent() {
 
               {mode !== "reset" && (
                 <Field
-                  label={
-                    mode === "activate"
-                      ? "Choose your access key"
-                      : "Access key"
-                  }
+                  label={mode === "activate" ? "Choose a password" : "Access key"}
                   type="password"
                   value={password}
                   onChange={setPassword}
@@ -236,7 +232,7 @@ export function LoginContent() {
                   }
                   placeholder={
                     mode === "activate"
-                      ? "Choose a strong access key"
+                      ? `At least ${MIN_PASSWORD_LENGTH} characters`
                       : "Your access key"
                   }
                   required
@@ -244,14 +240,20 @@ export function LoginContent() {
               )}
 
               {mode === "activate" && (
-                <Field
-                  label="Access key"
-                  value={accessKey}
-                  onChange={setAccessKey}
-                  autoComplete="off"
-                  placeholder="The key your admin gave you"
-                  required
-                />
+                <div>
+                  <Field
+                    label="Access key"
+                    value={accessKey}
+                    onChange={setAccessKey}
+                    autoComplete="off"
+                    placeholder="The key your admin gave you"
+                    required
+                  />
+                  <p className="mt-1.5 px-1 text-[11px] text-neutral-600">
+                    A short code from DasDev, sent when your project started —
+                    not the password you choose above.
+                  </p>
+                </div>
               )}
 
               <motion.button
