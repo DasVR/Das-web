@@ -69,6 +69,24 @@ export function statusBadgeClass(status: ProjectStatus): string {
   }
 }
 
+/** Plain-language status a client sees, instead of the internal enum value. */
+export function statusClientLabel(status: ProjectStatus): string {
+  switch (status) {
+    case "queued":
+      return "Up next";
+    case "in progress":
+      return "Being built";
+    case "in review":
+      return "Waiting on your OK";
+    case "live":
+      return "Live";
+    default: {
+      const exhaustive: never = status;
+      return exhaustive;
+    }
+  }
+}
+
 export function formatDate(value: string | null): string {
   if (!value) return "—";
   return new Date(value).toLocaleDateString("en-US", {

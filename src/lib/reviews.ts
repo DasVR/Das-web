@@ -1,5 +1,9 @@
 import { getSupabase } from "./supabase";
-import type { ProjectReviewRow, ReviewFeedbackRow } from "./database.types";
+import type {
+  ProjectReviewRow,
+  ReviewFeedbackRow,
+  ReviewFeedbackStatus,
+} from "./database.types";
 
 export type PublicReview = {
   review: ProjectReviewRow;
@@ -116,4 +120,42 @@ export async function fetchProjectReviews(projectId: string): Promise<
     .order("created_at", { ascending: false });
   if (error) throw error;
   return data ?? [];
+}
+
+/**
+ * All feedback left on any review link for a project. Clients can already
+ * submit this from the public /review page; there was previously no admin
+ * view of it anywhere, so submissions went untriaged.
+ */
+export async function fetchProjectReviewFeedback(
+  projectId: string
+): Promise<ReviewFeedbackRow[]> {
+  const supabase = getSupabase();
+  const { data: reviews, error: reviewsError } = await supabase
+    .from("project_reviews")
+    .select("id")
+    .eq("project_id", projectId);
+  if (reviewsError) throw reviewsError;
+
+  const reviewIds = (reviews ?? []).map((review) => review.id);
+  if (reviewIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("review_feedback")
+    .select("*")
+    .in("review_id", reviewIds)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function setReviewFeedbackStatus(
+  feedbackId: string,
+  status: ReviewFeedbackStatus
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from("review_feedback")
+    .update({ status })
+    .eq("id", feedbackId);
+  if (error) throw error;
 }

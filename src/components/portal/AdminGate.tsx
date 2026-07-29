@@ -6,11 +6,9 @@ import { useRequireAuth } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
 export const adminNavLinks = [
-  { href: "/admin", label: "Overview" },
+  { href: "/admin", label: "Inbox" },
   { href: "/admin/clients", label: "Clients" },
   { href: "/admin/projects", label: "Projects" },
-  { href: "/admin/messages", label: "Messages" },
-  { href: "/admin/leads", label: "Leads" },
 ];
 
 /**

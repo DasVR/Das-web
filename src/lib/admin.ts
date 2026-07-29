@@ -259,6 +259,31 @@ export async function createProject(input: {
   return data.id;
 }
 
+/**
+ * Full project edit — name, URL, status, services, note. createProject() and
+ * setProjectStatus() only ever covered creation and a status flip; nothing
+ * let an admin fix a typo'd name or URL afterwards.
+ */
+export async function updateProject(
+  projectId: string,
+  patch: Partial<
+    Pick<ProjectRow, "name" | "url" | "status" | "services" | "note">
+  >
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from("projects")
+    .update(patch)
+    .eq("id", projectId);
+  if (error) throw error;
+}
+
+/**
+ * Setting status to "in review" is the one transition a client actually
+ * needs to be told about — it means their input is next. Rather than build a
+ * parallel email path, this creates the update item the notify-update
+ * function already expects and sends through it. Best-effort: a failed
+ * notification never blocks the status change itself.
+ */
 export async function setProjectStatus(
   projectId: string,
   status: ProjectStatus
@@ -268,6 +293,22 @@ export async function setProjectStatus(
     .update({ status })
     .eq("id", projectId);
   if (error) throw error;
+
+  if (status === "in review") {
+    try {
+      const { data: created } = await getSupabase()
+        .from("updates")
+        .insert({
+          project_id: projectId,
+          body: "This project is ready for your review.",
+        })
+        .select("id")
+        .single();
+      if (created) await notifyUpdateEmail(created.id);
+    } catch {
+      // Best-effort notification; the status change above already succeeded.
+    }
+  }
 }
 
 export async function createUpdate(input: {
@@ -275,12 +316,57 @@ export async function createUpdate(input: {
   body: string;
   due_date?: string;
 }): Promise<void> {
-  const { error } = await getSupabase().from("updates").insert({
-    project_id: input.project_id,
-    body: input.body,
-    due_date: input.due_date ?? null,
-  });
+  const { data, error } = await getSupabase()
+    .from("updates")
+    .insert({
+      project_id: input.project_id,
+      body: input.body,
+      due_date: input.due_date ?? null,
+    })
+    .select("id")
+    .single();
   if (error) throw error;
+  if (data) {
+    try {
+      await notifyUpdateEmail(data.id);
+    } catch {
+      // Best-effort; the update item itself was created successfully.
+    }
+  }
+}
+
+/**
+ * Emails a client through the notify-update Edge Function that an update
+ * needs their attention. Silently no-ops if there is no session or the
+ * function is unreachable — the caller already has the update saved.
+ */
+export async function notifyUpdateEmail(
+  updateId: string
+): Promise<{ emailed: boolean }> {
+  const supabase = getSupabase();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return { emailed: false };
+
+  try {
+    const response = await fetch(functionsUrl("notify-update"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: supabaseAnonKey,
+      },
+      body: JSON.stringify({ update_id: updateId }),
+    });
+    if (response.ok) {
+      const body = await response.json().catch(() => ({}));
+      return { emailed: Boolean(body.emailed) };
+    }
+  } catch {
+    // Function not deployed or unreachable.
+  }
+  return { emailed: false };
 }
 
 export async function toggleUpdateDone(
@@ -355,6 +441,34 @@ export async function setLeadStatus(
     .update({ status })
     .eq("id", leadId);
   if (error) throw error;
+}
+
+/**
+ * Marks a lead converted AND records which client it became. The plain
+ * setLeadStatus(id, "converted") call used to leave leads.client_id null
+ * even though the column exists — this is the fix, used by
+ * OnboardClientDialog whenever it starts from a lead.
+ */
+export async function convertLead(
+  leadId: string,
+  clientId: string
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from("leads")
+    .update({ status: "converted", client_id: clientId })
+    .eq("id", leadId);
+  if (error) throw error;
+}
+
+/** Project files for the admin-side project detail panel. */
+export async function fetchProjectFiles(projectId: string) {
+  const { data, error } = await getSupabase()
+    .from("files")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
 }
 
 /**

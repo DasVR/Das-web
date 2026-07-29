@@ -1,13 +1,13 @@
 import { pageMetadata } from "@/lib/site";
-import { AdminOverview } from "./AdminOverview";
+import { AdminInbox } from "./AdminInbox";
 
 export const metadata = pageMetadata({
-  title: "Admin Overview",
+  title: "Admin Inbox",
   description: "DasDev admin dashboard.",
   path: "/admin",
   noIndex: true,
 });
 
 export default function AdminPage() {
-  return <AdminOverview />;
+  return <AdminInbox />;
 }
