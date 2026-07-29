@@ -42,11 +42,6 @@ export function ContactContent() {
   );
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
-  /**
-   * Prefers the submit-lead Edge Function, which verifies Turnstile and lands
-   * the enquiry in the admin Leads view. Falls back to Formspree, then to a
-   * mailto, so the form still works before the backend is provisioned.
-   */
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     triggerHaptic(HapticPatterns.medium);
@@ -254,7 +249,9 @@ export function ContactContent() {
                   className="w-full resize-y rounded-md border border-neutral-800 bg-[#0a0a0a] px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-700 focus:border-neutral-500"
                 />
               </div>
-              {isSupabaseConfigured && <Turnstile onVerify={setCaptchaToken} />}
+              {isSupabaseConfigured && isTurnstileEnabled && (
+                <Turnstile onVerify={setCaptchaToken} />
+              )}
               <button
                 type="submit"
                 disabled={status === "sending"}
@@ -274,11 +271,7 @@ export function ContactContent() {
                 </p>
               ) : null}
               <p className="text-xs text-neutral-600">
-                {isSupabaseConfigured
-                  ? "Goes straight to my inbox and my leads board."
-                  : FORMSPREE_ID
-                    ? "Sends via Formspree to hello@dasdev.net."
-                    : "Opens your email client with a draft to hello@dasdev.net."}
+                Goes straight to my inbox. No third-party services.
               </p>
             </form>
           </AnimatedSection>

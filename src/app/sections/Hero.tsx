@@ -38,7 +38,7 @@ export function Hero() {
           </p>
 
           <div className="mb-8 h-20 w-full max-w-xl text-neutral-200 sm:h-24 md:mb-10 md:h-28 md:max-w-2xl lg:h-36 lg:max-w-3xl">
-            <DotMatrix text="DASDEV" gap={6} letterGap={8} radius={2.1} />
+            <DotMatrix text="Arriq" gap={6} letterGap={8} radius={2.1} />
           </div>
 
           <h1 className="mb-6 font-display text-[2.85rem] font-bold leading-[0.92] tracking-tight sm:text-5xl md:mb-8 md:text-7xl lg:text-[5.5rem]">
