@@ -14,6 +14,7 @@ import {
   createClient,
   fetchAccessRequests,
   fetchLeads,
+  inviteClient,
   reviewAccessRequest,
   setLeadStatus,
 } from "@/lib/admin";
@@ -220,13 +221,39 @@ function LeadsBody() {
                       </button>
                     )}
                     {lead.status !== "converted" && (
-                      <button
-                        type="button"
-                        onClick={() => convertLead(lead)}
-                        className="rounded-md bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-neutral-200"
-                      >
-                        Convert to client
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => convertLead(lead)}
+                          className="rounded-md bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-neutral-200"
+                        >
+                          Convert to client
+                        </button>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              await inviteClient({
+                                business_name: lead.name,
+                                contact_name: lead.name,
+                                email: lead.email,
+                              });
+                              await setLeadStatus(lead.id, "converted");
+                              setNotice(`Invite sent to ${lead.email}.`);
+                              await load();
+                            } catch (cause) {
+                              setError(
+                                cause instanceof Error
+                                  ? cause.message
+                                  : "Could not send invite."
+                              );
+                            }
+                          }}
+                          className="rounded-md border border-orange-500/40 px-3 py-1.5 text-xs text-orange-300 transition-colors hover:border-orange-400 hover:text-orange-200"
+                        >
+                          Send portal invite
+                        </button>
+                      </>
                     )}
                     <button
                       type="button"

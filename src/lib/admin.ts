@@ -319,6 +319,36 @@ export async function setLeadStatus(
   if (error) throw error;
 }
 
+/**
+ * Admin-only. Creates a client record AND sends an email invite to the
+ * contact so they can set a password and access their dashboard.
+ * Uses the invite-client Edge Function (service_role) because the browser
+ * cannot call auth.admin.inviteUserByEmail.
+ */
+export async function inviteClient(input: {
+  business_name: string;
+  contact_name?: string;
+  email: string;
+}): Promise<{ client: ClientRow; invited: boolean; error?: string }> {
+  const session = (await getSupabase().auth.getSession()).data.session;
+  const res = await fetch(functionsUrl("invite-client"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: supabaseAnonKey,
+      Authorization: `Bearer ${session?.access_token ?? ""}`,
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Invite failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
 export async function markClientMessagesRead(clientId: string): Promise<void> {
   const { error } = await getSupabase()
     .from("messages")

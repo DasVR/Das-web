@@ -74,7 +74,12 @@ export function ContactContent() {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          ...(isSupabaseConfigured ? { apikey: supabaseAnonKey } : {}),
+          ...(isSupabaseConfigured
+            ? {
+                apikey: supabaseAnonKey,
+                Authorization: `Bearer ${supabaseAnonKey}`,
+              }
+            : {}),
         },
         body: JSON.stringify(
           isSupabaseConfigured
