@@ -43,12 +43,12 @@ export function LoginContent() {
   // Detect invite token from URL (supabase sends ?token=xyz&type=invite)
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-    const token = hash.get("token") || hash.get("access_token");
-    const type = hash.get("type");
+    const search = new URLSearchParams(window.location.search);
+    const token = search.get("token") || search.get("code");
+    const type = search.get("type");
     if (token && type === "invite") {
       setMode("invite");
-      setNotice("Welcome! Set your access key to get started.");
+      setNotice("Welcome! Create your access key to get started.");
     }
   }, []);
 
@@ -57,8 +57,8 @@ export function LoginContent() {
       setError(`Use at least ${MIN_PASSWORD_LENGTH} characters.`);
       return;
     }
-    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-    const token = hash.get("token") || hash.get("access_token");
+    const search = new URLSearchParams(window.location.search);
+    const token = search.get("token") || search.get("code");
     if (!token) {
       setError("Invite link expired. Request access instead.");
       return;
@@ -135,7 +135,7 @@ export function LoginContent() {
       password,
       options: {
         data: { full_name: fullName.trim() },
-        emailRedirectTo: `${window.location.origin}/dashboard/login`,
+        emailRedirectTo: "https://dasdev.net/dashboard/login",
         ...(captchaToken ? { captchaToken } : {}),
       },
     });
@@ -170,7 +170,7 @@ export function LoginContent() {
   async function handleReset() {
     const { error: resetError } = await getSupabase().auth.resetPasswordForEmail(
       email.trim(),
-      { redirectTo: `${window.location.origin}/dashboard/reset` }
+      { redirectTo: "https://dasdev.net/dashboard/reset" }
     );
 
     if (resetError) {
