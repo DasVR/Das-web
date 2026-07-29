@@ -11,7 +11,7 @@ import { useAuth } from "@/lib/auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 
-type Mode = "signin" | "request" | "reset";
+type Mode = "signin" | "request" | "reset" | "invite";
 
 const MIN_PASSWORD_LENGTH = 10;
 
@@ -39,6 +39,59 @@ export function LoginContent() {
     if (loading || !session) return;
     router.replace(role === "admin" ? "/admin" : "/dashboard");
   }, [loading, session, role, router]);
+
+  // Detect invite token from URL (supabase sends ?token=xyz&type=invite)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const token = hash.get("token") || hash.get("access_token");
+    const type = hash.get("type");
+    if (token && type === "invite") {
+      setMode("invite");
+      setNotice("Welcome! Set your access key to get started.");
+    }
+  }, []);
+
+  async function handleSetPasswordFromInvite() {
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError(`Use at least ${MIN_PASSWORD_LENGTH} characters.`);
+      return;
+    }
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const token = hash.get("token") || hash.get("access_token");
+    if (!token) {
+      setError("Invite link expired. Request access instead.");
+      return;
+    }
+
+    const supabase = getSupabase();
+
+    // Step 1: verify the invite token (this signs them in)
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+      token_hash: token,
+      type: "invite",
+    });
+
+    if (verifyError) {
+      setError(
+        verifyError.message || "Invite link expired. Request access instead."
+      );
+      return;
+    }
+
+    // Step 2: set their password
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
+    });
+
+    if (updateError) {
+      setError(updateError.message);
+      return;
+    }
+
+    setNotice("Access key set! Redirecting...");
+    setTimeout(() => router.replace("/dashboard"), 800);
+  }
 
   function switchMode(next: Mode) {
     setMode(next);
@@ -148,6 +201,7 @@ export function LoginContent() {
     try {
       if (mode === "signin") await handleSignIn();
       else if (mode === "request") await handleRequestAccess();
+      else if (mode === "invite") await handleSetPasswordFromInvite();
       else await handleReset();
     } catch {
       setError("Something went wrong. Try again, or email hello@dasdev.net.");
@@ -197,7 +251,7 @@ export function LoginContent() {
           </PortalNotice>
         ) : (
           <>
-            {mode !== "reset" && (
+            {mode !== "reset" && mode !== "invite" && (
               <div
                 role="tablist"
                 aria-label="Portal access"
@@ -256,7 +310,7 @@ export function LoginContent() {
 
               {mode !== "reset" && (
                 <Field
-                  label="Access key"
+                  label={mode === "invite" ? "Create access key" : "Access key"}
                   type="password"
                   value={password}
                   onChange={setPassword}
@@ -266,7 +320,9 @@ export function LoginContent() {
                   placeholder={
                     mode === "request"
                       ? `At least ${MIN_PASSWORD_LENGTH} characters`
-                      : "Your access key"
+                      : mode === "invite"
+                        ? "Choose a strong access key"
+                        : "Your access key"
                   }
                   required
                 />
@@ -288,7 +344,9 @@ export function LoginContent() {
                     ? "Enter workspace"
                     : mode === "request"
                       ? "Request access"
-                      : "Send reset link"}
+                      : mode === "invite"
+                        ? "Set access key"
+                        : "Send reset link"}
               </motion.button>
             </form>
 
