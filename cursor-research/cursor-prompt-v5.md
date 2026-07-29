@@ -23,14 +23,63 @@ This is a Next.js 14 portfolio site for "Arriq / Das Web Design" — a personal 
 
 ### Multi-Page Architecture (SCAFFOLDED, needs polish)
 New pages created:
-- `/` (Home) — existing single-page sections
-- `/work` — extracted Work section + CTA footer
-- `/about` — extracted About section
-- `/contact` — extracted Contact section + real form
-- `/lab` — Experiments grid with status badges
-- `/now` — "What I'm doing right now" page (inspired by nownownow.com)
+- `/` (Home)
+- `/work`
+- `/about`
+- `/contact`
+- `/lab`
+- `/now`
+- `/review` — PUBLIC review page for client deliverables (see Review Links below)
+- `/dashboard` — Client portal
+- `/dashboard/login` — Client sign in / activation with PIN key
+- `/admin` — Admin panel
+- `/admin/clients/detail` — Single client page with projects, care plans, messages, files
 
-**Already implemented:**
+---
+
+## Client Review Links (NEW — v5.1)
+A time-limited public review system for all project types (not just web design).
+
+### Database Tables
+- `project_reviews` — stores token, external_url, expires_at, active flag, project_id
+- `review_feedback` — anonymous or named comments on a review link
+- Enum `review_feedback_status`: `open | resolved | wontfix`
+
+### Admin Flow
+- Admin creates project → checkbox "Enable client review link"
+- Optional custom review URL (staging site, Figma, Drive, etc.)
+- Expiry picker: 3 / 7 / 14 / 30 days
+- After creation, review link displayed with Copy + Deactivate buttons
+- Existing projects show active/inactive review links on their card
+
+### Public Flow
+- Anyone with link visits `/review?token=xxx`
+- Sees project name + preview URL
+- Can leave feedback (name/email optional)
+- Can view past feedback
+- Link auto-expires; admin can manually deactivate
+
+### Code Locations
+- Public page: `src/app/review/page.tsx`
+- Admin UI: `src/app/admin/clients/detail/AdminClientDetail.tsx` (NewProjectForm, ProjectReviews component)
+- Client dashboard: `src/app/dashboard/DashboardContent.tsx` (shows review links with copy)
+- Data layer: `src/lib/reviews.ts` (fetchReviewByToken, submitFeedback, fetchFeedback, createReviewLink, deactivateReviewLink, fetchProjectReviews)
+- Types: `src/lib/database.types.ts` (ReviewFeedbackStatus, ProjectReviewRow, ReviewFeedbackRow)
+- Edge functions: `supabase/functions/verify-access-key/` (PIN-based client activation, deployed and working)
+- Migrations: `supabase/migrations/0007_project_reviews.sql`, `0009_review_feedback.sql`, `0010_review_rls.sql` (renumbered to avoid collision)
+
+---
+
+## Client Activation (PIN-based)
+Replaces Supabase invite emails (which hit rate limits). Admin generates an access_key → texts it to client → client activates at `/dashboard/login` with email + key + password.
+- Edge function: `verify-access-key` (deployed)
+- Client table columns: `access_key text`, `access_key_created_at timestamptz`
+- Key cleared on first successful activation
+- RLS policies allow anonymous users to verify keys
+
+---
+
+## What Just Changed (v4 → v5)
 - `template.tsx` with spring physics page transitions (Framer Motion `AnimatePresence` via `template.tsx`)
 - `SiteNav.tsx` updated to use Next.js `Link` with `usePathname()` + `layoutId` animated underline
 - All 5 new pages have `SiteNav`, `GrainOverlay`, `CustomCursor`, and section animations
