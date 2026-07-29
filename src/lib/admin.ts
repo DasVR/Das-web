@@ -460,6 +460,16 @@ export async function convertLead(
   if (error) throw error;
 }
 
+export async function fetchProjectUpdates(projectId: string): Promise<UpdateRow[]> {
+  const { data, error } = await getSupabase()
+    .from("updates")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
 /** Project files for the admin-side project detail panel. */
 export async function fetchProjectFiles(projectId: string) {
   const { data, error } = await getSupabase()

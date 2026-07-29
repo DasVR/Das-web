@@ -1,13 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AdminGate } from "@/components/portal/AdminGate";
 import {
   EmptyState,
   PortalCard,
   PortalNotice,
 } from "@/components/portal/PortalShell";
+import { ProjectDetailPanel } from "@/components/admin/ProjectDetailPanel";
 import {
   fetchAllClients,
   fetchAllProjects,
@@ -23,12 +25,17 @@ const columns: ProjectStatus[] = ["queued", "in progress", "in review", "live"];
 export function AdminProjects() {
   return (
     <AdminGate>
-      <ProjectsBody />
+      {/* useSearchParams needs a boundary in a statically exported page. */}
+      <Suspense fallback={<p className="text-sm text-neutral-500">Loading projects…</p>}>
+        <ProjectsBody />
+      </Suspense>
     </AdminGate>
   );
 }
 
 function ProjectsBody() {
+  const router = useRouter();
+  const selectedId = useSearchParams().get("id");
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +71,18 @@ function ProjectsBody() {
 
   const clientName = (id: string) =>
     clients.find((client) => client.id === id)?.business_name ?? "Unassigned";
+
+  const selectedProject = selectedId
+    ? projects.find((project) => project.id === selectedId) ?? null
+    : null;
+
+  function openProject(id: string) {
+    router.replace(`/admin/projects?id=${id}`, { scroll: false });
+  }
+
+  function closeProject() {
+    router.replace("/admin/projects", { scroll: false });
+  }
 
   return (
     <>
@@ -114,9 +133,10 @@ function ProjectsBody() {
               <div className="space-y-2">
                 {byStatus[status].map((project) => (
                   <PortalCard key={project.id} className="px-3 py-3">
-                    <Link
-                      href={`/admin/clients/detail?id=${project.client_id}`}
-                      className="block"
+                    <button
+                      type="button"
+                      onClick={() => openProject(project.id)}
+                      className="block w-full text-left"
                     >
                       <p className="truncate text-sm font-medium hover:text-white">
                         {project.name}
@@ -124,7 +144,7 @@ function ProjectsBody() {
                       <p className="truncate text-xs text-neutral-500">
                         {clientName(project.client_id)}
                       </p>
-                    </Link>
+                    </button>
 
                     {project.services.length > 0 && (
                       <p className="mt-1.5 truncate font-mono text-[10px] text-neutral-600">
@@ -164,6 +184,15 @@ function ProjectsBody() {
             </section>
           ))}
         </div>
+      )}
+
+      {selectedProject && (
+        <ProjectDetailPanel
+          project={selectedProject}
+          clientName={clientName(selectedProject.client_id)}
+          onClose={closeProject}
+          onChanged={load}
+        />
       )}
     </>
   );
