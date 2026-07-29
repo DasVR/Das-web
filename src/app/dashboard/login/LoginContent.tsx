@@ -5,19 +5,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { DotMatrix } from "@/components/DotMatrix";
-import { Turnstile, isTurnstileEnabled } from "@/components/Turnstile";
 import { PortalNotice } from "@/components/portal/PortalShell";
 import { useAuth } from "@/lib/auth";
-import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabase, isSupabaseConfigured, supabaseAnonKey } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 
-type Mode = "signin" | "request" | "reset" | "invite";
+type Mode = "signin" | "reset" | "activate";
 
 const MIN_PASSWORD_LENGTH = 10;
 
 const tabs: { mode: Mode; label: string }[] = [
   { mode: "signin", label: "Sign in" },
-  { mode: "request", label: "Request access" },
+  { mode: "activate", label: "Activate with key" },
 ];
 
 export function LoginContent() {
@@ -27,71 +26,15 @@ export function LoginContent() {
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [businessName, setBusinessName] = useState("");
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [accessKey, setAccessKey] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  // Already signed in: send them where they belong rather than showing a form.
   useEffect(() => {
     if (loading || !session) return;
     router.replace(role === "admin" ? "/admin" : "/dashboard");
   }, [loading, session, role, router]);
-
-  // Detect invite token from URL (supabase sends ?token=xyz&type=invite)
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const search = new URLSearchParams(window.location.search);
-    const token = search.get("token") || search.get("code");
-    const type = search.get("type");
-    if (token && type === "invite") {
-      setMode("invite");
-      setNotice("Welcome! Create your access key to get started.");
-    }
-  }, []);
-
-  async function handleSetPasswordFromInvite() {
-    if (password.length < MIN_PASSWORD_LENGTH) {
-      setError(`Use at least ${MIN_PASSWORD_LENGTH} characters.`);
-      return;
-    }
-    const search = new URLSearchParams(window.location.search);
-    const token = search.get("token") || search.get("code");
-    if (!token) {
-      setError("Invite link expired. Request access instead.");
-      return;
-    }
-
-    const supabase = getSupabase();
-
-    // Step 1: verify the invite token (this signs them in)
-    const { error: verifyError } = await supabase.auth.verifyOtp({
-      token_hash: token,
-      type: "invite",
-    });
-
-    if (verifyError) {
-      setError(
-        verifyError.message || "Invite link expired. Request access instead."
-      );
-      return;
-    }
-
-    // Step 2: set their password
-    const { error: updateError } = await supabase.auth.updateUser({
-      password,
-    });
-
-    if (updateError) {
-      setError(updateError.message);
-      return;
-    }
-
-    setNotice("Access key set! Redirecting...");
-    setTimeout(() => router.replace("/dashboard"), 800);
-  }
 
   function switchMode(next: Mode) {
     setMode(next);
@@ -106,65 +49,11 @@ export function LoginContent() {
     });
 
     if (signInError) {
-      // Supabase returns the same message for unknown email and wrong
-      // password; keep it that way so this form cannot enumerate accounts.
       setError("That email and access key do not match.");
       return;
     }
 
     router.replace("/dashboard");
-  }
-
-  async function handleRequestAccess() {
-    if (password.length < MIN_PASSWORD_LENGTH) {
-      setError(`Use at least ${MIN_PASSWORD_LENGTH} characters.`);
-      return;
-    }
-    if (!businessName.trim()) {
-      setError("Tell me your business name.");
-      return;
-    }
-    if (isTurnstileEnabled && !captchaToken) {
-      setError("Complete the verification check.");
-      return;
-    }
-
-    const supabase = getSupabase();
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        data: { full_name: fullName.trim() },
-        emailRedirectTo: "https://dasdev.net/dashboard/login",
-        ...(captchaToken ? { captchaToken } : {}),
-      },
-    });
-
-    if (signUpError) {
-      setError(signUpError.message);
-      return;
-    }
-
-    // A new account is 'pending' until an admin attaches it to a client, so
-    // this request is the only thing it can write.
-    if (data.session && data.user) {
-      const { error: requestError } = await supabase
-        .from("access_requests")
-        .insert({
-          user_id: data.user.id,
-          business_name: businessName.trim(),
-          message: null,
-        });
-      if (requestError && requestError.code !== "23505") {
-        setError(requestError.message);
-        return;
-      }
-    }
-
-    setNotice(
-      "Request received. Confirm your email, then I will set up your workspace and email you when it is ready."
-    );
-    setPassword("");
   }
 
   async function handleReset() {
@@ -178,9 +67,54 @@ export function LoginContent() {
       return;
     }
 
-    // Confirm unconditionally: revealing whether an address exists would leak
-    // the client list.
     setNotice("If that email has an account, a reset link is on its way.");
+  }
+
+  async function handleActivateWithKey() {
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError(`Use at least ${MIN_PASSWORD_LENGTH} characters.`);
+      return;
+    }
+    if (!accessKey.trim()) {
+      setError("Enter the access key you were given.");
+      return;
+    }
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "")}/functions/v1/verify-access-key`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: supabaseAnonKey,
+          Authorization: `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+          access_key: accessKey.trim().toUpperCase(),
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setError(body.error || "Could not activate. Check your key and try again.");
+      return;
+    }
+
+    const { error: signInError } = await getSupabase().auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    if (signInError) {
+      setError("Activated! Sign in with your email and new password.");
+      return;
+    }
+
+    setNotice("Workspace activated! Redirecting...");
+    setTimeout(() => router.replace("/dashboard"), 800);
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -200,8 +134,7 @@ export function LoginContent() {
     setBusy(true);
     try {
       if (mode === "signin") await handleSignIn();
-      else if (mode === "request") await handleRequestAccess();
-      else if (mode === "invite") await handleSetPasswordFromInvite();
+      else if (mode === "activate") await handleActivateWithKey();
       else await handleReset();
     } catch {
       setError("Something went wrong. Try again, or email hello@dasdev.net.");
@@ -251,7 +184,7 @@ export function LoginContent() {
           </PortalNotice>
         ) : (
           <>
-            {mode !== "reset" && mode !== "invite" && (
+            {mode !== "reset" && (
               <div
                 role="tablist"
                 aria-label="Portal access"
@@ -278,26 +211,6 @@ export function LoginContent() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-3">
-              {mode === "request" && (
-                <>
-                  <Field
-                    label="Your name"
-                    value={fullName}
-                    onChange={setFullName}
-                    autoComplete="name"
-                    placeholder="Jordan Reyes"
-                  />
-                  <Field
-                    label="Business name"
-                    value={businessName}
-                    onChange={setBusinessName}
-                    autoComplete="organization"
-                    placeholder="Northline Studio"
-                    required
-                  />
-                </>
-              )}
-
               <Field
                 label="Email"
                 type="email"
@@ -310,7 +223,11 @@ export function LoginContent() {
 
               {mode !== "reset" && (
                 <Field
-                  label={mode === "invite" ? "Create access key" : "Access key"}
+                  label={
+                    mode === "activate"
+                      ? "Choose your access key"
+                      : "Access key"
+                  }
                   type="password"
                   value={password}
                   onChange={setPassword}
@@ -318,18 +235,23 @@ export function LoginContent() {
                     mode === "signin" ? "current-password" : "new-password"
                   }
                   placeholder={
-                    mode === "request"
-                      ? `At least ${MIN_PASSWORD_LENGTH} characters`
-                      : mode === "invite"
-                        ? "Choose a strong access key"
-                        : "Your access key"
+                    mode === "activate"
+                      ? "Choose a strong access key"
+                      : "Your access key"
                   }
                   required
                 />
               )}
 
-              {mode === "request" && (
-                <Turnstile onVerify={setCaptchaToken} className="pt-1" />
+              {mode === "activate" && (
+                <Field
+                  label="Access key"
+                  value={accessKey}
+                  onChange={setAccessKey}
+                  autoComplete="off"
+                  placeholder="The key your admin gave you"
+                  required
+                />
               )}
 
               <motion.button
@@ -342,11 +264,9 @@ export function LoginContent() {
                   ? "Working…"
                   : mode === "signin"
                     ? "Enter workspace"
-                    : mode === "request"
-                      ? "Request access"
-                      : mode === "invite"
-                        ? "Set access key"
-                        : "Send reset link"}
+                    : mode === "activate"
+                      ? "Activate workspace"
+                      : "Send reset link"}
               </motion.button>
             </form>
 

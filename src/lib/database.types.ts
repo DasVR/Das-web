@@ -11,6 +11,7 @@ export type ProjectStatus = "queued" | "in progress" | "in review" | "live";
 export type ClientStatus = "active" | "paused" | "archived";
 export type LeadStatus = "new" | "contacted" | "converted" | "archived";
 export type RequestStatus = "pending" | "approved" | "denied";
+export type ReviewFeedbackStatus = "open" | "resolved" | "wontfix";
 
 export type ProfileRow = {
   id: string;
@@ -31,6 +32,8 @@ export type ClientRow = {
   status: ClientStatus;
   since: string | null;
   notes: string | null;
+  access_key: string | null;
+  access_key_created_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -91,6 +94,28 @@ export type FileRow = {
   content_type: string | null;
   uploaded_by: string | null;
   created_at: string;
+};
+
+export type ProjectReviewRow = {
+  id: string;
+  project_id: string;
+  token: string;
+  external_url: string | null;
+  expires_at: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ReviewFeedbackRow = {
+  id: string;
+  review_id: string;
+  author_name: string | null;
+  author_email: string | null;
+  body: string;
+  status: ReviewFeedbackStatus;
+  created_at: string;
+  updated_at: string;
 };
 
 export type AccessRequestRow = {
@@ -163,6 +188,14 @@ export type Database = {
         { user_id: string; business_name: string; message?: string | null }
       >;
       leads: Table<LeadRow>;
+      project_reviews: Table<
+        ProjectReviewRow,
+        Omit<Partial<ProjectReviewRow>, "id"> & { project_id: string; token: string; expires_at: string }
+      >;
+      review_feedback: Table<
+        ReviewFeedbackRow,
+        Omit<Partial<ReviewFeedbackRow>, "id"> & { review_id: string; body: string }
+      >;
     };
     Views: Record<string, { Row: Record<string, unknown>; Relationships: [] }>;
     Functions: {
@@ -176,6 +209,7 @@ export type Database = {
       client_status: ClientStatus;
       lead_status: LeadStatus;
       request_status: RequestStatus;
+      review_feedback_status: ReviewFeedbackStatus;
     };
   };
 };

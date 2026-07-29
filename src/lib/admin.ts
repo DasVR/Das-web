@@ -179,6 +179,7 @@ export async function createClient(input: {
   email?: string;
   phone?: string;
   industry?: string;
+  access_key?: string;
 }): Promise<ClientRow> {
   const { data, error } = await getSupabase()
     .from("clients")
@@ -189,12 +190,38 @@ export async function createClient(input: {
       phone: input.phone ?? null,
       industry: input.industry ?? null,
       since: String(new Date().getFullYear()),
+      access_key: input.access_key ?? null,
+      access_key_created_at: input.access_key ? new Date().toISOString() : null,
     })
     .select()
     .single();
 
   if (error) throw error;
   return data;
+}
+
+export async function setClientAccessKey(
+  clientId: string,
+  key: string | null
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from("clients")
+    .update({
+      access_key: key,
+      access_key_created_at: key ? new Date().toISOString() : null,
+    })
+    .eq("id", clientId);
+  if (error) throw error;
+}
+
+const ACCESS_KEY_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+export function generateAccessKey(length = 8): string {
+  let key = "";
+  for (let i = 0; i < length; i++) {
+    key += ACCESS_KEY_CHARS[Math.floor(Math.random() * ACCESS_KEY_CHARS.length)];
+  }
+  return key;
 }
 
 export async function updateClient(
@@ -215,8 +242,8 @@ export async function createProject(input: {
   status?: ProjectStatus;
   services?: string[];
   note?: string;
-}): Promise<void> {
-  const { error } = await getSupabase()
+}): Promise<string> {
+  const { data, error } = await getSupabase()
     .from("projects")
     .insert({
       client_id: input.client_id,
@@ -225,8 +252,11 @@ export async function createProject(input: {
       status: input.status ?? "queued",
       services: input.services ?? [],
       note: input.note ?? null,
-    });
+    })
+    .select("id")
+    .single();
   if (error) throw error;
+  return data.id;
 }
 
 export async function setProjectStatus(
@@ -293,6 +323,14 @@ export async function assignProfileToClient(
   const { error } = await getSupabase()
     .from("profiles")
     .update({ role: "client", client_id: clientId })
+    .eq("id", profileId);
+  if (error) throw error;
+}
+
+export async function toggleAdmin(profileId: string, makeAdmin: boolean): Promise<void> {
+  const { error } = await getSupabase()
+    .from("profiles")
+    .update({ role: makeAdmin ? "admin" : "pending" })
     .eq("id", profileId);
   if (error) throw error;
 }
@@ -406,5 +444,47 @@ export async function broadcastMessage(
   const { error } = await getSupabase()
     .from("messages")
     .insert(clientIds.map((clientId) => ({ client_id: clientId, body })));
+  if (error) throw error;
+}
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+
+export async function notifyNewLead(payload: { name: string; email: string; message: string }) {
+  try {
+    await fetch("https://notify.dasdev.net/dasdev-leads", {
+      method: "POST",
+      body: `New lead: ${payload.name} (${payload.email})\n${payload.message}`,
+    });
+  } catch { /* ignore network errors */ }
+}
+
+export async function notifyNewClient(client: ClientRow, accessKey?: string | null) {
+  try {
+    const body = accessKey
+      ? `New client: ${client.business_name}\nAccess key: ${accessKey}\nContact: ${client.contact_name || "—"} / ${client.email || "—"}`
+      : `New client: ${client.business_name}\nContact: ${client.contact_name || "—"} / ${client.email || "—"}`;
+    await fetch("https://notify.dasdev.net/dasdev-clients", {
+      method: "POST",
+      body,
+    });
+  } catch { /* ignore */ }
+}
+
+export async function notifyKeyGenerated(client: ClientRow, key: string) {
+  try {
+    await fetch("https://notify.dasdev.net/dasdev-clients", {
+      method: "POST",
+      body: `Key generated for ${client.business_name}: ${key}`,
+    });
+  } catch { /* ignore */ }
+}
+
+export async function deleteClient(clientId: string): Promise<void> {
+  const { error } = await getSupabase()
+    .from("clients")
+    .delete()
+    .eq("id", clientId);
   if (error) throw error;
 }

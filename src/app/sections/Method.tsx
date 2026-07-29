@@ -59,9 +59,9 @@ export function Method() {
           }
         />
 
-        <div className="relative mt-4 grid gap-10 md:grid-cols-[auto_1fr] md:gap-16">
+        <div className="relative mt-4 grid gap-6 md:grid-cols-[auto_1fr] md:gap-16">
           <div
-            className="relative mx-auto hidden h-full min-h-[28rem] w-12 md:block"
+            className="relative mx-auto hidden h-full min-h-[28rem] w-12 shrink-0 md:block"
             aria-hidden="true"
           >
             <svg
@@ -90,15 +90,15 @@ export function Method() {
             {STEPS.map((step, i) => (
               <li key={step.num}>
                 <AnimatedSection delay={i * 0.06}>
-                  <div className="grid gap-3 border-b border-neutral-800 py-8 md:grid-cols-[5rem_1fr] md:gap-8 md:py-10">
-                    <span className="font-mono text-sm text-orange-500">
+                  <div className="grid gap-3 border-b border-neutral-800 py-6 sm:py-8 md:grid-cols-[5rem_1fr] md:gap-8 md:py-10">
+                    <span className="font-mono text-xs text-orange-500 sm:text-sm">
                       {step.num}
                     </span>
                     <div>
-                      <h3 className="font-display text-2xl font-semibold tracking-tight text-white transition-transform duration-300 md:text-4xl">
+                      <h3 className="font-display text-xl font-semibold tracking-tight text-white transition-transform duration-300 sm:text-2xl md:text-4xl">
                         {step.title}
                       </h3>
-                      <p className="mt-3 max-w-2xl text-base leading-relaxed text-neutral-400">
+                      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400 sm:text-base sm:mt-3">
                         {step.body}
                       </p>
                     </div>

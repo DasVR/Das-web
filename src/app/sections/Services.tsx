@@ -58,7 +58,7 @@ export function Services() {
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-4">
-                    <span className="hidden font-mono text-xs tracking-wide text-orange-400 sm:inline md:text-sm">
+                    <span className="font-mono text-[10px] tracking-wide text-orange-400 sm:text-xs md:text-sm">
                       {service.price}
                     </span>
                     <ArrowUpRight

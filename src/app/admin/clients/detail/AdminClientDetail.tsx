@@ -14,10 +14,14 @@ import { AdminField } from "@/app/admin/clients/AdminClients";
 import {
   createProject,
   createUpdate,
+  deleteClient,
   fetchClientDetail,
+  generateAccessKey,
   markClientMessagesRead,
   sendAdminMessage,
+  setClientAccessKey,
   setProjectStatus,
+  toggleAdmin,
   toggleUpdateDone,
   updateClient,
   upsertCarePlan,
@@ -25,6 +29,7 @@ import {
 } from "@/lib/admin";
 import { formatDate, statusBadgeClass } from "@/lib/dashboard";
 import type { ProjectStatus } from "@/lib/database.types";
+import { fetchProjectReviews, deactivateReviewLink } from "@/lib/reviews";
 import { getServiceName, services } from "@/lib/services";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
@@ -104,13 +109,28 @@ function DetailBody() {
 
   return (
     <>
-      <nav className="mb-4">
+      <nav className="mb-4 flex items-center justify-between">
         <Link
           href="/admin/clients"
           className="text-xs text-neutral-500 transition-colors hover:text-neutral-300"
         >
           ← Clients
         </Link>
+        <button
+          type="button"
+          onClick={async () => {
+            if (!confirm(`Remove ${client.business_name}? This cannot be undone.`)) return;
+            try {
+              await deleteClient(client.id);
+              window.location.href = "/admin/clients";
+            } catch {
+              setError("Could not remove client.");
+            }
+          }}
+          className="text-xs text-neutral-600 transition-colors hover:text-red-400"
+        >
+          Remove client
+        </button>
       </nav>
 
       <header className="mb-8">
@@ -152,6 +172,71 @@ function DetailBody() {
               </button>
             ))}
           </div>
+        </PortalCard>
+      </section>
+
+      <section className="mb-8">
+        <SectionTitle
+          action={
+            <button
+              type="button"
+              onClick={async () => {
+                const key = generateAccessKey();
+                await setClientAccessKey(client.id, key);
+                await load();
+              }}
+              className="rounded-md border border-neutral-800 px-3 py-1.5 text-[10px] text-neutral-400 transition-colors hover:border-neutral-600 hover:text-neutral-200"
+            >
+              Regenerate key
+            </button>
+          }
+        >
+          Access key
+        </SectionTitle>
+        <PortalCard>
+          {client.access_key ? (
+            <div className="space-y-2">
+              <p className="font-mono text-xl tracking-widest text-orange-400">
+                {client.access_key}
+              </p>
+              <p className="text-xs text-neutral-500">
+                Share this with{" "}
+                {client.contact_name || client.business_name}. They enter it at{" "}
+                <Link href="/dashboard/login" className="underline">
+                  dasdev.net/dashboard/login
+                </Link>{" "}
+                to activate their workspace.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(client.access_key ?? "");
+                }}
+                className="text-[10px] text-neutral-400 transition-colors hover:text-neutral-200"
+              >
+                Copy key
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-xs text-neutral-500">
+                No active key. Generate one so{" "}
+                {client.contact_name || "the client"} can activate their
+                workspace.
+              </p>
+              <button
+                type="button"
+                onClick={async () => {
+                  const key = generateAccessKey();
+                  await setClientAccessKey(client.id, key);
+                  await load();
+                }}
+                className="rounded-md border border-neutral-800 px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:border-neutral-600 hover:text-neutral-200"
+              >
+                Generate key
+              </button>
+            </div>
+          )}
         </PortalCard>
       </section>
 
@@ -204,6 +289,8 @@ function DetailBody() {
               </div>
 
               <UpdateComposer projectId={project.id} onAdded={load} />
+
+              <ProjectReviews projectId={project.id} />
 
               <div className="mt-3 space-y-1.5 border-t border-neutral-900 pt-3">
                 {updates
@@ -259,6 +346,48 @@ function DetailBody() {
           included={care?.included ?? []}
           onSaved={load}
         />
+      </section>
+
+      <section className="mb-8">
+        <SectionTitle>Linked accounts</SectionTitle>
+        {members.length === 0 ? (
+          <EmptyState
+            title="No linked accounts"
+            body="The client has not activated their workspace yet."
+          />
+        ) : (
+          <div className="space-y-2">
+            {members.map((member) => (
+              <PortalCard key={member.id} className="px-4 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">
+                      {member.full_name || "Unnamed"}
+                    </p>
+                    <p className="text-xs text-neutral-500">
+                      {member.role} · {member.id.slice(0, 8)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const makeAdmin = member.role !== "admin";
+                      await toggleAdmin(member.id, makeAdmin);
+                      await load();
+                    }}
+                    className={`rounded-md px-3 py-1.5 text-[10px] font-medium transition-colors ${
+                      member.role === "admin"
+                        ? "bg-orange-500/20 text-orange-300 hover:bg-orange-500/30"
+                        : "border border-neutral-800 text-neutral-400 hover:border-neutral-600"
+                    }`}
+                  >
+                    {member.role === "admin" ? "Revoke admin" : "Make admin"}
+                  </button>
+                </div>
+              </PortalCard>
+            ))}
+          </div>
+        )}
       </section>
 
       <section>
@@ -361,6 +490,10 @@ function NewProjectForm({
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
+  const [enableReview, setEnableReview] = useState(true);
+  const [reviewUrl, setReviewUrl] = useState("");
+  const [reviewDays, setReviewDays] = useState(7);
+  const [createdLink, setCreatedLink] = useState<string | null>(null);
 
   if (!open) {
     return (
@@ -380,16 +513,29 @@ function NewProjectForm({
         onSubmit={async (event) => {
           event.preventDefault();
           if (!name.trim()) return;
-          await createProject({
+          const projectId = await createProject({
             client_id: clientId,
             name: name.trim(),
             url: url.trim() || undefined,
             services: picked,
           });
+          if (enableReview) {
+            const { createReviewLink } = await import("@/lib/reviews");
+            const review = await createReviewLink({
+              project_id: projectId,
+              external_url: reviewUrl.trim() || url.trim() || undefined,
+              expires_at: new Date(
+                Date.now() + reviewDays * 24 * 60 * 60 * 1000
+              ).toISOString(),
+            });
+            const link = `${typeof window !== "undefined" ? window.location.origin : "https://dasdev.net"}/review?token=${review.token}`;
+            setCreatedLink(link);
+          }
           setName("");
           setUrl("");
           setPicked([]);
-          setOpen(false);
+          setReviewUrl("");
+          setReviewDays(7);
           await onCreated();
         }}
         className="grid gap-3 sm:grid-cols-2"
@@ -432,7 +578,41 @@ function NewProjectForm({
           </div>
         </fieldset>
 
-        <div className="flex gap-2 sm:col-span-2">
+        <label className="flex items-center gap-2 text-xs text-neutral-500 sm:col-span-2">
+          <input
+            type="checkbox"
+            checked={enableReview}
+            onChange={(e) => setEnableReview(e.target.checked)}
+            className="accent-orange-500"
+          />
+          Enable client review link
+        </label>
+
+        {enableReview && (
+          <>
+            <AdminField
+              label="Review URL (optional)"
+              value={reviewUrl}
+              onChange={setReviewUrl}
+              placeholder="https://staging… or Figma / Drive link"
+            />
+            <label className="text-xs text-neutral-500">
+              Expires in
+              <select
+                value={reviewDays}
+                onChange={(e) => setReviewDays(Number(e.target.value))}
+                className="mt-1 w-full rounded-md border border-neutral-800 bg-[#111] px-3 py-2 text-sm text-white outline-none focus:border-neutral-600"
+              >
+                <option value={3}>3 days</option>
+                <option value={7}>7 days</option>
+                <option value={14}>14 days</option>
+                <option value={30}>30 days</option>
+              </select>
+            </label>
+          </>
+        )}
+
+        <div className="flex flex-wrap gap-2 sm:col-span-2">
           <button
             type="submit"
             disabled={!name.trim()}
@@ -442,12 +622,31 @@ function NewProjectForm({
           </button>
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              setCreatedLink(null);
+            }}
             className="rounded-md border border-neutral-800 px-4 py-2 text-sm text-neutral-400"
           >
             Cancel
           </button>
         </div>
+
+        {createdLink && (
+          <div className="sm:col-span-2 rounded-md border border-green-800 bg-green-500/10 p-3">
+            <p className="text-xs text-green-400">Review link created</p>
+            <p className="mt-1 break-all font-mono text-[11px] text-neutral-300">
+              {createdLink}
+            </p>
+            <button
+              type="button"
+              onClick={() => navigator.clipboard.writeText(createdLink)}
+              className="mt-2 text-[10px] text-neutral-400 transition-colors hover:text-neutral-200"
+            >
+              Copy link
+            </button>
+          </div>
+        )}
       </form>
     </PortalCard>
   );
@@ -599,5 +798,76 @@ function MessageComposer({
         <p className="mt-2 text-xs text-neutral-500">{result}</p>
       )}
     </>
+  );
+}
+
+function ProjectReviews({ projectId }: { projectId: string }) {
+  const [reviews, setReviews] = useState<import("@/lib/database.types").ProjectReviewRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    try {
+      const data = await fetchProjectReviews(projectId);
+      setReviews(data);
+    } finally {
+      setLoading(false);
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  if (loading) return null;
+  if (reviews.length === 0) return null;
+
+  return (
+    <div className="mt-2 space-y-1.5">
+      {reviews.map((review) => {
+        const expired = new Date(review.expires_at) < new Date();
+        const link = `${typeof window !== "undefined" ? window.location.origin : "https://dasdev.net"}/review?token=${review.token}`;
+        return (
+          <div
+            key={review.id}
+            className={`flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2 text-[11px] ${
+              review.active && !expired
+                ? "border-green-800 bg-green-500/10"
+                : "border-neutral-800 bg-[#111] opacity-60"
+            }`}
+          >
+            <div className="min-w-0">
+              <p className="truncate font-mono text-[10px] text-neutral-400">
+                {review.active && !expired ? "Active" : "Inactive"}
+                {" · expires "}
+                {new Date(review.expires_at).toLocaleDateString("en-US")}
+              </p>
+              <p className="mt-0.5 break-all text-neutral-300">{link}</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => navigator.clipboard.writeText(link)}
+                className="text-[10px] text-neutral-400 transition-colors hover:text-neutral-200"
+              >
+                Copy
+              </button>
+              {review.active && !expired && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!confirm("Deactivate this review link?")) return;
+                    await deactivateReviewLink(review.id);
+                    await load();
+                  }}
+                  className="text-[10px] text-red-400 transition-colors hover:text-red-300"
+                >
+                  Deactivate
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }

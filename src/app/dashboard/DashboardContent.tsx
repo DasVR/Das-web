@@ -172,7 +172,7 @@ function Workspace({
             { label: "Live", count: counts.live },
             { label: "In progress", count: counts["in progress"] },
             { label: "In review", count: counts["in review"] },
-            { label: "Open items", count: openUpdates.length },
+            { label: "Updates", count: openUpdates.length },
           ] as const
         ).map((stat, index) => (
           <motion.div
@@ -249,6 +249,37 @@ function Workspace({
                         {getServiceName(serviceId)}
                       </span>
                     ))}
+                  </div>
+                )}
+
+                {project.reviews.length > 0 && (
+                  <div className="mt-2 space-y-1.5">
+                    {project.reviews.map((review) => {
+                      const link = `${typeof window !== "undefined" ? window.location.origin : "https://dasdev.net"}/review?token=${review.token}`;
+                      return (
+                        <div
+                          key={review.id}
+                          className="flex items-center justify-between gap-2 rounded border border-green-900/40 bg-green-500/5 px-2.5 py-1.5"
+                        >
+                          <div className="min-w-0">
+                            <p className="font-mono text-[10px] text-green-400/80">
+                              Review link · expires{" "}
+                              {new Date(review.expires_at).toLocaleDateString("en-US")}
+                            </p>
+                            <p className="break-all text-[11px] text-neutral-400">
+                              {link}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => navigator.clipboard.writeText(link)}
+                            className="flex-shrink-0 rounded border border-green-900/40 px-2 py-1 text-[10px] text-green-400/80 transition-colors hover:text-green-300"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </PortalCard>

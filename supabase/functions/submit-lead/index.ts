@@ -71,6 +71,14 @@ Deno.serve(async (request) => {
       });
     }
 
+    // Push notification via ntfy
+    try {
+      await fetch("https://notify.dasdev.net/dasdev-leads", {
+        method: "POST",
+        body: `New lead: ${name} (${email})\n${message.slice(0, 300)}`,
+      });
+    } catch { /* ignore network errors */ }
+
     return jsonResponse({ ok: true }, 200, origin);
   } catch (error) {
     if (error instanceof BadRequest) {

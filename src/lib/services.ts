@@ -20,122 +20,121 @@ export type Service = {
   detail: string;
   price: string;
   category: ServiceCategory;
-  /** Who this service typically serves — broad SMB, not one vertical */
   fits: string[];
 };
 
 /**
- * Canonical service menu for marketing + client dashboard.
- * Broad SMB: professional services, retail, hospitality, creators, trades, and more.
+ * Service menu for local small business work.
+ * Prices are ranges, not starting points. Honest for a teen freelancer.
  */
 export const services: Service[] = [
   {
     id: "web-design",
     name: "Web Design",
     detail:
-      "Sites that build trust fast. Clear story, proof, and a path to inquire. Mobile-first and fast for small businesses of any industry.",
-    price: "From $500",
+      "Clean sites that get the point across. Mobile-first and fast. Good for trades, cafes, clinics, and anyone who needs to look legit online.",
+    price: "$300 – $600",
     category: "build",
-    fits: ["professional services", "trades", "hospitality", "creators"],
+    fits: ["trades", "local services", "small shops", "creators"],
   },
   {
     id: "branding",
     name: "Branding",
     detail:
-      "Identity systems: logo, type, color. Your site, socials, and materials should feel like one brand.",
-    price: "From $350",
+      "Logo, colors, and type that look consistent on a business card, truck, and site. Not overdone, just recognizable.",
+    price: "$150 – $300",
     category: "build",
-    fits: ["new brands", "rebrands", "studios", "retail"],
+    fits: ["new brands", "rebrands", "contractors", "food trucks"],
   },
   {
     id: "development",
     name: "Development",
     detail:
-      "Custom builds when quality matters. Clean code, performance, and hosting that fits. No bloated page builders.",
-    price: "With design",
+      "Custom stuff when templates break. Integrations, tools, or weird features that Squarespace cant handle.",
+    price: "$200 – $500",
     category: "build",
-    fits: ["custom sites", "tools", "performance-critical"],
+    fits: ["custom sites", "booking tools", "calculators"],
   },
   {
     id: "landing-pages",
     name: "Landing Pages",
     detail:
-      "Focused pages for launches, offers, and campaigns. Designed to convert without clutter.",
-    price: "From $400",
+      "One page for one offer. A service, a promo, a signup. No fluff, just a clear next step.",
+    price: "$150 – $300",
     category: "build",
-    fits: ["campaigns", "coaches", "product launches"],
+    fits: ["campaigns", "events", "new services"],
   },
   {
     id: "seo",
     name: "SEO",
     detail:
-      "Titles, structure, meta, and discoverability basics so the right people can find you. Local or broader.",
-    price: "From $200",
+      "Google Business setup, page titles, and basic structure so people nearby can actually find you.",
+    price: "$75 – $150",
     category: "grow",
-    fits: ["local business", "service firms", "clinics"],
+    fits: ["local business", "trades", "clinics"],
   },
   {
     id: "ui-product",
     name: "UI / Product",
     detail:
-      "Interfaces for tools, apps, and product marketing pages. Clear UI with the same editorial care.",
-    price: "Per project",
+      "Interface work for small tools, apps, or dashboards. Clean and usable, not overdesigned.",
+    price: "$250 – $500",
     category: "build",
-    fits: ["SaaS light", "internal tools", "apps"],
+    fits: ["internal tools", "small apps", "forms"],
   },
   {
     id: "content",
     name: "Content & Copy",
     detail:
-      "Homepage narrative, service pages, and CTA language that sounds like you — not generic agency filler.",
-    price: "From $250",
+      "Homepage text, service descriptions, and CTA language that sounds like a human wrote it.",
+    price: "$50 – $150",
     category: "grow",
-    fits: ["coaches", "clinics", "consultants", "creators"],
+    fits: ["any site that needs words"],
   },
   {
     id: "ecommerce",
-    name: "E-commerce Lite",
+    name: "E-commerce",
     detail:
-      "Simple product catalogs, checkout-ready pages, and clean merchandising for shops that do not need a megastore.",
-    price: "From $800",
+      "Small product catalogs and checkout for local sellers. Not Shopify bloat, just what you need.",
+    price: "$400 – $800",
     category: "build",
-    fits: ["retail", "makers", "studios", "food & beverage"],
+    fits: ["local sellers", "makers", "retail"],
   },
   {
     id: "hosting-launch",
     name: "Hosting & Launch",
     detail:
-      "Domain, DNS, SSL, and a calm go-live. You get a live URL that works — without the technical headache.",
-    price: "From $150",
+      "Domain, SSL, and getting the thing live. You hand it off, I make sure it works.",
+    price: "$10 / mo",
     category: "care",
-    fits: ["first-time sites", "migrations", "rebrands"],
+    fits: ["first-time sites", "migrations"],
   },
   {
     id: "strategy",
     name: "Strategy Session",
     detail:
-      "A focused consult on goals, sitemap, and what to build first. Useful before a full project — or when you are stuck.",
-    price: "From $100",
+      "30-60 min call to figure out what to build first and what to skip. Good when you arent sure where to start.",
+    price: "$50 – $100",
     category: "special",
-    fits: ["early stage", "rebrands", "unclear scope"],
+    fits: ["new businesses", "unclear scope"],
   },
   {
     id: "maintenance",
     name: "Maintenance",
     detail:
-      "Updates, content tweaks, uptime checks, and small fixes so your site stays sharp after launch.",
-    price: "$50 / month",
+      "Updates, small fixes, and keeping the lights on. Month to month, no contract.",
+    price: "$25 / mo",
     category: "care",
-    fits: ["ongoing clients", "live sites"],
+    fits: ["live sites", "busy owners"],
   },
   {
     id: "creative",
     name: "Creative Direction",
     detail:
-      "Mood, motion, and visual systems for brands that want something distinctive — selectively scoped, not a menu default.",
-    price: "Per project",
+      "Mood, motion, and visual systems for brands that want to stand out. Selectively scoped.",
+    price: "$300 – $600",
     category: "special",
-    fits: ["studios", "hospitality", "personal brands"],
+    fits: ["studios", "personal brands", "hospitality"],
   },
 ];
 
@@ -145,11 +144,6 @@ export function getService(id: string): Service | undefined {
   return services.find((s) => s.id === id);
 }
 
-/**
- * Service ids are stored as plain text in the database so the catalog can grow
- * without a migration, which means a stored value may not match this list. Fall
- * back to the raw id rather than rendering nothing.
- */
 export function getServiceName(id: string): string {
   return getService(id)?.name ?? id;
 }

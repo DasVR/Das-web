@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AdminGate } from "@/components/portal/AdminGate";
 import {
@@ -12,8 +12,10 @@ import {
 import {
   assignProfileToClient,
   createClient,
+  deleteClient,
   fetchAllClients,
   fetchUnassignedProfiles,
+  generateAccessKey,
 } from "@/lib/admin";
 import { supportedIndustries } from "@/lib/dashboard";
 import type { ClientRow, ProfileRow } from "@/lib/database.types";
@@ -33,6 +35,9 @@ function ClientsBody() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "active" | "paused" | "archived">("all");
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -52,12 +57,42 @@ function ClientsBody() {
     void load();
   }, [load]);
 
+  const filtered = useMemo(() => {
+    let list = clients;
+    if (filter !== "all") list = list.filter((c) => c.status === filter);
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter(
+        (c) =>
+          c.business_name.toLowerCase().includes(q) ||
+          (c.contact_name ?? "").toLowerCase().includes(q) ||
+          (c.email ?? "").toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [clients, filter, search]);
+
+  const activeCount = clients.filter((c) => c.status === "active").length;
+  const pausedCount = clients.filter((c) => c.status === "paused").length;
+  const archivedCount = clients.filter((c) => c.status === "archived").length;
+
+  async function handleRemove(id: string, name: string) {
+    try {
+      await deleteClient(id);
+      setNotice(`${name} removed.`);
+      setConfirmDelete(null);
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not remove client.");
+    }
+  }
+
   return (
     <>
       <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-600">
-            {clients.length} total
+            {clients.length} total · {activeCount} active · {pausedCount} paused · {archivedCount} archived
           </p>
           <h1 className="mt-1 font-display text-xl font-medium tracking-tight sm:text-2xl">
             Clients
@@ -96,12 +131,38 @@ function ClientsBody() {
         </div>
       )}
 
+      {/* Search + filter */}
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search clients…"
+          className="flex-1 rounded-md border border-neutral-800 bg-[#111] px-3 py-2 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-neutral-600"
+        />
+        <div className="flex gap-1">
+          {(["all", "active", "paused", "archived"] as const).map((f) => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setFilter(f)}
+              className={`rounded-md px-3 py-2 text-xs font-medium transition-colors ${
+                filter === f
+                  ? "bg-neutral-800 text-white"
+                  : "text-neutral-500 hover:text-neutral-300"
+              }`}
+            >
+              {f[0].toUpperCase() + f.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {pending.length > 0 && (
         <section className="mb-8">
           <SectionTitle>Accounts waiting for a workspace</SectionTitle>
           <p className="mb-3 text-xs text-neutral-500">
-            These people signed up but cannot see anything until you link them to
-            a client.
+            These people signed up but cannot see anything until you link them to a client.
           </p>
           <div className="space-y-2">
             {pending.map((profile) => (
@@ -157,26 +218,75 @@ function ClientsBody() {
           title="No clients yet"
           body="Add a client, then link their signup to this record."
         />
+      ) : filtered.length === 0 ? (
+        <EmptyState title="No matches" body="Try a different search or filter." />
       ) : (
         <div className="space-y-2">
-          {clients.map((client) => (
-            <Link key={client.id} href={`/admin/clients/detail?id=${client.id}`}>
-              <PortalCard className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:border-neutral-600">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">
+          {filtered.map((client) => (
+            <PortalCard
+              key={client.id}
+              className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:border-neutral-600"
+            >
+              <div className="min-w-0 flex-1">
+                <Link href={`/admin/clients/detail?id=${client.id}`}>
+                  <p className="truncate text-sm font-medium hover:text-neutral-200">
                     {client.business_name}
                   </p>
-                  <p className="truncate text-xs text-neutral-500">
-                    {[client.contact_name, client.email, client.industry]
-                      .filter(Boolean)
-                      .join(" · ") || "No contact details"}
-                  </p>
-                </div>
-                <span className="flex-shrink-0 font-mono text-[10px] uppercase tracking-wider text-neutral-600">
+                </Link>
+                <p className="truncate text-xs text-neutral-500">
+                  {[client.contact_name, client.email, client.phone]
+                    .filter(Boolean)
+                    .join(" · ") || "No contact details"}
+                  {client.industry ? ` · ${client.industry}` : ""}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`flex-shrink-0 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
+                    client.status === "active"
+                      ? "bg-green-500/10 text-green-400"
+                      : client.status === "paused"
+                        ? "bg-orange-500/10 text-orange-400"
+                        : "bg-neutral-800 text-neutral-500"
+                  }`}
+                >
                   {client.status}
                 </span>
-              </PortalCard>
-            </Link>
+                {client.access_key && (
+                  <span className="hidden font-mono text-[10px] text-neutral-600 sm:inline">
+                    Key: {client.access_key}
+                  </span>
+                )}
+                {confirmDelete === client.id ? (
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] text-neutral-500">Remove?</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemove(client.id, client.business_name)}
+                      className="rounded bg-red-500/20 px-2 py-1 text-[10px] text-red-300 hover:bg-red-500/30"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDelete(null)}
+                      className="text-[10px] text-neutral-500 hover:text-neutral-300"
+                    >
+                      No
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(client.id)}
+                    className="text-[10px] text-neutral-600 transition-colors hover:text-red-400"
+                    title="Remove client"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </PortalCard>
           ))}
         </div>
       )}
@@ -204,19 +314,21 @@ function NewClientForm({
 
     setBusy(true);
     try {
+      const key = generateAccessKey();
       await createClient({
         business_name: businessName.trim(),
         contact_name: contactName.trim() || undefined,
         email: email.trim() || undefined,
         phone: phone.trim() || undefined,
         industry: industry || undefined,
+        access_key: key,
       });
       setBusinessName("");
       setContactName("");
       setEmail("");
       setPhone("");
       setIndustry("");
-      await onCreated(businessName.trim());
+      await onCreated(`${businessName.trim()} (key: ${key})`);
     } catch (cause) {
       onError(
         cause instanceof Error ? cause.message : "Could not create the client."

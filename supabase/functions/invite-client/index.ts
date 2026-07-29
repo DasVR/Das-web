@@ -52,7 +52,7 @@ Deno.serve(async (request) => {
 
     if (clientError) throw new Error(clientError.message);
 
-    const redirectTo = `${Deno.env.get("SITE_URL") ?? "https://dasdev.net"}/dashboard/login`;
+    const redirectTo = "https://dasdev.net/dashboard/login";
 
     const { data: invited, error: inviteError } =
       await admin.auth.admin.inviteUserByEmail(email, { redirectTo });

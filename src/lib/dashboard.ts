@@ -14,6 +14,7 @@ export type { ProjectStatus };
 /** A project plus the update items belonging to it. */
 export type ProjectWithUpdates = ProjectRow & {
   updates: UpdateRow[];
+  reviews: import("@/lib/database.types").ProjectReviewRow[];
 };
 
 export type ClientWorkspace = {
@@ -133,15 +134,28 @@ export async function fetchWorkspace(): Promise<ClientWorkspace | null> {
 
   const projectIds = (projects.data ?? []).map((project) => project.id);
   let updates: UpdateRow[] = [];
+  let reviews: import("@/lib/database.types").ProjectReviewRow[] = [];
 
   if (projectIds.length > 0) {
-    const { data, error } = await supabase
-      .from("updates")
-      .select("*")
-      .in("project_id", projectIds)
-      .order("created_at", { ascending: false });
-    if (error) throw error;
-    updates = data ?? [];
+    const [{ data: uData, error: uError }, { data: rData, error: rError }] =
+      await Promise.all([
+        supabase
+          .from("updates")
+          .select("*")
+          .in("project_id", projectIds)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("project_reviews")
+          .select("*")
+          .in("project_id", projectIds)
+          .eq("active", true)
+          .gt("expires_at", new Date().toISOString())
+          .order("created_at", { ascending: false }),
+      ]);
+    if (uError) throw uError;
+    if (rError) throw rError;
+    updates = uData ?? [];
+    reviews = rData ?? [];
   }
 
   return {
@@ -149,6 +163,7 @@ export async function fetchWorkspace(): Promise<ClientWorkspace | null> {
     projects: (projects.data ?? []).map((project) => ({
       ...project,
       updates: updates.filter((update) => update.project_id === project.id),
+      reviews: reviews.filter((review) => review.project_id === project.id),
     })),
     care: care.data ?? null,
     messages: messages.data ?? [],

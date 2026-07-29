@@ -8,7 +8,7 @@ import { pageMetadata } from "@/lib/site";
 export const metadata = pageMetadata({
   title: "Services",
   description:
-    "Web design, branding, development, landing pages, SEO, content, e-commerce, hosting, strategy, UI, and maintenance for small businesses — starting around $500.",
+    "Web design, branding, development, landing pages, SEO, content, e-commerce, hosting, strategy, UI, and maintenance for small businesses.",
   path: "/services",
 });
 

@@ -14,8 +14,10 @@ import {
   createClient,
   fetchAccessRequests,
   fetchLeads,
-  inviteClient,
+  generateAccessKey,
+  notifyNewClient,
   reviewAccessRequest,
+  setClientAccessKey,
   setLeadStatus,
 } from "@/lib/admin";
 import { formatDate } from "@/lib/dashboard";
@@ -57,13 +59,16 @@ function LeadsBody() {
 
   async function convertLead(lead: LeadRow) {
     try {
+      const key = generateAccessKey();
       const client = await createClient({
         business_name: lead.name,
         contact_name: lead.name,
         email: lead.email,
+        access_key: key,
       });
       await setLeadStatus(lead.id, "converted");
-      setNotice(`${client.business_name} created from lead.`);
+      await notifyNewClient(client, key);
+      setNotice(`${client.business_name} created. Access key: ${key}`);
       await load();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not convert lead.");
@@ -72,14 +77,17 @@ function LeadsBody() {
 
   async function approveRequest(request: AccessRequestRow) {
     try {
+      const key = generateAccessKey();
       const client = await createClient({
         business_name: request.business_name,
       });
-      // Linking the account is what actually makes their workspace visible;
-      // until this runs they stay 'pending' and see nothing.
+      // Link the account to the new client
       await assignProfileToClient(request.user_id, client.id);
       await reviewAccessRequest(request.id, "approved");
-      setNotice(`${request.business_name} approved and linked.`);
+      // Give them the access key so they can log in
+      await setClientAccessKey(client.id, key);
+      await notifyNewClient(client, key);
+      setNotice(`${request.business_name} approved. Access key: ${key}`);
       await load();
     } catch (cause) {
       setError(
@@ -233,25 +241,28 @@ function LeadsBody() {
                           type="button"
                           onClick={async () => {
                             try {
-                              await inviteClient({
+                              const key = generateAccessKey();
+                              const client = await createClient({
                                 business_name: lead.name,
                                 contact_name: lead.name,
                                 email: lead.email,
+                                access_key: key,
                               });
                               await setLeadStatus(lead.id, "converted");
-                              setNotice(`Invite sent to ${lead.email}.`);
+                              await notifyNewClient(client, key);
+                              setNotice(`Key for ${client.business_name}: ${key}`);
                               await load();
                             } catch (cause) {
                               setError(
                                 cause instanceof Error
                                   ? cause.message
-                                  : "Could not send invite."
+                                  : "Could not create client."
                               );
                             }
                           }}
                           className="rounded-md border border-orange-500/40 px-3 py-1.5 text-xs text-orange-300 transition-colors hover:border-orange-400 hover:text-orange-200"
                         >
-                          Send portal invite
+                          Generate key
                         </button>
                       </>
                     )}
