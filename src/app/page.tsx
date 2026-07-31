@@ -9,7 +9,7 @@ import { Method } from "./sections/Method";
 export const metadata = pageMetadata({
   title: "Web Design & Digital Services for Small Businesses",
   description:
-    "DasDev designs and builds websites for small businesses and independents. Design, branding, development, SEO, and ongoing care. Based in Florida, working with clients anywhere.",
+    "Web design and digital services for small businesses. Design, branding, development, SEO, and ongoing care. Based in Florida.",
   path: "/",
 });
 

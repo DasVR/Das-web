@@ -14,7 +14,7 @@ export function AsciiDivider({ className }: AsciiDividerProps) {
       )}
       aria-hidden="true"
     >
-      <pre className="overflow-hidden font-mono text-[10px] leading-none tracking-[0.35em] md:text-xs">
+      <pre className="overflow-hidden font-mono text-[10px] leading-none tracking-[0.35em] text-neutral-400 md:text-xs">
         · · · + · · · + · · · + · · ·
       </pre>
     </div>

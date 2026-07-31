@@ -124,7 +124,19 @@
   }
 }
 
-/* Soft vignette for cinematic A24 feel */
+/* Accessibility: ensure neutral text is legible on the dark background.
+   Tailwind text-neutral-500/600/700 are too low-contrast against #0a0a0a,
+   so we bump them to neutral-400 site-wide without changing class names. */
+.text-neutral-500,
+.text-neutral-600,
+.text-neutral-700 {
+  color: rgb(163 163 163) !important;
+}
+
+::placeholder {
+  color: rgb(115 115 115) !important;
+}
+
 body::after {
   content: "";
   pointer-events: none;
