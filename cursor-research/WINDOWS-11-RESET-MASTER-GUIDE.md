@@ -449,19 +449,48 @@ Create `~/.config/starship.toml` for customization.
 
 ## 5.6 Browser Setup (Brave)
 
+### Migrating TO Brave (From Chrome/Edge/Firefox)
+1. **Before you leave dad's / before reset:**
+   - In your current browser: go to `chrome://bookmarks` (or equivalent) → Export as HTML
+   - Go to password manager → Export passwords as CSV (or just make sure Vaultwarden is synced)
+   - Screenshot your extensions bar so you remember what to reinstall
+   - Screenshot your pinned tabs / bookmark bar layout
+2. **Install Brave** (via winget: `winget install BraveSoftware.BraveBrowser`)
+3. **Import data:**
+   - Open Brave → `brave://settings/importData`
+   - Select your old browser → check bookmarks, passwords, autofill, extensions (if possible)
+   - Or: `brave://bookmarks` → Import → select the HTML file you exported
+4. **Import extensions:**
+   - Brave is Chromium-based, so Chrome extensions work
+   - Go to `brave://extensions` → turn on Developer mode → "Load unpacked" or just reinstall from Chrome Web Store
+   - Must-haves: Bitwarden/Vaultwarden, uBlock Origin (backup), Dark Reader, SponsorBlock, Return YouTube Dislike, Stylus
+
+### Brave Settings to Configure
 1. Settings → Appearance → Brave colors: Dark
 2. Settings → Appearance → Show home button: OFF
 3. Settings → Appearance → Show bookmarks bar: ON
 4. Settings → Appearance → Always show full URLs
-5. Settings → Privacy → Block ads and trackers: Aggressive
+5. Settings → Privacy → Block ads and trackers: **Aggressive**
 6. Settings → Privacy → Forget me when I close: Enable for sites you don't want tracking
-7. Extensions to install:
-   - Bitwarden / Vaultwarden
-   - uBlock Origin (backup ad blocker)
-   - Dark Reader (for sites without dark mode)
-   - SponsorBlock for YouTube (skip sponsored segments)
-   - Return YouTube Dislike
-   - Stylus (custom CSS for websites)
+7. Settings → Privacy → Block fingerprinting: **Strict**
+8. Settings → Privacy → Block cookies: **Block 3rd-party cookies**
+9. Settings → Search engine → Default: DuckDuckGo or Brave Search (your call)
+10. Settings → Additional settings → Rewards → **Turn OFF** (unless you actually want crypto notifications)
+11. Settings → Additional settings → Wallet → **Turn OFF** (same reason)
+12. Settings → Additional settings → News → **Turn OFF** (bloat)
+13. Settings → Additional settings → Leo AI → **Turn OFF** (you don't need another AI in your browser)
+14. Settings → System → Continue running background apps: **OFF**
+15. Settings → System → Startup: **Open the New Tab page** (or "Continue where you left off")
+
+### Extensions to Install
+- Bitwarden / Vaultwarden
+- uBlock Origin (backup ad blocker — Brave's built-in is good but uBlock is extra insurance)
+- Dark Reader (for sites without dark mode)
+- SponsorBlock for YouTube (skip sponsored segments)
+- Return YouTube Dislike
+- Stylus (custom CSS for websites)
+- Bypass Paywalls Clean (if you read news articles)
+- Video Speed Controller
 
 ## 5.7 Custom Cursors & Icons
 
