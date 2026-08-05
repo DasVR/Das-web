@@ -24,11 +24,13 @@ The default Windows 11 volume/brightness popups are ugly. This replaces them.
 
 ## 1.2 Noti — Custom Toast Notifications
 
-Windows toast notifications are boring. Noti lets you create custom notification popups with HTML/CSS.
+Windows toast notifications are boring. Noti used to let you create custom notification popups with HTML/CSS, but the original `noti-org/noti` repo is gone.
 
-- **GitHub:** `https://github.com/noti-org/noti`
-- **Why it's cool:** Custom notification sounds, custom styling, notification history with search, rules engine (mute certain apps during focus hours)
-- **Setup:** Install → pick a theme → set rules for which apps can notify you and when
+- **Status:** ⚠️ Dead link — original repo deleted
+- **Alternatives:**
+  - **SnoreToast** (below) for command-line native toasts
+  - **BurntToast** for PowerShell-driven custom toasts
+  - **angeloj87/toasty-noti** if you want a maintained Windows 11 toast experiments repo
 
 ## 1.3 BurntToast (PowerShell Module)
 
@@ -195,12 +197,24 @@ If you don't want to replace Explorer entirely, just add tabs to it.
 - **Shows:** CPU, RAM, disk, network, uptime, IP, processes, services
 - **Why it's cool:** Zero CPU usage when not updating, always visible, survives explorer restarts
 
-## 4.4 SysDVR — System Stats Overlay
+## 4.4 Sidebar Diagnostics — System Stats Sidebar
 
-- **GitHub:** `https://github.com/exelban/sysdvr`
-- **What it does:** Hardware monitor overlay (like MSI Afterburner but cleaner)
-- **Shows:** CPU/GPU temp, usage, clock, FPS, RAM, network
-- **Why:** If you want to see your system stats without opening Task Manager
+Clean always-on hardware monitor that docks to the side of your screen.
+
+- **GitHub:** `https://github.com/ArcadeRenegade/SidebarDiagnostics`
+- **What it does:** Live CPU, RAM, GPU, drive, network, and clock stats
+- **Why:** Like MSI Afterburner but way cleaner and always visible
+- **Setup:** Pick which sensors to show, set sidebar width, choose dark theme
+
+## 4.5 SysDVR — Stream Switch to PC (No Capture Card)
+
+If you mod your Switch, this streams gameplay to your PC over USB or local network.
+
+- **GitHub:** `https://github.com/exelix11/SysDVR`
+- **Website:** `https://sysdvr.net/`
+- **What it does:** Stream Nintendo Switch screen/audio to Windows/macOS/Linux without a capture card
+- **Why:** Free, low-latency, perfect for homelab recording setups
+- **Setup:** Install sysmodule on Switch + run SysDVR client on PC
 
 ---
 
@@ -333,8 +347,8 @@ If you don't want to replace Explorer entirely, just add tabs to it.
 
 ## 8.2 Custom Login UI (Advanced)
 
-- **Tool:** `https://github.com/ADeltaX/LoginCustomizer` (use with caution, modifies system files)
-- **What you can change:** Login background, button colors, text, opacity, blur intensity
+- **Tool:** `https://github.com/ninjaeon/Windows11-Welcome-Screen-Customizer` (use with caution, modifies system files)
+- **What you can change:** Login/welcome screen background
 - **Warning:** Backup first. Windows updates can break this.
 
 ## 8.3 IdleLock — Auto-Lock with Style
@@ -370,7 +384,7 @@ If you don't want to replace Explorer entirely, just add tabs to it.
 - **Tool:** Right-click folder → Properties → Customize → Change Icon
 - **Icon sources:**
   - `https://icon-icons.com/` — searchable, downloadable .ico files
-  - `https://www.iconfinder.com/` — huge library
+  - `https://www.flaticon.com/` / `https://www.freepik.com/icons` — huge library (Iconfinder is gone, folded into Freepik)
   - `https://feathericons.com/` — minimal, open source
 - **Pro tip:** Color-code your project folders (red = active, green = done, yellow = waiting)
 
@@ -455,11 +469,15 @@ If you don't want to replace Explorer entirely, just add tabs to it.
 - **Why:** The most detailed hardware info tool. Pairs with Rainmeter to show real-time stats on desktop.
 - **Setup:** HWiNFO → Sensors → Configure → enable shared memory → Rainmeter plugin reads it
 
-## 11.4 NetSpeedMonitor (Revived)
+## 11.4 NetSpeedMonitor (Modern Successor)
 
-- **GitHub:** `https://github.com/Ardiloot/NetSpeedMonitor`
+The original NetSpeedMonitor toolbar doesn't work cleanly on Windows 11, but a modern continuation exists.
+
+- **Website:** `https://netspeedmonitor.de/index-en.php` (HighspeedMonitor, official continuation)
+- **GitHub:** `https://github.com/hanyizhao/NetSpeedMonitor` (community fork)
 - **What it does:** Shows current upload/download speed in taskbar
 - **Why:** TrafficMonitor is good, but this is lighter and sits in the taskbar itself
+- **Note:** Use the installer from the official site for a signed build
 
 ---
 
@@ -552,9 +570,10 @@ If you don't want to replace Explorer entirely, just add tabs to it.
 
 ## 14.3 Caffeine — Keep PC Awake
 
-- **GitHub:** `https://github.com/zhongyang219/Caffeine`
+- **GitHub:** `https://github.com/cttynul/caffeine`
 - **What it does:** One-click prevent sleep/screensaver. Sits in system tray.
 - **Why:** Better than changing power settings every time you need to keep PC awake
+- **Alternative:** `https://github.com/mrviduus/caffeinate-windows` if you want a system-tray toggle tool
 
 ## 14.4 PowerPlanSwitcher — Auto-Switch Power Plans
 
@@ -900,9 +919,9 @@ winget install CopyQ.CopyQ
 | SteelSeries Sonar | `https://steelseries.com/gg/sonar` |
 | T-Clock Redux | `https://github.com/White-Tiger/T-Clock` |
 | TaskbarXI | `https://github.com/ChrisAnd1998/TaskbarXI` |
-| Noti | `https://github.com/noti-org/noti` |
+| Noti (dead) | original `noti-org/noti` repo deleted — use SnoreToast/BurntToast instead |
 | SnoreToast | `https://github.com/KDE/snoretoast` |
-| OpenHashTab | `https://github.com/namazso/OpenHashTab` |
+| OpenHashTab | `https://github.com/namazso/OpenHashTab` (repo exists; may be region-blocked for some IPs) |
 | 7TSP GUI | `https://www.deviantart.com/devillnside/art/7TSP-GUI-2019-Edition-804769422` |
 | FontBase | `https://fontba.se/` |
 | PowerPlanSwitcher | `https://github.com/petrroll/PowerSwitcher` |
@@ -913,6 +932,11 @@ winget install CopyQ.CopyQ
 | yazi | `https://github.com/sxyazi/yazi` |
 | lazygit | `https://github.com/jesseduffield/lazygit` |
 | ncspot | `https://github.com/hrkfdn/ncspot` |
+| Sidebar Diagnostics | `https://github.com/ArcadeRenegade/SidebarDiagnostics` |
+| SysDVR | `https://github.com/exelix11/SysDVR` / `https://sysdvr.net/` |
+| NetSpeedMonitor | `https://netspeedmonitor.de/index-en.php` |
+| Caffeine | `https://github.com/cttynul/caffeine` |
+| Windows 11 Welcome Screen Customizer | `https://github.com/ninjaeon/Windows11-Welcome-Screen-Customizer` |
 
 ---
 
